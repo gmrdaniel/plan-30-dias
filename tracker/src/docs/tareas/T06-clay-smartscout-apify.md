@@ -87,10 +87,50 @@ Columna 5: Video Gap Score
 - [ ] Cascada corre sin errores de API
 - [ ] Datos de SmartScout + Apify fluyen a Clay sin intervención manual
 
+## Estrategia de creditos Clay: empezar con $149, escalar si necesario
+
+El plan actual de Clay es Base ($149/mes, ~2,000 creditos). El Pro ($495/mes) tiene ~50,000 creditos. La decision de upgrade se toma con datos reales.
+
+### Comparacion de planes
+
+| Aspecto | Base ($149/mes) | Pro ($495/mes) |
+|---|---|---|
+| Creditos | ~2,000/mes | ~50,000/mes |
+| Cascada/waterfall | SI | SI |
+| Filas por tabla | ~1,000 | ~25,000-50,000 |
+| Webhooks | SI | SI |
+| API completa | Limitada | Completa |
+
+### Consumo estimado de creditos por prospecto
+
+| Tipo de enriquecimiento | Creditos x prospecto | Total 1,000 | Cabe en $149? |
+|---|---|---|---|
+| Solo email (1 provider) | 1 | 1,000 | SI |
+| Email cascade (3 providers) | 1-3 | 1,000-3,000 | JUSTO |
+| Email + LinkedIn + empresa + scoring | 4-6 | 4,000-6,000 | NO |
+| Pipeline completo | 5-8 | 5,000-8,000 | NO |
+
+### Plan de accion (Opcion A: empezar con base, escalar con datos)
+
+1. **Batch 1 (200 prospectos):** Correr cascada completa y medir creditos consumidos
+2. **Evaluar:** Si cada prospecto consume <= 2 creditos → los 2,000 alcanzan para 1,000
+3. **Si consume > 2 creditos:** Notificar a Daniel INMEDIATAMENTE para upgrade a Pro
+4. **Upgrade rapido:** Daniel aprueba el mismo dia (es DG, no necesita escalacion)
+5. **Continuar batches 2-5** con el plan adecuado
+
+### Ventajas de esta estrategia
+- No gasta $495/mes por adelantado sin datos
+- El primer batch de 200 da metricas reales de consumo
+- Si alcanza con Base, se ahorra $346/mes
+- Si no alcanza, el upgrade es inmediato (mismo dia)
+
+**Gabriel: registra en un spreadsheet los creditos consumidos por batch.** Columnas: batch_num, prospectos, creditos_inicio, creditos_fin, creditos_por_prospecto.
+
 ## Costo
 | Item | Costo |
 |------|-------|
-| Clay upgrade (si necesario) | +$346/mes (base → pro) |
+| Clay (plan actual Base) | $149/mes |
+| Clay upgrade a Pro (si necesario) | +$346/mes |
 | SmartScout | Ya contratado ($97/mes) |
 | Apify | Ya contratado ($49/mes) |
 
@@ -101,3 +141,4 @@ Columna 5: Video Gap Score
 - Los criterios de ICP vienen de T04 (Eugenia). Si no los tienes para las 10 AM del miércoles, usa estos temporales:
   - B2B: E-commerce/Amazon sellers, >$1M revenue, US/LATAM, sin video profesional
   - Ajustar cuando lleguen los criterios reales
+- **Medir creditos en el primer batch de 200** — esta metrica decide si se necesita upgrade
