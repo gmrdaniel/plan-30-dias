@@ -64,7 +64,7 @@
 | 20 Abr (Lun) | 11 | Soporte técnico para micrositios (tracking, forms → HubSpot). | Tracking verificado |
 | 21 Abr (Mar) | 12 | Verificar warmup completo (Día 14 de 14). **Emails listos para envío.** | Warmup score >90% en Smartlead |
 | **SEMANA 3-4 (Monitoreo)** |
-| 22 Abr+ | 13+ | **Monitoreo diario 9 AM:** Google Postmaster, MxToolbox, Mail-Tester. Reportar en #salud-dominios. | Reporte diario en Slack |
+| 22 Abr+ | 13+ | **Monitoreo diario 9 AM:** Google Postmaster, MxToolbox, Mail-Tester. Reportar en #salud-dominios. | Reporte diario en Telegram |
 | | | Resolver errores sincronización Clay → Smartlead. | Issues resueltos mismo día |
 | | | Resolver fallas de integración reportadas. | Fix documentado |
 | 6 May (Mié) | 22 | Documentar capacidad actual y issues encontrados para evaluación. | Documento técnico |
@@ -120,11 +120,11 @@
 | 14 Abr (Mar) | 7 | Iniciar construcción flujos ManyChat WhatsApp (cualificación). Integrar Branch.io deep links. | Flujo WhatsApp v1 construido |
 | **SEMANA 2** |
 | 15 Abr (Mié) | 8 | **Completar flujos ManyChat WhatsApp + Instagram DM.** Probar end-to-end en móvil. | Flujos completos + video de prueba |
-| 16 Abr (Jue) | 9 | Testing E2E (verificar alertas Slack). Documentar arquitectura (apoyar visual). | Alertas verificadas + assets documentación |
+| 16 Abr (Jue) | 9 | Testing E2E (verificar alertas Telegram). Documentar arquitectura (apoyar visual). | Alertas verificadas + assets documentación |
 | 17 Abr (Vie) | 10 | **Co-ejecutar micrositios con Lillian:** definir dirección creativa, diseñar assets visuales, escribir copy. | Assets + copy + dirección visual entregados |
 | 20-21 Abr | 11-12 | **Co-ejecutar micrositios:** iterar diseño, QA visual, probar responsive mobile. Iterar flujos ManyChat si hay feedback. | Micrositios QA visual passed |
 | **SEMANA 3-4 (Monitoreo)** |
-| 22 Abr+ | 13+ | **Monitoreo diario:** salud cuentas LinkedIn (restricciones), Instagram (rate limits DMs). Ajustar volumen ManyChat si necesario. | Reporte diario en Slack |
+| 22 Abr+ | 13+ | **Monitoreo diario:** salud cuentas LinkedIn (restricciones), Instagram (rate limits DMs). Ajustar volumen ManyChat si necesario. | Reporte diario en Telegram |
 | | | Resolver rechazos templates ManyChat → WhatsApp. | Templates aprobados |
 | | | Resolver fallas deep links Branch.io. | Links funcionales |
 | 8 May (Vie) | 24 | **RETROSPECTIVA.** | — |
@@ -133,17 +133,17 @@
 
 ## EUGENIA GARCÍA (Estratega de MKT Digital y Narrativa)
 
-**Rol principal:** ICP documents, Slack/Relay.app, Klaviyo, Outgrow calculadoras, presupuesto tracking, narrativa de flujos.
+**Rol principal:** ICP documents, Telegram/Relay.app, Klaviyo, Outgrow calculadoras, presupuesto tracking, narrativa de flujos.
 **Nota:** Tareas puntuales con instrucciones claras. Incluir dónde buscar información. Puede aportar en narrativa/copy de templates y flujos ManyChat.
 
 | Fecha | Día | Tareas | Entregable verificable | Dónde buscar info |
 |-------|-----|--------|----------------------|-------------------|
 | **PRE-SPRINT** |
 | 6 Abr (Lun) | 1 | Crear spreadsheet de tracking presupuesto (ver 00-PRESUPUESTO). Enviar template ICP a Pepe y Mery por email. | Spreadsheet + emails enviados | 00-PRESUPUESTO-HERRAMIENTAS.md |
-| 7 Abr (Mar) | 2 | **Configurar Slack workspace** + 5 canales. **Configurar Relay.app** alertas CRM→Slack. **Compilar ICP docs** con input de Pepe y Mery. | Slack operativo + ICP docs V1 | DTOs DTO-IN-01 y DTO-IN-02 |
+| 7 Abr (Mar) | 2 | **Configurar Telegram workspace** + 5 canales. **Configurar Relay.app** alertas CRM→Telegram. **Compilar ICP docs** con input de Pepe y Mery. | Telegram operativo + ICP docs V1 | DTOs DTO-IN-01 y DTO-IN-02 |
 | **SEMANA 1** |
 | 8 Abr (Mié) | 3 | Finalizar ICP docs si faltó input. Actualizar presupuesto con compras realizadas. | ICP final firmado + presupuesto actualizado | Emails de Pepe/Mery |
-| 9 Abr (Jue) | 4 | Verificar que Relay.app esté disparando alertas correctamente (pedir a Daniel que genere evento test en HubSpot). | Screenshot de alerta en Slack |
+| 9 Abr (Jue) | 4 | Verificar que Relay.app esté disparando alertas correctamente (pedir a Daniel que genere evento test en HubSpot). | Screenshot de alerta en Telegram |
 | 10 Abr (Vie) | 5 | Investigar Klaviyo/SimpleTexting. Ver tutoriales de setup. | Notas de investigación | klaviyo.com/docs, simpletexting.com/docs |
 | 13 Abr (Lun) | 6 | **Configurar Klaviyo/SimpleTexting** para recuperación SMS abandono Elevn. Configurar trigger de abandono. | Klaviyo configurado + trigger activo | Portal Elevn (pedir URL a Daniel) |
 | 14 Abr (Mar) | 7 | **Adquirir Social Blade API + Outgrow.** Configuración inicial de Outgrow. | Cuentas activas | socialblade.com, outgrow.co |

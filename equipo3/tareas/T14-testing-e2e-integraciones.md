@@ -63,7 +63,7 @@ Instagram DM → ManyChat → WhatsApp → Branch.io → HubSpot
 4. Verificar que Branch.io redirige correctamente a WhatsApp
 5. Completar el flujo de cualificación en WhatsApp
 6. Verificar que los datos llegan a HubSpot (pipeline Creadores)
-7. Verificar que la alerta se dispara en Slack #creadores-nuevos
+7. Verificar que la alerta se dispara en Telegram #creadores-nuevos
 
 ### Resultado esperado
 - [ ] DM de Instagram dispara flujo ManyChat
@@ -71,7 +71,7 @@ Instagram DM → ManyChat → WhatsApp → Branch.io → HubSpot
 - [ ] Flujo WhatsApp se completa correctamente
 - [ ] Datos de cualificación llegan a HubSpot
 - [ ] **Datos de creador cualificado llegan a Supabase (creator_inventory + creator_lists)**
-- [ ] Alerta Slack se dispara
+- [ ] Alerta Telegram se dispara
 - [ ] Tester C3 (abandono): SMS de recuperacion Klaviyo se envia despues de 24h
 
 ---
@@ -90,7 +90,7 @@ Instagram DM → ManyChat → WhatsApp → Branch.io → HubSpot
 
 ---
 
-## Test 4: Alertas Slack (Dayana)
+## Test 4: Alertas Telegram (Dayana)
 
 ### Verificar cada alerta
 | Alerta | Canal | Trigger | Status |
@@ -132,7 +132,7 @@ Instagram DM → ManyChat → WhatsApp → Branch.io → HubSpot
 - [ ] Pipeline B2B fluye end-to-end sin errores
 - [ ] Pipeline Creadores fluye end-to-end sin errores
 - [ ] Todas las integraciones HubSpot verificadas
-- [ ] Alertas Slack funcionan
+- [ ] Alertas Telegram funcionan
 - [ ] Deep links funcionan en móvil
 - [ ] CERO bugs críticos abiertos al final del día
 

@@ -83,7 +83,7 @@ Si pipeline validado:
 | Reuniones/firmas | HubSpot CRM |
 | Costos herramientas | Spreadsheet de Eugenia |
 | Issues resueltos | Doc "Issues Resueltos" de T18 |
-| Salud dominios | Reportes de Gabriel en Slack |
+| Salud dominios | Reportes de Gabriel en Telegram |
 
 ## Entregables
 - [ ] Documento de evaluación completo (Google Doc, 5-8 páginas)

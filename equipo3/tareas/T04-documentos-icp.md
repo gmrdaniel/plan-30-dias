@@ -71,7 +71,7 @@ Tener 2 documentos ICP finalizados (B2B y Creadores) que definan exactamente a q
 1. Recibir respuestas de Pepe y Mery
 2. Compilar en 2 documentos formales con formato limpio
 3. Enviar a Daniel para revisión rápida
-4. Compartir link en #general-sprint de Slack
+4. Compartir link en #general-sprint de Telegram
 5. Gabriel toma los criterios para T06 (Clay)
 
 ### Si no llega a tiempo:
@@ -85,7 +85,7 @@ Tener 2 documentos ICP finalizados (B2B y Creadores) que definan exactamente a q
 - [ ] ICP B2B compilado y compartido
 - [ ] ICP Creadores compilado y compartido
 - [ ] Daniel revisó y aprobó ambos documentos
-- [ ] Link compartido en Slack
+- [ ] Link compartido en Telegram
 
 ## Criterios de Aceptación
 - [ ] Cada documento tiene TODOS los campos llenos (no hay "___" vacíos)

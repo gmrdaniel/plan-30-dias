@@ -35,7 +35,7 @@ Mantener todos los sistemas operativos, detectar problemas temprano y resolverlo
    - Open rate (benchmark: >40% durante warmup)
    - Si alguna cuenta tiene bounce rate >5%: pausar 48h
 
-### Reporte diario en Slack #salud-dominios
+### Reporte diario en Telegram #salud-dominios
 Formato:
 ```
 📊 Reporte Dominios — [Fecha]
@@ -72,7 +72,7 @@ Formato:
 2. Si hay rate limiting: reducir volumen de ManyChat en 50%
 3. Revisar engagement orgánico (likes, comentarios, follows)
 
-### Reporte en Slack #standup-diario
+### Reporte en Telegram #standup-diario
 ```
 📱 Redes — [Fecha]
 LinkedIn: 2 cuentas activas, 0 restricciones, 15 conexiones enviadas
@@ -107,7 +107,7 @@ ManyChat WhatsApp: 10 conversaciones activas, 3 cualificados
 ---
 
 ## Entregables
-- [ ] Reporte diario de dominios en Slack (Gabriel) — mínimo 15 reportes en el sprint
+- [ ] Reporte diario de dominios en Telegram (Gabriel) — mínimo 15 reportes en el sprint
 - [ ] Reporte diario de redes en standup (Dayana) — mínimo 15 reportes
 - [ ] Doc "Issues Resueltos" actualizado con cada incidente
 - [ ] Cero issues críticos abiertos por más de 24h

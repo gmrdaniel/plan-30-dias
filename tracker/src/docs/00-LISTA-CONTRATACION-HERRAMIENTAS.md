@@ -110,8 +110,8 @@
 | H01 | **Smartlead** | Email masivo | $94 | — | **P0 — ADELANTAR** | 6 Abr | T01, T07, warmup 14d | Daniel | Warmup empieza el dia que se contrata. Adelantar = ventaja directa. |
 | H02 | **Clay upgrade** (Base→Pro) | Enriquecimiento | +$346 | — | **P1 — DIA 1** | 6 Abr | T06, T11 (cascada 1000) | Daniel | Sin upgrade no hay creditos para 1,000 prospectos. Coordinar con equipos. |
 | H03 | **HubSpot CRM** | CRM | $0 (Free) | — | **P1 — DIA 1** | 7 Abr | T02, T14, T17 | Daniel | Solo crear cuenta y configurar. |
-| H04 | **Slack** | Comunicacion | $0 (Free) | — | **P1 — DIA 1** | 7 Abr | T03, T14, T18 | Daniel | Workspace + 5 canales. |
-| H05 | **Relay.app** | Automatizacion | $9 | — | **P2 — DIAS 2-4** | 7 Abr | T03 (alertas) | Daniel | Conecta HubSpot → Slack. |
+| H04 | **Telegram** | Comunicacion | $0 (Free) | — | **P1 — DIA 1** | 7 Abr | T03, T14, T18 | Daniel | Workspace + 5 canales. |
+| H05 | **Relay.app** | Automatizacion | $9 | — | **P2 — DIAS 2-4** | 7 Abr | T03 (alertas) | Daniel | Conecta HubSpot → Telegram. |
 | H06 | **Expandi** | LinkedIn automation | $99 | — | **P2 — DIAS 2-4** | 9 Abr | T07 (outreach LinkedIn) | Daniel | Necesita cuentas LinkedIn activas (T05). |
 | H07 | **JustCall** | Telefonia | $30 | — | **P2 — DIAS 2-4** | 9 Abr | T07 (llamadas) | Daniel | 1 usuario. |
 | H08 | **ManyChat Pro** | Chatbot/Messaging | $65 | — | **P3 — DIAS 5-7** | 10 Abr | T08, T12 (flujos WhatsApp) | Daniel | Conectar WhatsApp Business API. Templates a Meta para aprobacion (48h+). |
@@ -148,7 +148,7 @@
 | Prioridad | Items | Costo mensual | Costo unico | Cuando |
 |-----------|-------|---------------|-------------|--------|
 | **P0 — ADELANTAR** | Dominios + emails + Smartlead + herramientas DNS gratis | $202 | $60 | Antes del 6 Abr |
-| **P1 — DIA 1** | Clay upgrade + HubSpot (free) + Slack (free) | $346 | $0 | 6 Abr |
+| **P1 — DIA 1** | Clay upgrade + HubSpot (free) + Telegram (free) | $346 | $0 | 6 Abr |
 | **P2 — DIAS 2-4** | Relay + Expandi + JustCall | $138 | $0 | 7-9 Abr |
 | **P3 — DIAS 5-7** | ManyChat + Twilio + Sendspark + ElevenLabs + Klaviyo + Slybroadcast + Social Blade + Outgrow | $369 | $175 | 10-14 Abr |
 | **P4 — SEMANA 2** | Unbounce + Leadpages | $148 | $0 | 15-21 Abr |
@@ -199,7 +199,7 @@
 ### P1 — DIA 1 (6 Abr)
 - [ ] Upgrade Clay Base → Pro ($495/mes). Coordinar con equipos si impacta presupuesto global
 - [ ] Crear cuenta HubSpot CRM (Free)
-- [ ] Crear workspace Slack (Free)
+- [ ] Crear workspace Telegram (Free)
 
 ### P2 — DIAS 2-4 (7-9 Abr)
 - [ ] Contratar Relay.app ($9/mes)

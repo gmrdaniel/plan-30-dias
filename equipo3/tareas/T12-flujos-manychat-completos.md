@@ -50,7 +50,7 @@ TRIGGER: Creador llega vía Branch.io deep link (desde IG DM, SMS, o ad)
   │       Te voy a conectar con un Account Manager."
   │    → Tag: "Cualificado" en ManyChat
   │    → Push a HubSpot: pipeline Creadores, etapa "Cualificado"
-  │    → Alerta Slack #creadores-nuevos
+  │    → Alerta Telegram #creadores-nuevos
   │
   │  Si no cumple:
   │    → "Gracias por tu interés. Por ahora trabajamos con creadores
@@ -150,7 +150,7 @@ TRIGGER: Creador interactúa con hashtag/contenido específico
 - [ ] El deep link de Instagram → WhatsApp funciona en iOS y Android
 - [ ] Los datos de cualificación llegan a HubSpot correctamente
 - [ ] **Los datos de cualificación llegan a Supabase (`creator_inventory` + `creator_lists`)**
-- [ ] La alerta de Slack se dispara para creadores cualificados
+- [ ] La alerta de Telegram se dispara para creadores cualificados
 - [ ] Lillian da visto bueno de UX
 
 ## Costo

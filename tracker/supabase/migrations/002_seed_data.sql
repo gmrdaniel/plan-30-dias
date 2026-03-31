@@ -31,8 +31,8 @@ INSERT INTO tasks (task_id, title, objective, priority, status, phase, start_dat
    '{}', '{T14,T17}'),
 
   ('T03',
-   'Slack + Relay.app Alertas',
-   'Workspace de Slack operativo con canales por funcion y alertas automaticas desde HubSpot via Relay.app.',
+   'Telegram + Relay.app Alertas',
+   'Workspace de Telegram operativo con canales por funcion y alertas automaticas desde HubSpot via Relay.app.',
    'CRITICA', 'pendiente', 'pre_sprint',
    '2026-04-07', '2026-04-07',
    '{}', '{T14,T18}'),
@@ -312,17 +312,17 @@ INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
   ('T02', 'entregable', 'Contacto de prueba en cada pipeline', 6);
 -- Criterios T02
 INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
-  ('T02', 'criterio', 'Los 4 lideres de equipo confirman acceso por Slack', 1),
+  ('T02', 'criterio', 'Los 4 lideres de equipo confirman acceso por Telegram', 1),
   ('T02', 'criterio', 'Un contacto puede moverse por todas las etapas sin error', 2),
   ('T02', 'criterio', 'Propiedades custom visibles al editar un contacto', 3);
 
 -- ===================== T03 =====================
 -- Entregables T03
 INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
-  ('T03', 'entregable', 'Workspace Slack creado con 5 canales', 1),
+  ('T03', 'entregable', 'Workspace Telegram creado con 5 canales', 1),
   ('T03', 'entregable', 'Todos los miembros de los 4 equipos invitados', 2),
   ('T03', 'entregable', 'Relay.app configurado con 2 automatizaciones', 3),
-  ('T03', 'entregable', 'Alerta de prueba recibida exitosamente en Slack', 4),
+  ('T03', 'entregable', 'Alerta de prueba recibida exitosamente en Telegram', 4),
   ('T03', 'entregable', 'Screenshot de la alerta funcionando', 5);
 -- Criterios T03
 INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
@@ -338,7 +338,7 @@ INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
   ('T04', 'entregable', 'ICP B2B compilado y compartido', 3),
   ('T04', 'entregable', 'ICP Creadores compilado y compartido', 4),
   ('T04', 'entregable', 'Daniel reviso y aprobo ambos documentos', 5),
-  ('T04', 'entregable', 'Link compartido en Slack', 6);
+  ('T04', 'entregable', 'Link compartido en Telegram', 6);
 -- Criterios T04
 INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
   ('T04', 'criterio', 'Cada documento tiene TODOS los campos llenos (no hay "___" vacios)', 1),
@@ -489,7 +489,7 @@ INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
   ('T12', 'criterio', 'El deep link de Instagram -> WhatsApp funciona en iOS y Android', 2),
   ('T12', 'criterio', 'Los datos de cualificacion llegan a HubSpot correctamente', 3),
   ('T12', 'criterio', 'Los datos de cualificacion llegan a Supabase (creator_inventory + creator_lists)', 4),
-  ('T12', 'criterio', 'La alerta de Slack se dispara para creadores cualificados', 5),
+  ('T12', 'criterio', 'La alerta de Telegram se dispara para creadores cualificados', 5),
   ('T12', 'criterio', 'Lillian da visto bueno de UX', 6);
 
 -- ===================== T13 =====================
@@ -521,7 +521,7 @@ INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
   ('T14', 'criterio', 'Pipeline B2B fluye end-to-end sin errores', 1),
   ('T14', 'criterio', 'Pipeline Creadores fluye end-to-end sin errores', 2),
   ('T14', 'criterio', 'Todas las integraciones HubSpot verificadas', 3),
-  ('T14', 'criterio', 'Alertas Slack funcionan', 4),
+  ('T14', 'criterio', 'Alertas Telegram funcionan', 4),
   ('T14', 'criterio', 'Deep links funcionan en movil', 5),
   ('T14', 'criterio', 'CERO bugs criticos abiertos al final del dia', 6);
 
@@ -532,7 +532,7 @@ INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
   ('T15', 'entregable', 'Screenshots de dashboards de cada herramienta (Dayana)', 2),
   ('T15', 'entregable', 'Tabla "donde cargar que" (Dayana)', 3),
   ('T15', 'entregable', 'Loom de 15 minutos grabado y compartido (Daniel)', 4),
-  ('T15', 'entregable', 'Link del Loom enviado a lider de Equipo 4 por Slack', 5);
+  ('T15', 'entregable', 'Link del Loom enviado a lider de Equipo 4 por Telegram', 5);
 -- Criterios T15
 INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
   ('T15', 'criterio', 'Lider de Equipo 4 confirma que entiende donde cargar cada tipo de contenido', 1),
@@ -570,7 +570,7 @@ INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
 -- ===================== T18 =====================
 -- Entregables T18
 INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
-  ('T18', 'entregable', 'Reporte diario de dominios en Slack (Gabriel) — minimo 15 reportes en el sprint', 1),
+  ('T18', 'entregable', 'Reporte diario de dominios en Telegram (Gabriel) — minimo 15 reportes en el sprint', 1),
   ('T18', 'entregable', 'Reporte diario de redes en standup (Dayana) — minimo 15 reportes', 2),
   ('T18', 'entregable', 'Doc "Issues Resueltos" actualizado con cada incidente', 3),
   ('T18', 'entregable', 'Cero issues criticos abiertos por mas de 24h', 4);
@@ -613,7 +613,7 @@ INSERT INTO task_checklist (task_id, category, description, sort_order) VALUES
 ---------------------------------------
 INSERT INTO milestones (milestone_id, title, target_date, success_criteria) VALUES
   ('M1', 'Warmup iniciado', '2026-04-06', '15 cuentas email en Smartlead calentando'),
-  ('M2', 'CRM + Comms operativos', '2026-04-07', 'HubSpot + Slack + Relay.app funcionando'),
+  ('M2', 'CRM + Comms operativos', '2026-04-07', 'HubSpot + Telegram + Relay.app funcionando'),
   ('M3', 'Stack de datos activo', '2026-04-09', 'Clay + SmartScout + Apify cascada construyendose'),
   ('M4', 'Outreach tools ready', '2026-04-10', 'Smartlead + Expandi + JustCall configurados'),
   ('M5', 'Messaging infra live', '2026-04-13', 'ManyChat + Twilio + Branch.io + ElevenLabs activos'),

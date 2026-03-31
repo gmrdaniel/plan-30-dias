@@ -65,7 +65,7 @@ Invitar a cada líder de equipo:
 - Crear 1 contacto de prueba en cada pipeline
 - Mover por todas las etapas
 - Verificar que las propiedades custom se guardan correctamente
-- Confirmar que cada equipo tiene acceso (pedir confirmación por Slack)
+- Confirmar que cada equipo tiene acceso (pedir confirmación por Telegram)
 
 ## Entregables
 - [ ] Cuenta HubSpot creada
@@ -76,7 +76,7 @@ Invitar a cada líder de equipo:
 - [ ] Contacto de prueba en cada pipeline
 
 ## Criterios de Aceptación
-- [ ] Los 4 líderes de equipo confirman acceso por Slack
+- [ ] Los 4 líderes de equipo confirman acceso por Telegram
 - [ ] Un contacto puede moverse por todas las etapas sin error
 - [ ] Propiedades custom visibles al editar un contacto
 

@@ -1,4 +1,4 @@
-# T03 — Slack + Relay.app Alertas
+# T03 — Telegram + Relay.app Alertas
 
 ## Información General
 | Campo | Valor |
@@ -12,12 +12,12 @@
 | **Bloquea a** | T14, T18, DTO-OUT-02 |
 
 ## Objetivo
-Workspace de Slack operativo con canales por función y alertas automáticas desde HubSpot vía Relay.app.
+Workspace de Telegram operativo con canales por función y alertas automáticas desde HubSpot vía Relay.app.
 
 ## Detalle de Implementación
 
-### Paso 1: Crear Workspace Slack (Free tier)
-- Ir a slack.com → Create a workspace
+### Paso 1: Crear Workspace Telegram (Free tier)
+- Ir a telegram.com → Create a workspace
 - Nombre: "La Neta - Sprint Escalamiento" (o el que Daniel indique)
 - Invitar a todos los miembros de los 4 equipos
 
@@ -33,7 +33,7 @@ Workspace de Slack operativo con canales por función y alertas automáticas des
 ### Paso 3: Configurar Relay.app ($9/mes)
 1. Ir a relay.app → Sign up
 2. Conectar HubSpot como fuente
-3. Conectar Slack como destino
+3. Conectar Telegram como destino
 4. Crear relay (automatización):
    - **Trigger:** Nuevo contacto en HubSpot con `icp_score >= 7`
    - **Acción:** Enviar mensaje a #leads-b2b-calientes
@@ -49,10 +49,10 @@ Workspace de Slack operativo con canales por función y alertas automáticas des
 - Verificar que todos los equipos la ven
 
 ## Entregables
-- [ ] Workspace Slack creado con 5 canales
+- [ ] Workspace Telegram creado con 5 canales
 - [ ] Todos los miembros de los 4 equipos invitados
 - [ ] Relay.app configurado con 2 automatizaciones
-- [ ] Alerta de prueba recibida exitosamente en Slack
+- [ ] Alerta de prueba recibida exitosamente en Telegram
 - [ ] Screenshot de la alerta funcionando
 
 ## Criterios de Aceptación
@@ -63,7 +63,7 @@ Workspace de Slack operativo con canales por función y alertas automáticas des
 ## Costo
 | Item | Costo |
 |------|-------|
-| Slack Free | $0 |
+| Telegram Free | $0 |
 | Relay.app | $9/mes |
 
 ## Notas para Eugenia

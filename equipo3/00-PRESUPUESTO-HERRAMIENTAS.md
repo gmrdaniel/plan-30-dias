@@ -38,7 +38,7 @@
 | Herramienta | Costo Mensual | Costo Único | Responsable Compra | Prioridad |
 |-------------|---------------|-------------|-------------------|-----------|
 | HubSpot CRM | $0 (Free) | — | Daniel | CRITICA |
-| Slack | $0 (Free) | — | Daniel | CRITICA |
+| Telegram | $0 (Free) | — | Daniel | CRITICA |
 | Relay.app | $9 | — | Daniel | CRITICA |
 | Expandi | $99 | — | Daniel | CRITICA |
 | JustCall (1 usuario) | $30 | — | Daniel | CRITICA |
@@ -101,7 +101,7 @@
 | Semana | Compras nuevas | Monto aproximado |
 |--------|---------------|-----------------|
 | Día 1 (6 Abr) | Dominios + emails + Smartlead | ~$226 (primer mes) |
-| Días 2-4 (7-9 Abr) | HubSpot + Slack + Relay + Expandi + JustCall + Clay upgrade | ~$484 (primer mes) |
+| Días 2-4 (7-9 Abr) | HubSpot + Telegram + Relay + Expandi + JustCall + Clay upgrade | ~$484 (primer mes) |
 | Días 5-6 (10-13 Abr) | ManyChat + Twilio + Sendspark + ElevenLabs + Klaviyo | ~$343 (primer mes) |
 | Día 7 (14 Abr) | Slybroadcast + Social Blade + Outgrow | ~$201 |
 | Semana 2 (15-21 Abr) | Unbounce + Leadpages + Visualping | ~$173 (primer mes) |

@@ -53,17 +53,17 @@
 | 8 | Llamada directa | JustCall | Llamada conecta, guion funciona | Tester B5: contesta → validar guion |
 | 9 | Email #4 (breakup) | Smartlead | Llega, tono correcto, link final | Tester B6: NO responde → validar paso a Nurture |
 | 10 | HubSpot | — | Todas las interacciones registradas, etapas actualizadas | Verificar en dashboard |
-| 11 | Slack alertas | Relay.app | Alertas disparadas para respuestas de B1, B2, B3, B4 | Verificar en #leads-b2b-calientes |
+| 11 | Telegram alertas | Relay.app | Alertas disparadas para respuestas de B1, B2, B3, B4 | Verificar en #leads-b2b-calientes |
 
 ### Resultado esperado por tester
 
 | Tester | Comportamiento simulado | Resultado esperado en HubSpot |
 |--------|------------------------|------------------------------|
-| B1 | Responde Email 1 | Secuencia se cancela → Status: "Respondido" → Alerta Slack |
-| B2 | Acepta LinkedIn y responde | Secuencia se cancela → Status: "Respondido LinkedIn" → Alerta Slack |
-| B3 | Responde SMS dia 7 | Secuencia se cancela → Status: "Respondido SMS" → Alerta Slack |
-| B4 | Responde WhatsApp dia 15 | Secuencia se cancela → Status: "Respondido WhatsApp" → Alerta Slack |
-| B5 | Contesta llamada dia 18 | Se registra en JustCall → HubSpot actualiza → Alerta Slack |
+| B1 | Responde Email 1 | Secuencia se cancela → Status: "Respondido" → Alerta Telegram |
+| B2 | Acepta LinkedIn y responde | Secuencia se cancela → Status: "Respondido LinkedIn" → Alerta Telegram |
+| B3 | Responde SMS dia 7 | Secuencia se cancela → Status: "Respondido SMS" → Alerta Telegram |
+| B4 | Responde WhatsApp dia 15 | Secuencia se cancela → Status: "Respondido WhatsApp" → Alerta Telegram |
+| B5 | Contesta llamada dia 18 | Se registra en JustCall → HubSpot actualiza → Alerta Telegram |
 | B6 | NO responde a nada | Completa 21 dias → Status: "Unresponsive" → Mover a lista Nurture |
 | B7 | Email bounces (email invalido a proposito) | Detectar bounce → Alertar en #salud-dominios |
 
@@ -102,20 +102,20 @@
 | 4 | WhatsApp cualificacion P2 | ManyChat | Pregunta suscriptores: rangos correctos | C1 (selecciona >10K), C2 (selecciona <10K) |
 | 5 | WhatsApp cualificacion P3 | ManyChat | Pregunta ingresos | C1, C2 |
 | 6 | WhatsApp cualificacion P4 | ManyChat | Pregunta idioma | C1, C2 |
-| 7a | Resultado: CUALIFICADO | ManyChat → HubSpot | C1 recibe mensaje de exito + proyeccion. HubSpot: etapa "Cualificado". Slack alerta. | C1 |
+| 7a | Resultado: CUALIFICADO | ManyChat → HubSpot | C1 recibe mensaje de exito + proyeccion. HubSpot: etapa "Cualificado". Telegram alerta. | C1 |
 | 7b | Resultado: NO CUALIFICADO | ManyChat | C2 recibe mensaje amable + link a calculadora. Tag "nurture". | C2 |
 | 8 | Abandono mid-flow | Klaviyo/SMS | C3 empieza flujo WhatsApp pero NO responde P3. Despues de 24h recibe SMS de recuperacion. | C3 |
 | 9 | Nota de voz IA | ElevenLabs + ManyChat | C4 recibe nota de voz clonada por WhatsApp. Suena natural? Acento correcto? | C4 |
 | 10 | Micrositio creadores | Leadpages | C5 recibe link al micrositio. Campos dinamicos reemplazados? Calculadora funciona? Mobile ok? | C5 |
 | 11 | Supabase sync | Edge Function | Datos de C1 (cualificado) aparecen en creator_inventory + creator_lists "Sprint-Abr-Nuevos-Pipeline" | Verificar en BD |
 | 12 | HubSpot pipeline | — | Todos los testers aparecen en pipeline Creadores con etapa correcta | Verificar dashboard |
-| 13 | Slack alertas | Relay.app | Alerta en #creadores-nuevos para C1 (cualificado) | Verificar canal |
+| 13 | Telegram alertas | Relay.app | Alerta en #creadores-nuevos para C1 (cualificado) | Verificar canal |
 
 ### Resultado esperado por tester
 
 | Tester | Comportamiento simulado | Resultado esperado |
 |--------|------------------------|-------------------|
-| C1 | Cualifica (>10K, >$500, espanol) | HubSpot: "Cualificado" → Slack alerta → Supabase: creator_inventory nuevo |
+| C1 | Cualifica (>10K, >$500, espanol) | HubSpot: "Cualificado" → Telegram alerta → Supabase: creator_inventory nuevo |
 | C2 | NO cualifica (<10K subs) | ManyChat: tag "nurture" → recibe link calculadora → HubSpot: "No cualificado" |
 | C3 | Abandona flujo WhatsApp en P3 | 24h despues: SMS Klaviyo de recuperacion → si regresa: continua flujo |
 | C4 | Recibe nota de voz IA | Evalua: suena natural? acento correcto? entendible? (feedback cualitativo) |
@@ -145,11 +145,11 @@
 
 ---
 
-## PLANTILLA D: Datos para prueba de integraciones HubSpot + Slack
+## PLANTILLA D: Datos para prueba de integraciones HubSpot + Telegram
 
 > Para validar que los datos fluyen correctamente entre sistemas.
 
-| # | Test | Accion | Resultado esperado en HubSpot | Resultado esperado en Slack | Resultado esperado en Supabase | Quien ejecuta |
+| # | Test | Accion | Resultado esperado en HubSpot | Resultado esperado en Telegram | Resultado esperado en Supabase | Quien ejecuta |
 |---|------|--------|------------------------------|---------------------------|-------------------------------|---------------|
 | I1 | Nuevo prospecto B2B | Crear contacto manual en HubSpot con tag TEST | Contacto visible en pipeline B2B | Alerta en #leads-b2b-calientes | — | Daniel |
 | I2 | Prospecto responde email | Marcar como "replied" en Smartlead | HubSpot: etapa actualiza a "Respondido" | Alerta en #leads-b2b-calientes | — | Gabriel |
@@ -169,7 +169,7 @@
 | 14 Abr (Dia 7) | Clay cascade con 10 prospectos test (Plantilla C) | CL1-CL10 | Gabriel |
 | 15 Abr (Dia 8) | Flujos ManyChat con testers (Plantilla B) | C1-C6 | Dayana |
 | 16 Abr (Dia 9) | **Testing E2E completo (T14)** | Plantillas A + B + D | Gabriel + Daniel + todo el equipo |
-| 16 Abr (Dia 9) | Integraciones HubSpot + Slack (Plantilla D) | I1-I7 | Daniel + Gabriel |
+| 16 Abr (Dia 9) | Integraciones HubSpot + Telegram (Plantilla D) | I1-I7 | Daniel + Gabriel |
 
 ---
 
@@ -178,6 +178,6 @@
 1. **Los testers deben dar su consentimiento** — avisarles que van a recibir emails, DMs, SMS, llamadas y voicemails de prueba durante 1-2 dias.
 2. **Usar tag "TEST" en TODAS las herramientas** (HubSpot, Clay, Smartlead, ManyChat) para poder filtrar y eliminar despues.
 3. **NO ejecutar pruebas desde las cuentas de warmup** de Smartlead — usar cuentas separadas o la cuenta de herramientas@laneta.com.
-4. **Documentar TODOS los bugs** encontrados durante las pruebas en un doc compartido o directamente en Slack #general-infra.
+4. **Documentar TODOS los bugs** encontrados durante las pruebas en un doc compartido o directamente en Telegram #general-infra.
 5. **Para la prueba de secuencia completa (21 dias):** no esperar 21 dias reales. Comprimir la secuencia a intervalos de 1-2 horas en modo test (Smartlead y Expandi tienen modos de prueba acelerados).
 6. **Minimo de testers recomendado:** 5 B2B + 5 Creadores + 10 datos Clay = 20 registros de prueba total. Con 3-4 personas de la empresa + 1-2 externos se cubre.

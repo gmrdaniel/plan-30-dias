@@ -55,7 +55,7 @@
 |----|-------|-------------|-------|--------|---------|-----------|--------|---------------|-----------|
 | T01 | Dominios + Email + DNS + Warmup Smartlead | Gabriel | Daniel (compra) | 6 Abr | 6 Abr | CRITICA | ☐ Pendiente | — | T06, T07, T11 |
 | T02 | HubSpot CRM Setup | Daniel | — | 7 Abr | 7 Abr | CRITICA | ☐ Pendiente | — | T14, T17 |
-| T03 | Slack + Relay.app Alertas | Eugenia | — | 7 Abr | 7 Abr | CRITICA | ☐ Pendiente | — | T14, T18 |
+| T03 | Telegram + Relay.app Alertas | Eugenia | — | 7 Abr | 7 Abr | CRITICA | ☐ Pendiente | — | T14, T18 |
 | T04 | Documentos ICP (B2B + Creadores) | Eugenia | Mery, Pepe (ext) | 6 Abr | 7 Abr | CRITICA | ☐ Pendiente | DTO-01, DTO-02 | T06, T11 |
 | T05 | Cuentas LinkedIn + Instagram Outreach | Dayana | — | 7 Abr | 7 Abr | CRITICA | ☐ Pendiente | — | T07 |
 | T06 | Clay Cascade + SmartScout + Apify Config | Gabriel | — | 8 Abr | 9 Abr | CRITICA | ☐ Pendiente | T04 | T07, T11 |
@@ -82,7 +82,7 @@
 | Hito | Fecha | Criterio de Éxito | Status |
 |------|-------|--------------------|--------|
 | **M1: Warmup iniciado** | 6 Abr | 15 cuentas email en Smartlead calentando | ☐ |
-| **M2: CRM + Comms operativos** | 7 Abr | HubSpot + Slack + Relay.app funcionando | ☐ |
+| **M2: CRM + Comms operativos** | 7 Abr | HubSpot + Telegram + Relay.app funcionando | ☐ |
 | **M3: Stack de datos activo** | 9 Abr | Clay + SmartScout + Apify cascada construyéndose | ☐ |
 | **M4: Outreach tools ready** | 10 Abr | Smartlead + Expandi + JustCall configurados | ☐ |
 | **M5: Messaging infra live** | 13 Abr | ManyChat + Twilio + Branch.io + ElevenLabs activos | ☐ |
@@ -105,6 +105,6 @@ Cada persona responde: **"¿Qué entregué ayer? ¿Qué haré hoy? ¿Qué me blo
 | Gabriel (Datos y Automatización) | Clay, Smartlead, datos, APIs, salud de dominios, sync Supabase |
 | Lillian (UX/UI Junior) | Branch.io, Discord, micrositios, UX reviews |
 | Dayana (Directora Creativa) | ManyChat, Expandi, LinkedIn/IG, flujos, dirección creativa micrositios |
-| Eugenia (Estratega MKT Digital) | Slack/alertas, ICP, Klaviyo, Outgrow, presupuesto, narrativa |
+| Eugenia (Estratega MKT Digital) | Telegram/alertas, ICP, Klaviyo, Outgrow, presupuesto, narrativa |
 
 **Daniel es Director General México.** Tiene autoridad de decisión para compras individuales y operación del equipo. Para decisiones de presupuesto total o que impacten a otros equipos, Daniel coordina y comunica con los líderes de los otros equipos. Resumen semanal los viernes (10 Abr, 17 Abr, 24 Abr, 8 May).

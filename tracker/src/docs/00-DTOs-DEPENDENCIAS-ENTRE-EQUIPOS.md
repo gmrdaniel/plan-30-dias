@@ -151,16 +151,16 @@ interface HubSpot_Entregable {
   };
   propiedades_custom: string[];          // source, icp_score, video_gap_score, etc.
   accesos: {equipo: string, nivel: string}[];
-  verificacion: "Todos los equipos confirman acceso por Slack";
+  verificacion: "Todos los equipos confirman acceso por Telegram";
 }
 ```
 
 ---
 
-### DTO-OUT-02: Slack + Alertas (Equipo 3 → Todos)
+### DTO-OUT-02: Telegram + Alertas (Equipo 3 → Todos)
 
 ```
-interface Slack_Entregable {
+interface Telegram_Entregable {
   // Deadline: Martes 7 Abr (Día 2)
 
   canales: [
@@ -390,10 +390,10 @@ interface Loom_Arquitectura {
     "Pipeline Creadores: IG DM → ManyChat → WhatsApp → Branch.io",
     "Integraciones HubSpot",
     "Dónde cargar activos (templates email, videos, etc.)",
-    "Alertas de Slack",
+    "Alertas de Telegram",
     "Monitoreo de dominios"
   ];
-  formato: "Loom link compartido por Slack #general-infra";
+  formato: "Loom link compartido por Telegram #general-infra";
 }
 ```
 
@@ -432,7 +432,7 @@ interface Micrositios_Entregable {
 
 ```
 Si un DTO no llega a tiempo:
-1. Responsable de Equipo 3 notifica a Daniel (Slack DM)
+1. Responsable de Equipo 3 notifica a Daniel (Telegram DM)
 2. Daniel contacta al líder del otro equipo (Pepe o Mery) — mismo día
 3. Si no hay respuesta en 4 horas hábiles → Daniel escala a dirección
 4. Mientras tanto: equipo avanza con placeholder/datos genéricos marcados como "TEMPORAL"

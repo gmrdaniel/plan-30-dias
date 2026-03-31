@@ -52,7 +52,7 @@ Tener 15 cuentas de email con DNS correctamente configurado y en warmup activo e
    - Sugerencias: laneta-media.com, globalreview-content.com, lanetastudio.com, elevn-creators.com, laneta-digital.com
    - Criterio: que suenen profesionales, NO spam, cercanos a la marca pero NO idénticos
 2. Comprar licencia Smartlead ($94/mes) — **URGENTE, Gabriel lo necesita hoy**
-3. Enviar credenciales de ambos a Gabriel por canal seguro (NO Slack público)
+3. Enviar credenciales de ambos a Gabriel por canal seguro (NO Telegram público)
 
 ### Gabriel — Configuración Técnica (todo el día)
 1. **Crear cuentas email en Google Workspace** (3 por dominio = 15 total):

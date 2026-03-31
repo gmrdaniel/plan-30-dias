@@ -35,7 +35,7 @@ Inbound     ──↗         ├→ Twilio (SMS)
                          ├→ Branch.io (deep links)
                          └→ HubSpot CRM
 
-Alertas: HubSpot → Relay.app → Slack
+Alertas: HubSpot → Relay.app → Telegram
 ```
 
 ### Paso 2: Dayana — Assets de documentación (Jue 16 Abr)
@@ -62,20 +62,20 @@ Alertas: HubSpot → Relay.app → Slack
 | 5-8 | Pipeline Creadores: mostrar ManyChat → WhatsApp → HubSpot. Deep links. |
 | 8-10 | HubSpot CRM: pipelines, cómo ver contactos, propiedades custom. |
 | 10-12 | Dónde cargar activos: email templates en Smartlead, videos en Sendspark, etc. |
-| 12-14 | Monitoreo: Slack channels, alertas, dashboard de salud de dominios. |
+| 12-14 | Monitoreo: Telegram channels, alertas, dashboard de salud de dominios. |
 | 14-15 | Cierre: "Si tienen dudas, pregunten en #general-sprint" |
 
 **Tips para grabar:**
 - Usa Loom (gratis) — pantalla completa + cámara
 - Habla como si le explicas a alguien que NO conoce las herramientas
-- Comparte el link en Slack #general-sprint
+- Comparte el link en Telegram #general-sprint
 
 ## Entregables
 - [ ] Diagrama de arquitectura en Figma (Lillian)
 - [ ] Screenshots de dashboards de cada herramienta (Dayana)
 - [ ] Tabla "dónde cargar qué" (Dayana)
 - [ ] Loom de 15 minutos grabado y compartido (Daniel)
-- [ ] Link del Loom enviado a líder de Equipo 4 por Slack
+- [ ] Link del Loom enviado a líder de Equipo 4 por Telegram
 
 ## Criterios de Aceptación
 - [ ] Líder de Equipo 4 confirma que entiende dónde cargar cada tipo de contenido
