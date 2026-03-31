@@ -8,7 +8,7 @@ export interface ToolInfo {
 
 const TOOL_CATALOG: Record<string, ToolInfo> = {
   smartlead: { name: 'Smartlead', url: 'https://smartlead.ai', description: 'Cold Email con calentamiento de cuentas y rotacion.', cost: '$94/mes', category: 'Email Masivo' },
-  namecheap: { name: 'Namecheap', url: 'https://www.namecheap.com', description: 'Registro de dominios secundarios para outreach.', cost: '~$12/dominio', category: 'Infraestructura' },
+  godaddy: { name: 'GoDaddy', url: 'https://www.godaddy.com', description: 'Registro de dominios secundarios para outreach.', cost: '~$12/dominio', category: 'Infraestructura' },
   google_workspace: { name: 'Google Workspace', url: 'https://admin.google.com', description: 'Cuentas de email corporativo (SMTP/IMAP).', cost: '~$7.20/usuario/mes', category: 'Infraestructura' },
   google_postmaster: { name: 'Google Postmaster Tools', url: 'https://postmaster.google.com', description: 'Monitoreo de reputacion de dominios de email.', category: 'Monitoreo' },
   mxtoolbox: { name: 'MxToolbox', url: 'https://mxtoolbox.com', description: 'Verificacion de DNS: SPF, DKIM, DMARC.', category: 'Monitoreo' },
@@ -42,11 +42,12 @@ const TOOL_CATALOG: Record<string, ToolInfo> = {
   supabase: { name: 'Supabase', url: 'https://supabase.com/dashboard', description: 'Base de datos PostgreSQL. Sync de prospectos Clay y creadores ManyChat.', cost: 'Free tier', category: 'Infraestructura' },
   loom: { name: 'Loom', url: 'https://www.loom.com', description: 'Grabacion de video para documentar arquitectura de pipelines.', cost: 'Free', category: 'Comunicacion' },
   guidde: { name: 'Guidde', url: 'https://www.guidde.com', description: 'Generacion de guias y documentacion visual con IA. Videos paso a paso automaticos.', cost: 'Free / $16/mes', category: 'Comunicacion' },
+  spreadsheet_cuentas: { name: 'Spreadsheet Cuentas Email', url: 'https://docs.google.com/spreadsheets/d/16SztIU02qisHWN1UKWWi6MkVoaVariyl/edit?gid=2107328304#gid=2107328304', description: 'Documento con la estructura de dominios, subdominios y cuentas de correo activas.', category: 'Referencia' },
 }
 
 // Map task_id → tool keys
 const TASK_TOOLS: Record<string, string[]> = {
-  'T01': ['namecheap', 'google_workspace', 'smartlead', 'google_postmaster', 'mxtoolbox', 'mail_tester'],
+  'T01': ['godaddy', 'google_workspace', 'spreadsheet_cuentas', 'smartlead', 'google_postmaster', 'mxtoolbox', 'mail_tester'],
   'T02': ['hubspot'],
   'T03': ['telegram', 'relay'],
   'T04': [],

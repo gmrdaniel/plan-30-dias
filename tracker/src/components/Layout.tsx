@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/use-auth'
-import { LayoutDashboard, List, User, LogOut, Target, FileText, GitBranch } from 'lucide-react'
+import { LayoutDashboard, List, User, LogOut, Target, FileText, GitBranch, ShoppingCart } from 'lucide-react'
 
 export default function Layout() {
   const { user, logout } = useAuth()
@@ -11,6 +11,7 @@ export default function Layout() {
     { to: '/board', icon: List, label: 'Board' },
     { to: '/my', icon: User, label: 'Mi Vista' },
     { to: '/milestones', icon: Target, label: 'Hitos' },
+    { to: '/procurement', icon: ShoppingCart, label: 'Contratacion' },
     { to: '/docs', icon: FileText, label: 'Documentos' },
     { to: '/docs/dtos-dependencias', icon: GitBranch, label: 'DTOs / Contratos' },
   ]

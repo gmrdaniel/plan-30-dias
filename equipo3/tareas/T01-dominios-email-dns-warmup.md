@@ -48,7 +48,7 @@ Tener 15 cuentas de email con DNS correctamente configurado y en warmup activo e
 ## Detalle de Implementación
 
 ### Daniel — Compras (mañana, antes de las 10 AM)
-1. Comprar 5 dominios secundarios en Namecheap (~$12 c/u):
+1. Comprar 5 dominios secundarios en GoDaddy (~$12 c/u):
    - Sugerencias: laneta-media.com, globalreview-content.com, lanetastudio.com, elevn-creators.com, laneta-digital.com
    - Criterio: que suenen profesionales, NO spam, cercanos a la marca pero NO idénticos
 2. Comprar licencia Smartlead ($94/mes) — **URGENTE, Gabriel lo necesita hoy**
@@ -89,7 +89,7 @@ Tener 15 cuentas de email con DNS correctamente configurado y en warmup activo e
 ## Costo
 | Item | Costo | Tipo |
 |------|-------|------|
-| 5 dominios Namecheap | ~$60 | Único |
+| 5 dominios GoDaddy | ~$60 | Único |
 | 15 cuentas Google Workspace | ~$108/mes | Recurrente |
 | Smartlead | $94/mes | Recurrente |
 

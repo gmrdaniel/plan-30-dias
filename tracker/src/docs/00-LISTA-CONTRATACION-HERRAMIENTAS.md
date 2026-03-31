@@ -64,11 +64,11 @@
 
 | # | Dominio sugerido | Registrador | Costo unico | Prioridad | Razon |
 |---|-----------------|-------------|-------------|-----------|-------|
-| D1 | laneta-media.com | Namecheap | ~$12 | **P0 — ADELANTAR** | Cold email B2B — warmup tarda 14 dias, cada dia cuenta |
-| D2 | globalreview-content.com | Namecheap | ~$12 | **P0 — ADELANTAR** | Cold email B2B |
-| D3 | globalreview-media.com | Namecheap | ~$12 | **P0 — ADELANTAR** | Cold email B2B |
-| D4 | laneta-creators.com | Namecheap | ~$12 | **P0 — ADELANTAR** | Outreach creadores (pipeline nuevo) |
-| D5 | elevn-creators.com | Namecheap | ~$12 | **P0 — ADELANTAR** | Outreach creadores (pipeline nuevo) |
+| D1 | laneta-media.com | GoDaddy | ~$12 | **P0 — ADELANTAR** | Cold email B2B — warmup tarda 14 dias, cada dia cuenta |
+| D2 | globalreview-content.com | GoDaddy | ~$12 | **P0 — ADELANTAR** | Cold email B2B |
+| D3 | globalreview-media.com | GoDaddy | ~$12 | **P0 — ADELANTAR** | Cold email B2B |
+| D4 | laneta-creators.com | GoDaddy | ~$12 | **P0 — ADELANTAR** | Outreach creadores (pipeline nuevo) |
+| D5 | elevn-creators.com | GoDaddy | ~$12 | **P0 — ADELANTAR** | Outreach creadores (pipeline nuevo) |
 | | **Subtotal dominios** | | **~$60** | | |
 
 **Nota:** Los nombres son sugeridos. Daniel puede elegir otros. Criterios: (1) similares a la marca pero no idénticos, (2) .com preferido, (3) evitar palabras spam.

@@ -28,7 +28,7 @@
 
 | Herramienta | Costo Mensual | Costo Único | Responsable Compra | Prioridad |
 |-------------|---------------|-------------|-------------------|-----------|
-| 5 dominios secundarios (Namecheap) | — | ~$60 | Daniel | CRITICA |
+| 5 dominios secundarios (GoDaddy) | — | ~$60 | Daniel | CRITICA |
 | 10 cuentas email adicionales (Google Workspace) | ~$72 | — | Daniel | CRITICA |
 | Smartlead | $94 | — | Daniel | CRITICA |
 | **Subtotal Día 1** | **$166/mes** | **$60** | | |
