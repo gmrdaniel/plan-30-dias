@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { DOCS } from '../docs'
@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 
 export default function DocView() {
   const { slug } = useParams<{ slug: string }>()
+  const navigate = useNavigate()
   const doc = DOCS.find((d) => d.slug === slug)
 
   if (!doc) return (
@@ -19,9 +20,9 @@ export default function DocView() {
     <div className="min-h-screen bg-gray-50">
       <div className="sticky top-0 bg-white border-b px-6 py-3 z-10 shadow-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link to="/docs" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
-            <ArrowLeft size={16} /> Documentos
-          </Link>
+          <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
+            <ArrowLeft size={16} /> Volver
+          </button>
           <span className="text-sm font-medium text-gray-700">{doc.title}</span>
         </div>
       </div>

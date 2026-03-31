@@ -2,15 +2,19 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTasks, useChecklist, useComments } from '../hooks/use-tasks'
 import { useAuth } from '../hooks/use-auth'
 import { PRIORITY_CONFIG, STATUS_CONFIG, type TaskStatus } from '../lib/types'
-import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText } from 'lucide-react'
+import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText, ExternalLink } from 'lucide-react'
 import { isDto, getDtoInfo } from '../lib/dtos'
 import { getTaskTools } from '../lib/tools'
-import { ExternalLink } from 'lucide-react'
+import { TASK_DETAIL_MD } from '../docs/tareas'
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const STATUSES: TaskStatus[] = ['pendiente', 'en_progreso', 'bloqueada', 'completada']
+
+type Tab = 'resumen' | 'detalle'
 
 export default function TaskDetail() {
   const { taskId } = useParams<{ taskId: string }>()
@@ -20,6 +24,7 @@ export default function TaskDetail() {
   const { comments, addComment } = useComments(taskId || '')
   const { user, members } = useAuth()
   const [newComment, setNewComment] = useState('')
+  const [activeTab, setActiveTab] = useState<Tab>('resumen')
 
   const task = tasks.find((t) => t.task_id === taskId)
   if (!task) return <div className="p-8 text-gray-400">Tarea no encontrada</div>
@@ -29,6 +34,7 @@ export default function TaskDetail() {
   const criterios = checklist.filter((c) => c.category === 'criterio')
   const responsables = task.assignments.filter((a) => a.assignment_role === 'responsable' || a.assignment_role === 'co-ejecuta')
   const apoyo = task.assignments.filter((a) => a.assignment_role === 'apoyo')
+  const detailMd = TASK_DETAIL_MD[task.task_id] || null
 
   const handleComment = async () => {
     if (!newComment.trim() || !user) return
@@ -63,217 +69,257 @@ export default function TaskDetail() {
         </div>
       </div>
 
-      {/* Meta */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white border rounded-xl p-4">
-        <div>
-          <div className="text-xs text-gray-500 mb-1">Inicio</div>
-          <div className="text-sm font-medium">{task.start_date}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500 mb-1">Entrega</div>
-          <div className="text-sm font-medium">{task.due_date}</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500 mb-1">Progreso</div>
-          <div className="text-sm font-medium">{task.progress_pct}%</div>
-        </div>
-        <div>
-          <div className="text-xs text-gray-500 mb-1">Bloquea a</div>
-          <div className="flex flex-wrap gap-1">
-            {task.blocks.length > 0 ? task.blocks.map((b) => (
-              isDto(b) ? (
-                <Link key={b} to="/docs/dtos-dependencias" className="text-xs font-mono bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded hover:bg-purple-200">{b}</Link>
-              ) : (
-                <Link key={b} to={`/task/${b}`} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded hover:bg-gray-200">{b}</Link>
-              )
-            )) : <span className="text-xs text-gray-400">Ninguna</span>}
-          </div>
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
+        <button
+          onClick={() => setActiveTab('resumen')}
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            activeTab === 'resumen' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Resumen
+        </button>
+        {detailMd && (
+          <button
+            onClick={() => setActiveTab('detalle')}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'detalle' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Detalle completo
+          </button>
+        )}
       </div>
 
-      {/* Assignees */}
-      <div className="bg-white border rounded-xl p-4">
-        <h2 className="text-sm font-semibold mb-2">Equipo</h2>
-        <div className="flex flex-wrap gap-3">
-          {responsables.map((a) => (
-            <div key={a.id} className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: a.team_members?.avatar_color }}>
-                {a.team_members?.short_name?.[0]}
-              </div>
-              <div>
-                <div className="text-sm font-medium">{a.team_members?.short_name}</div>
-                <div className="text-xs text-indigo-600">{a.assignment_role}</div>
-              </div>
-            </div>
-          ))}
-          {apoyo.map((a) => (
-            <div key={a.id} className="flex items-center gap-2 opacity-60">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: a.team_members?.avatar_color }}>
-                {a.team_members?.short_name?.[0]}
-              </div>
-              <div>
-                <div className="text-sm font-medium">{a.team_members?.short_name}</div>
-                <div className="text-xs text-gray-500">apoyo</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Objective */}
-      {task.objective && (
-        <div className="bg-white border rounded-xl p-4">
-          <h2 className="text-sm font-semibold mb-2">Objetivo</h2>
-          <p className="text-sm text-gray-700">{task.objective}</p>
+      {/* Tab: Detalle */}
+      {activeTab === 'detalle' && detailMd && (
+        <div className="bg-white border rounded-xl shadow-sm p-8">
+          <article className="prose prose-sm prose-gray max-w-none
+            prose-headings:font-bold
+            prose-h1:text-2xl prose-h1:mb-4
+            prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3
+            prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2
+            prose-table:w-full prose-table:text-sm prose-table:border-collapse
+            prose-thead:bg-gray-50 prose-thead:border-b-2 prose-thead:border-gray-200
+            prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-th:text-gray-700
+            prose-td:px-3 prose-td:py-2 prose-td:border-t prose-td:border-gray-100
+            prose-tr:border-b prose-tr:border-gray-100
+            prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+            prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:p-4
+            [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-100 [&_pre_code]:text-xs
+            prose-a:text-indigo-600
+            prose-li:my-0.5
+            prose-strong:text-gray-900
+          ">
+            <Markdown remarkPlugins={[remarkGfm]}>{detailMd}</Markdown>
+          </article>
         </div>
       )}
 
-      {/* Tools */}
-      {(() => {
-        const tools = getTaskTools(task.task_id)
-        if (tools.length === 0) return null
-        return (
+      {/* Tab: Resumen */}
+      {activeTab === 'resumen' && (
+        <>
+          {/* Meta */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white border rounded-xl p-4">
+            <div>
+              <div className="text-xs text-gray-500 mb-1">Inicio</div>
+              <div className="text-sm font-medium">{task.start_date}</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500 mb-1">Entrega</div>
+              <div className="text-sm font-medium">{task.due_date}</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500 mb-1">Progreso</div>
+              <div className="text-sm font-medium">{task.progress_pct}%</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500 mb-1">Bloquea a</div>
+              <div className="flex flex-wrap gap-1">
+                {task.blocks.length > 0 ? task.blocks.map((b) => (
+                  isDto(b) ? (
+                    <Link key={b} to="/docs/dtos-dependencias" className="text-xs font-mono bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded hover:bg-purple-200">{b}</Link>
+                  ) : (
+                    <Link key={b} to={`/task/${b}`} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded hover:bg-gray-200">{b}</Link>
+                  )
+                )) : <span className="text-xs text-gray-400">Ninguna</span>}
+              </div>
+            </div>
+          </div>
+
+          {/* Assignees */}
           <div className="bg-white border rounded-xl p-4">
-            <h2 className="text-sm font-semibold mb-3">Herramientas ({tools.length})</h2>
-            <div className="space-y-2">
-              {tools.map((tool) => (
-                <a
-                  key={tool.url}
-                  href={tool.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-3 px-4 py-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors group"
-                >
-                  <ExternalLink size={16} className="text-gray-400 group-hover:text-indigo-500 shrink-0 mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium group-hover:text-indigo-700">{tool.name}</span>
-                      {tool.category && (
-                        <span className="text-[10px] px-1.5 py-0.5 bg-gray-200 text-gray-600 rounded-full">{tool.category}</span>
-                      )}
-                      {tool.cost && (
-                        <span className="text-xs text-gray-400 ml-auto shrink-0">{tool.cost}</span>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-0.5">{tool.description}</p>
+            <h2 className="text-sm font-semibold mb-2">Equipo</h2>
+            <div className="flex flex-wrap gap-3">
+              {responsables.map((a) => (
+                <div key={a.id} className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: a.team_members?.avatar_color }}>
+                    {a.team_members?.short_name?.[0]}
                   </div>
-                </a>
+                  <div>
+                    <div className="text-sm font-medium">{a.team_members?.short_name}</div>
+                    <div className="text-xs text-indigo-600">{a.assignment_role}</div>
+                  </div>
+                </div>
+              ))}
+              {apoyo.map((a) => (
+                <div key={a.id} className="flex items-center gap-2 opacity-60">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: a.team_members?.avatar_color }}>
+                    {a.team_members?.short_name?.[0]}
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium">{a.team_members?.short_name}</div>
+                    <div className="text-xs text-gray-500">apoyo</div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-        )
-      })()}
 
-      {/* Blocked by */}
-      {task.blocked_by.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <h2 className="text-sm font-semibold text-amber-700 mb-2">Bloqueada por</h2>
-          <div className="flex flex-col gap-2">
-            {task.blocked_by.map((b) => {
-              if (isDto(b)) {
-                const dto = getDtoInfo(b)
-                return (
-                  <Link key={b} to="/docs/dtos-dependencias" className="flex items-start gap-3 bg-white rounded-lg px-4 py-3 border border-purple-200 hover:shadow transition-shadow">
-                    {dto?.direction === 'IN' ? (
-                      <ArrowDownLeft size={18} className="text-purple-500 shrink-0 mt-0.5" />
-                    ) : (
-                      <ArrowUpRight size={18} className="text-blue-500 shrink-0 mt-0.5" />
-                    )}
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-purple-600">{b}</span>
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">
-                          {dto?.direction === 'IN' ? 'Entrada' : 'Salida'}
-                        </span>
+          {/* Objective */}
+          {task.objective && (
+            <div className="bg-white border rounded-xl p-4">
+              <h2 className="text-sm font-semibold mb-2">Objetivo</h2>
+              <p className="text-sm text-gray-700">{task.objective}</p>
+            </div>
+          )}
+
+          {/* Tools */}
+          {(() => {
+            const tools = getTaskTools(task.task_id)
+            if (tools.length === 0) return null
+            return (
+              <div className="bg-white border rounded-xl p-4">
+                <h2 className="text-sm font-semibold mb-3">Herramientas ({tools.length})</h2>
+                <div className="space-y-2">
+                  {tools.map((tool) => (
+                    <a
+                      key={tool.url}
+                      href={tool.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 px-4 py-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors group"
+                    >
+                      <ExternalLink size={16} className="text-gray-400 group-hover:text-indigo-500 shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium group-hover:text-indigo-700">{tool.name}</span>
+                          {tool.category && (
+                            <span className="text-[10px] px-1.5 py-0.5 bg-gray-200 text-gray-600 rounded-full">{tool.category}</span>
+                          )}
+                          {tool.cost && (
+                            <span className="text-xs text-gray-400 ml-auto shrink-0">{tool.cost}</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5">{tool.description}</p>
                       </div>
-                      {dto && (
-                        <>
-                          <div className="text-sm font-medium text-gray-900 mt-0.5">{dto.title}</div>
-                          <div className="text-xs text-gray-500 mt-0.5">
-                            {dto.from} → {dto.to} | Deadline: {dto.deadline}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* Blocked by */}
+          {task.blocked_by.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <h2 className="text-sm font-semibold text-amber-700 mb-2">Bloqueada por</h2>
+              <div className="flex flex-col gap-2">
+                {task.blocked_by.map((b) => {
+                  if (isDto(b)) {
+                    const dto = getDtoInfo(b)
+                    return (
+                      <Link key={b} to="/docs/dtos-dependencias" className="flex items-start gap-3 bg-white rounded-lg px-4 py-3 border border-purple-200 hover:shadow transition-shadow">
+                        {dto?.direction === 'IN' ? (
+                          <ArrowDownLeft size={18} className="text-purple-500 shrink-0 mt-0.5" />
+                        ) : (
+                          <ArrowUpRight size={18} className="text-blue-500 shrink-0 mt-0.5" />
+                        )}
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-purple-600">{b}</span>
+                            <span className="text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">
+                              {dto?.direction === 'IN' ? 'Entrada' : 'Salida'}
+                            </span>
                           </div>
+                          {dto && (
+                            <>
+                              <div className="text-sm font-medium text-gray-900 mt-0.5">{dto.title}</div>
+                              <div className="text-xs text-gray-500 mt-0.5">
+                                {dto.from} → {dto.to} | Deadline: {dto.deadline}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        <FileText size={14} className="text-gray-400 shrink-0 mt-1 ml-auto" />
+                      </Link>
+                    )
+                  }
+                  const dep = tasks.find((t) => t.task_id === b)
+                  return (
+                    <Link key={b} to={`/task/${b}`} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border text-sm hover:shadow">
+                      <span className="font-mono font-bold text-gray-400">{b}</span>
+                      {dep && (
+                        <>
+                          <span className="text-gray-600">{dep.title}</span>
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${STATUS_CONFIG[dep.status].bg} ${STATUS_CONFIG[dep.status].color}`}>
+                            {dep.progress_pct}%
+                          </span>
                         </>
                       )}
-                    </div>
-                    <FileText size={14} className="text-gray-400 shrink-0 mt-1 ml-auto" />
-                  </Link>
-                )
-              }
-              const dep = tasks.find((t) => t.task_id === b)
-              return (
-                <Link key={b} to={`/task/${b}`} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border text-sm hover:shadow">
-                  <span className="font-mono font-bold text-gray-400">{b}</span>
-                  {dep && (
-                    <>
-                      <span className="text-gray-600">{dep.title}</span>
-                      <span className={`text-xs px-1.5 py-0.5 rounded ${STATUS_CONFIG[dep.status].bg} ${STATUS_CONFIG[dep.status].color}`}>
-                        {dep.progress_pct}%
-                      </span>
-                    </>
-                  )}
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Entregables */}
-      <ChecklistSection
-        title="Entregables"
-        items={entregables}
-        user={user}
-        members={members}
-        onToggle={toggleItem}
-      />
-
-      {/* Criterios */}
-      <ChecklistSection
-        title="Criterios de Aceptacion"
-        items={criterios}
-        user={user}
-        members={members}
-        onToggle={toggleItem}
-      />
-
-      {/* Comments */}
-      <div className="bg-white border rounded-xl p-4">
-        <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <MessageCircle size={16} /> Comentarios ({comments.length})
-        </h2>
-        <div className="space-y-3 mb-4">
-          {comments.map((c: any) => (
-            <div key={c.id} className="flex gap-2">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-                style={{ backgroundColor: c.team_members?.avatar_color }}>
-                {c.team_members?.short_name?.[0]}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-medium">{c.team_members?.short_name}</span>
-                  <span className="text-xs text-gray-400">
-                    {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: es })}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-700 mt-0.5">{c.content}</p>
+                    </Link>
+                  )
+                })}
               </div>
             </div>
-          ))}
-          {comments.length === 0 && <p className="text-sm text-gray-400">Sin comentarios</p>}
-        </div>
-        <div className="flex gap-2">
-          <input
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleComment()}
-            placeholder="Escribe un comentario..."
-            className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <button onClick={handleComment} className="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-            <Send size={16} />
-          </button>
-        </div>
-      </div>
+          )}
+
+          {/* Entregables */}
+          <ChecklistSection title="Entregables" items={entregables} user={user} members={members} onToggle={toggleItem} />
+
+          {/* Criterios */}
+          <ChecklistSection title="Criterios de Aceptacion" items={criterios} user={user} members={members} onToggle={toggleItem} />
+
+          {/* Comments */}
+          <div className="bg-white border rounded-xl p-4">
+            <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <MessageCircle size={16} /> Comentarios ({comments.length})
+            </h2>
+            <div className="space-y-3 mb-4">
+              {comments.map((c: any) => (
+                <div key={c.id} className="flex gap-2">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                    style={{ backgroundColor: c.team_members?.avatar_color }}>
+                    {c.team_members?.short_name?.[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-sm font-medium">{c.team_members?.short_name}</span>
+                      <span className="text-xs text-gray-400">
+                        {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: es })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700 mt-0.5">{c.content}</p>
+                  </div>
+                </div>
+              ))}
+              {comments.length === 0 && <p className="text-sm text-gray-400">Sin comentarios</p>}
+            </div>
+            <div className="flex gap-2">
+              <input
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleComment()}
+                placeholder="Escribe un comentario..."
+                className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button onClick={handleComment} className="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                <Send size={16} />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
