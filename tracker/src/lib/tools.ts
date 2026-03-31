@@ -41,6 +41,7 @@ const TOOL_CATALOG: Record<string, ToolInfo> = {
   instagram: { name: 'Instagram', url: 'https://www.instagram.com', description: 'Cuenta de outreach para reclutamiento de creadores via DM.', category: 'Mensajeria y RRSS' },
   supabase: { name: 'Supabase', url: 'https://supabase.com/dashboard', description: 'Base de datos PostgreSQL. Sync de prospectos Clay y creadores ManyChat.', cost: 'Free tier', category: 'Infraestructura' },
   loom: { name: 'Loom', url: 'https://www.loom.com', description: 'Grabacion de video para documentar arquitectura de pipelines.', cost: 'Free', category: 'Comunicacion' },
+  guidde: { name: 'Guidde', url: 'https://www.guidde.com', description: 'Generacion de guias y documentacion visual con IA. Videos paso a paso automaticos.', cost: 'Free / $16/mes', category: 'Comunicacion' },
 }
 
 // Map task_id → tool keys
@@ -60,7 +61,7 @@ const TASK_TOOLS: Record<string, string[]> = {
   'T12': ['manychat', 'branch', 'whatsapp_business'],
   'T13': ['discord', 'whatsapp_business'],
   'T14': ['hubspot', 'slack', 'smartlead', 'expandi', 'manychat', 'branch'],
-  'T15': ['loom'],
+  'T15': ['loom', 'guidde'],
   'T16': ['unbounce', 'leadpages', 'outgrow'],
   'T17': ['google_alerts', 'visualping', 'routable'],
   'T18': ['google_postmaster', 'mxtoolbox', 'mail_tester', 'smartlead', 'expandi', 'linkedin', 'instagram'],
