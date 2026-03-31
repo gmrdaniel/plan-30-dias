@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AlertTriangle, CheckCircle2, Circle, MessageCircle, Clock } from 'lucide-react'
 
@@ -125,7 +126,14 @@ export default function Blockers() {
                     {item.question}
                   </h3>
                   <p className="text-xs text-gray-500 mt-1">{item.context}</p>
-                  <div className="text-xs text-indigo-500 mt-1">Tareas: {item.related_tasks}</div>
+                  <div className="text-xs text-indigo-500 mt-1">
+                    Tareas: {item.related_tasks.split(', ').map((t: string, i: number) => (
+                      <span key={t}>
+                        {i > 0 && ', '}
+                        <Link to={`/task/${t.trim()}`} className="underline hover:text-indigo-700" onClick={(e) => e.stopPropagation()}>{t.trim()}</Link>
+                      </span>
+                    ))}
+                  </div>
 
                   {/* Answer */}
                   {item.answer && !isEditing && (
