@@ -98,8 +98,64 @@ Tener 15 cuentas de email con DNS correctamente configurado y en warmup activo e
 - **Gabriel sin internet:** Daniel tiene los conocimientos para hacer la configuración como backup.
 - **Smartlead no acepta cuentas:** Verificar que SMTP/IMAP estén habilitados en Google Admin. Si persiste, usar Instantly.ai como backup.
 
+## Estrategia de Warmup (14-21 dias)
+
+Smartlead tiene warmup automatico incluido. Funciona asi:
+1. Smartlead mantiene un pool de miles de buzones reales que intercambian emails con tus cuentas
+2. Los emails se abren, responden y marcan como "no spam" automaticamente
+3. Esto entrena a Gmail/Outlook a confiar en tus dominios
+
+### Plan de warmup con empleados internos (22 personas)
+
+Ademas del warmup automatico de Smartlead, usar a los 22 empleados como "semilla de confianza":
+
+| Dia | Accion | Quien |
+|-----|--------|-------|
+| 1-2 | Cada empleado agrega las 15 cuentas nuevas a sus contactos (Gmail/Outlook) | Todos (22) |
+| 1-3 | Cada empleado envia 1-2 emails reales a cada cuenta nueva (pregunta casual, saludo) | Todos (22) |
+| 3-5 | Cada empleado responde al menos 1 email de las cuentas nuevas | Todos (22) |
+| 1-7 | Si algun email llega a spam: marcarlo como "No es spam" | Todos (22) |
+| 7-14 | Smartlead warmup automatico continua, ya no se necesita accion manual | Automatico |
+
+**Importante:**
+- Las interacciones de empleados son MANUALES y genuinas, no automatizadas
+- Esto complementa el warmup de Smartlead, no lo reemplaza
+- Los empleados usan sus cuentas personales Y corporativas (mas senales de confianza)
+
+### Configuracion de warmup en Smartlead
+
+| Parametro | Valor recomendado |
+|-----------|------------------|
+| Emails warmup/dia inicial | 2-3 por cuenta |
+| Incremento diario | +2-3 cada 3 dias |
+| Max emails warmup/dia | 30-40 por cuenta |
+| Warmup durante campanas | SI, mantener activo siempre |
+| Volumen real post-warmup | 25-30 emails/dia por cuenta MAX |
+
+### Escalonamiento de cuentas
+
+NO activar las 15 cuentas el mismo dia. Escalonar:
+- Dia 1: 5 cuentas (1 por dominio)
+- Dia 2: 5 cuentas mas
+- Dia 3: 5 cuentas restantes
+
+### Timeline de warmup
+
+| Dia | Status | Volumen estimado/cuenta |
+|-----|--------|------------------------|
+| 1-3 | Warmup inicial + empleados | 2-5 emails/dia |
+| 4-7 | Warmup activo | 8-12 emails/dia |
+| 8-14 | Warmup maduro | 15-25 emails/dia |
+| 15-21 | Listo para campanas reales | Iniciar con 10-15 reales/dia |
+| 21+ | Produccion | 25-30 reales/dia + warmup de fondo |
+
+**Alerta:** Si en el Dia 14 el inbox placement rate es <90% en Smartlead, NO lanzar campanas reales. Esperar hasta Dia 21.
+
 ## Notas para Gabriel
 - Usa un spreadsheet para trackear: dominio | cuenta | SPF | DKIM | DMARC | Mail-Tester | Smartlead status
 - NO uses los dominios principales (laneta.com, elevn.me, etc.) para cold email
 - Guarda TODAS las credenciales en el gestor de contraseñas del equipo
 - Si un dominio no propaga DNS antes de las 5 PM, continúa con los demás y completa al día siguiente
+- **Monitorear warmup diario desde Dia 3:** revisar dashboard Smartlead para inbox placement rate
+- **Poner landing page basica en cada dominio nuevo** — dominios completamente vacios parecen sospechosos
+- **No cruzar links entre dominios de outreach** — mantenerlos independientes para aislar reputacion
