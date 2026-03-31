@@ -1,0 +1,18 @@
+campo_csv,columna_supabase,tabla,tipo,obligatorio_clay,obligatorio_supabase,fuente,ejemplo
+empresa_ref,(lookup → client_inventory_id),client_contacts,UUID FK,-,SI,Relación por nombre/website,Good Molecules
+nombre,first_name,client_contacts,TEXT,SI,SI,Clay/LinkedIn Sales Nav,Ava
+apellido,last_name,client_contacts,TEXT,SI,NO,Clay/LinkedIn Sales Nav,Infante
+cargo,job_title,client_contacts,TEXT,SI,NO,LinkedIn Sales Nav,Digital Marketing Specialist
+role_type,role_type,client_contacts,TEXT,NO,NO,"Derivar de cargo: CMO→cmo, VP→marketing_director",marketing_manager
+email,email,client_contacts,TEXT,SI,NO,"Clay cascade (Prospeo→Findymail→Hunter)",ava.infante@goodmolecules.com
+telefono,phone,client_contacts,TEXT,NO,NO,Apollo/Clay,+1 2134-444-663
+codigo_pais,phone_country_code,client_contacts,TEXT,NO,NO,Clay,+1
+linkedin_url,linkedin_url,client_contacts,TEXT,SI,NO,LinkedIn Sales Nav,http://www.linkedin.com/in/ava-infante-517456332
+ubicacion_pais,country,client_contacts,TEXT,NO,NO,LinkedIn,United States
+ubicacion_ciudad,city,client_contacts,TEXT,NO,NO,LinkedIn,Philadelphia
+es_tomador_decision,is_decision_maker,client_contacts,BOOLEAN,NO,NO,"Derivar: CMO/VP/Head/Director → true",true
+es_contacto_principal,is_primary_contact,client_contacts,BOOLEAN,NO,NO,Primer contacto de la empresa → true,true
+email_disponible,email_valid,client_contacts,BOOLEAN,NO,NO,Enrichment (Hunter/Bouncer),true
+telefono_disponible,phone_valid,client_contacts,BOOLEAN,NO,NO,Enrichment,true
+(auto),status = 'active',client_contacts,TEXT,-,SI,Sistema,active
+(auto),preferred_contact_channel = 'email',client_contacts,TEXT,-,NO,Sistema,email

@@ -1,0 +1,16 @@
+campo_csv,columna_supabase,tabla,tipo,obligatorio_pipeline,obligatorio_supabase,fuente,ejemplo
+creator_email,(lookup → creator_id),creator_social_profiles,UUID FK,-,SI,Relación por email,carlos@gmail.com
+platform,platform,creator_social_profiles,ENUM,SI,SI,Social Blade/ManyChat,youtube
+username,username,creator_social_profiles,TEXT,SI,SI,Social Blade/IG DM,carlosgaming
+account_url,account_url,creator_social_profiles,TEXT,NO,NO,Enrichment,https://youtube.com/@carlosgaming
+followers,followers,creator_social_profiles,INTEGER,SI,NO,Social Blade/Enrichment,45000
+following_count,following_count,creator_social_profiles,INTEGER,NO,NO,Enrichment,120
+media_count,media_count,creator_social_profiles,INTEGER,NO,NO,Enrichment,350
+engagement_rate,engagement_rate,creator_social_profiles,NUMERIC,NO,NO,Social Blade,3.5
+average_views,average_views,creator_social_profiles,INTEGER,NO,NO,Social Blade,12000
+average_likes,average_likes,creator_social_profiles,INTEGER,NO,NO,Social Blade,800
+average_comments,average_comments,creator_social_profiles,INTEGER,NO,NO,Social Blade,45
+is_verified,is_verified,creator_social_profiles,BOOLEAN,NO,NO,Enrichment,false
+is_private,is_private,creator_social_profiles,BOOLEAN,NO,NO,Enrichment,false
+is_business,is_business,creator_social_profiles,BOOLEAN,NO,NO,Enrichment IG,true
+main_social_media,main_social_media,creator_social_profiles,BOOLEAN,NO,NO,"Solo 1 por creador = true",true

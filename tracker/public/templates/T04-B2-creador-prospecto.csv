@@ -1,0 +1,14 @@
+campo_csv,columna_supabase,tabla,tipo,obligatorio_pipeline,obligatorio_supabase,fuente,ejemplo
+nombre,first_name,creator_inventory,TEXT,SI,SI,ManyChat/Manual,Carlos
+apellido,last_name,creator_inventory,TEXT,NO,NO,ManyChat/Manual,Lopez
+email,email,creator_inventory,TEXT,SI,SI,ManyChat/Manual,carlos@gmail.com
+telefono,phone,creator_inventory,TEXT,NO,NO,ManyChat/WhatsApp,+52 55 1234 5678
+codigo_pais,phone_country_code,creator_inventory,TEXT,NO,NO,Auto-detectar,+52
+country,country,creator_inventory,TEXT,NO,NO,Auto-detectado por código país,Mexico
+city,city,creator_inventory,TEXT,NO,NO,Manual,CDMX
+language,language,creator_inventory,TEXT,SI,NO,ManyChat (pregunta idioma),es
+categories,categories,creator_inventory,TEXT[],NO,NO,ManyChat/Enrichment,"Gaming; Tech"
+bio,bio,creator_inventory,TEXT,NO,NO,Enrichment IG/TT,Gamer y streamer mexicano
+website_url,website_url,creator_inventory,TEXT,NO,NO,Enrichment TT,
+(auto),status = 'inventory',creator_inventory,TEXT,-,SI,Sistema,inventory
+(auto),is_profile_complete,creator_inventory,BOOLEAN,-,SI,Sistema (si tiene nombre+email),true

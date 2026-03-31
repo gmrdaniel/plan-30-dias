@@ -1,0 +1,23 @@
+campo,valor,ejemplo,obligatorio,usado_por
+plataformas_objetivo,,YouTube; TikTok; Instagram,SI,Social Blade (filtros) + ManyChat (flujo pregunta plataforma)
+suscriptores_minimo,,10000,SI,Social Blade (filtro) + ManyChat (umbral cualificación)
+idiomas_contenido,,Español; Inglés; Portugués,SI,Social Blade (filtro) + ManyChat (pregunta idioma)
+categorias_contenido,,Gaming; Lifestyle; Tech; Beauty,SI,Social Blade (filtro categoría)
+ingreso_mensual_minimo_usd,,500,SI,ManyChat (umbral cualificación: >$500)
+razon_desercion_1,,Pagos tardíos,SI,Para messaging en flujos de retención
+razon_desercion_2,,Falta de comunicación,SI,Para messaging
+razon_desercion_3,,Mejores ofertas de competidores,SI,Para messaging
+razon_desercion_4,,,NO,
+razon_desercion_5,,,NO,
+tiempo_a_monetizacion_promedio,,45 días,SI,Calculadora Outgrow (proyecciones)
+servicio_streaming_tasa,,60,SI,"Calculadora Outgrow + micrositio Leadpages"
+servicio_doblaje_tasa,,35,SI,"Calculadora Outgrow + micrositio Leadpages"
+servicio_expansion_tasa,,20,NO,"Calculadora Outgrow + micrositio Leadpages"
+pain_point_1,,No saben monetizar más allá de AdSense,SI,Copy flujos ManyChat + micrositio
+pain_point_2,,Contenido limitado a 1 idioma (audiencia local),SI,Copy flujos ManyChat
+pain_point_3,,No hacen streaming 24/7 (pierden revenue pasivo),SI,Copy flujos ManyChat
+segmento_mejor_retencion,,"Gamers con >50K subs y contenido en español",NO,Estrategia de targeting
+cpm_youtube_espanol,,1.50-3.00,NO,Calculadora Outgrow (fórmula)
+cpm_youtube_ingles,,4.00-8.00,NO,Calculadora Outgrow (fórmula)
+uplift_streaming_24_7,,40-60%,NO,Calculadora Outgrow (proyección)
+uplift_doblaje,,80-150%,NO,Calculadora Outgrow (proyección audiencia)

@@ -1,0 +1,23 @@
+campo_csv,columna_supabase,tabla,tipo,obligatorio_clay,obligatorio_supabase,fuente,ejemplo
+empresa,name,client_inventory,TEXT,SI,SI,Clay/SmartScout,Good Molecules
+industria,industry,client_inventory,TEXT,SI,NO,Clay AI,Health & Wellness
+categoria,primary_category,client_inventory,TEXT,NO,NO,SmartScout,Skincare
+clasificacion,classification,client_inventory,TEXT,NO,NO,Clay AI scoring,"brand / private_label / manufacturer"
+country,country,client_inventory,TEXT,SI,NO,Clay,Estados Unidos
+ubicacion,city,client_inventory,TEXT,NO,NO,Clay,Philadelphia
+ingresos_estimados,estimated_marketplace_revenue,client_inventory,"NUMERIC(12,2)",SI,NO,SmartScout,707321
+pagina_web,website_url,client_inventory,TEXT,SI,NO,Clay/Apify,https://www.goodmolecules.com
+tienda_online,online_store_url,client_inventory,TEXT,NO,NO,SmartScout/Apify,https://www.amazon.com/dp/B01MT6RJRU
+instagram_handle,instagram_handle,client_inventory,TEXT,NO,NO,Clay,goodmolecules
+tiktok_handle,tiktok_handle,client_inventory,TEXT,NO,NO,Clay,
+youtube_url,youtube_url,client_inventory,TEXT,NO,NO,Clay,
+linkedin_url,linkedin_url,client_inventory,TEXT,NO,NO,Clay,
+facebook_url,facebook_url,client_inventory,TEXT,NO,NO,Clay,https://facebook.com/goodmolecules
+email_corporativo,corporate_email,client_inventory,TEXT,NO,NO,Clay cascade,support@goodmolecules.com
+telefono,phone,client_inventory,TEXT,NO,NO,Clay,+1 2134-444-663
+num_empleados,(qualification_criteria JSONB),client_inventory,INTEGER,NO,NO,Clay/LinkedIn,130
+icp_score,qualification_score,client_inventory,INTEGER,SI,NO,Clay AI (0-100),75
+video_gap_score,(qualification_criteria JSONB),client_inventory,JSONB,SI,NO,SmartScout,8
+(auto),status = 'lead',client_inventory,TEXT,-,SI,Sistema,lead
+(auto),lead_source = 'cold_email',client_inventory,TEXT,-,NO,Sistema,cold_email
+(auto),priority (derivar de icp_score),client_inventory,TEXT,-,NO,Sistema,"high / medium / low"

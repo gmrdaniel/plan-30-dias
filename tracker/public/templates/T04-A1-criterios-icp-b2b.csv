@@ -1,0 +1,20 @@
+campo,valor,ejemplo,obligatorio,usado_por
+industrias_objetivo,,Health & Wellness; Beauty; CPG; E-commerce,SI,Clay (filtros SmartScout/Apify)
+tamano_acuerdo_min_usd,,2000,SI,Clay (scoring)
+tamano_acuerdo_max_usd,,12000,SI,Clay (scoring)
+titulos_decision,,CMO; VP Marketing; Head of E-commerce; Brand Manager; Marketing Director,SI,Clay (filtro LinkedIn) + Smartlead (personalización)
+tamano_empresa_min,,10,SI,Clay (filtro)
+tamano_empresa_max,,500,NO,Clay (filtro)
+geolocalizacion,,US; Mexico; LATAM,SI,Clay (filtro geo)
+keywords_exclusion,,pharma; tobacco; gambling; crypto,SI,Clay (exclusión)
+clasificacion_leads,,"Lead A: >$1M revenue + video gap. Lead B: $500K-1M. Lead C: <$500K",SI,Clay (qualification_score → client_inventory)
+caso_exito_referencia,,"The Ad Factory - 3x ROI con UGC en 90 días",NO,Templates email (Email 3 caso estudio)
+objecion_1,,Ya tenemos agencia interna,SI,Templates email + guiones llamada
+objecion_2,,No tenemos presupuesto para influencers,SI,Templates email + guiones llamada
+objecion_3,,No vemos ROI en video/UGC,SI,Templates email + guiones llamada
+objecion_4,,,NO,
+objecion_5,,,NO,
+que_hace_prospecto_caliente,,"Responde email; agenda reunión; visita micrositio >2 min",SI,Alertas Telegram + HubSpot scoring
+marketplace_principal,,Amazon,NO,SmartScout (filtro)
+categorias_producto,,"Skincare; Supplements; Home; Pet",NO,SmartScout (filtro categoría)
+tiene_video_en_listings,,NO (buscamos los que NO tienen),SI,SmartScout (video_gap_score)
