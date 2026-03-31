@@ -1,0 +1,71 @@
+import { useState } from 'react'
+import { useAuth } from '../hooks/use-auth'
+
+export default function Login() {
+  const { members, login, loading } = useAuth()
+  const [selected, setSelected] = useState<string | null>(null)
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  if (loading) return <div className="flex items-center justify-center h-screen text-gray-500">Cargando...</div>
+
+  const handleLogin = async () => {
+    if (!selected) return
+    setError('')
+    const ok = await login(selected, password)
+    if (!ok) setError('Password incorrecto')
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-2">Equipo 3: Infraestructura</h1>
+        <p className="text-gray-500 text-center mb-6">Sprint Tracker</p>
+
+        <div className="space-y-2 mb-6">
+          {members.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => { setSelected(m.short_name); setError('') }}
+              className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                selected === m.short_name ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
+                style={{ backgroundColor: m.avatar_color }}
+              >
+                {m.short_name[0]}
+              </div>
+              <div className="text-left">
+                <div className="font-medium">{m.name}</div>
+                <div className="text-xs text-gray-500">{m.role}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {selected && (
+          <div className="space-y-3">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              autoFocus
+            />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <button
+              onClick={handleLogin}
+              className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 font-medium"
+            >
+              Entrar como {selected}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

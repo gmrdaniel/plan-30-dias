@@ -2,5 +2,11 @@
 Implementación/04-Herramientas plan 30 días  - Herramientas.csv
 Implementación/05-Estructura Dominios, Subdominios y Correos.xlsx - CUENTAS ACTIVAS .csv
 
+# Tracker app
+tracker/node_modules/
+tracker/dist/
+tracker/.env.local
+tracker/.env
+
 # Claude Code local
 .claude/
