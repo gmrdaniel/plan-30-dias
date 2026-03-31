@@ -26,12 +26,26 @@ Ya tienen: Clay (base $149), SmartScout (base $97), Apify (base $49).
 - Verificar créditos disponibles en plan base
 - Si insuficientes para 1,000 prospectos: notificar a Daniel para upgrade
 
-### Paso 2: Configurar SmartScout → Clay
-1. Login SmartScout
-2. Exportar vendedores Amazon que coincidan con ICP B2B (criterios de T04):
-   - Filtros: categoría, revenue estimado, presencia de video (o falta de), geografía
-3. Exportar lista CSV
+### Paso 2: Configurar SmartScout → Clay (proceso manual via UI)
+
+> **Nota:** El plan Pro ($97/mes) NO incluye acceso al API. Para automatizar este paso via API, es necesario solicitar una demo de ventas a SmartScout. Ver tab "Detalle API" para los endpoints necesarios y el template de solicitud.
+
+1. Login SmartScout (herramientas@laneta.com)
+2. Ir a **Brands** > filtrar vendedores Amazon que coincidan con ICP B2B (criterios de T04):
+   - **Filtros disponibles en UI:**
+     - Categoria/subcategoria de Amazon
+     - Revenue mensual estimado (min $41,666 = ~$500K/ano)
+     - Brand Score
+     - Numero de productos
+     - Has Storefront (si/no)
+   - **Filtro de video (limitacion):** La UI de SmartScout no tiene un filtro directo de "sin video en listing". Para identificar marcas sin video:
+     - Opcion A: Filtrar por **Sponsored Video Win Rate = 0%** (disponible en filtros de Ad Spy) — detecta marcas sin video ADS pagados
+     - Opcion B: Exportar lista amplia y revisar manualmente los listings top de cada marca en Amazon
+     - Opcion C (recomendada): Combinar con Apify para scrape de paginas de producto y detectar presencia de video
+3. Exportar lista CSV (max ~1,000 marcas por export en UI)
 4. Importar a Clay como tabla fuente
+
+**Campos clave a incluir en el export:** brand_name, monthly_revenue, category, subcategory, total_products, has_storefront, brand_score
 
 ### Paso 3: Configurar Apify scrapers
 1. Login Apify
@@ -63,8 +77,10 @@ Columna 4: Calificación con IA
   → Resultado: icp_score
 
 Columna 5: Video Gap Score
-  → SmartScout data: ¿tiene video en listings? ¿calidad?
-  → Resultado: video_gap_score (1-10)
+  → SmartScout: sponsored_video_win_rate (0% = no pauta video ads)
+  → Apify: scrape de pagina de producto para detectar video organico en listing
+  → Combinacion de ambos: video_gap_score (1-10)
+  → NOTA: SmartScout NO tiene campo "video en listing", solo "video ads pagados"
 ```
 
 ### Paso 5: Ejecutar prueba con 50 prospectos
