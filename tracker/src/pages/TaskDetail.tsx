@@ -2,7 +2,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTasks, useChecklist, useComments } from '../hooks/use-tasks'
 import { useAuth } from '../hooks/use-auth'
 import { PRIORITY_CONFIG, STATUS_CONFIG, type TaskStatus } from '../lib/types'
-import { ArrowLeft, CheckSquare, Square, MessageCircle, Send } from 'lucide-react'
+import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText } from 'lucide-react'
+import { isDto, getDtoInfo } from '../lib/dtos'
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -78,7 +79,11 @@ export default function TaskDetail() {
           <div className="text-xs text-gray-500 mb-1">Bloquea a</div>
           <div className="flex flex-wrap gap-1">
             {task.blocks.length > 0 ? task.blocks.map((b) => (
-              <Link key={b} to={`/task/${b}`} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded hover:bg-gray-200">{b}</Link>
+              isDto(b) ? (
+                <Link key={b} to="/docs/dtos-dependencias" className="text-xs font-mono bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded hover:bg-purple-200">{b}</Link>
+              ) : (
+                <Link key={b} to={`/task/${b}`} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded hover:bg-gray-200">{b}</Link>
+              )
             )) : <span className="text-xs text-gray-400">Ninguna</span>}
           </div>
         </div>
@@ -125,11 +130,40 @@ export default function TaskDetail() {
       {task.blocked_by.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
           <h2 className="text-sm font-semibold text-amber-700 mb-2">Bloqueada por</h2>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col gap-2">
             {task.blocked_by.map((b) => {
+              if (isDto(b)) {
+                const dto = getDtoInfo(b)
+                return (
+                  <Link key={b} to="/docs/dtos-dependencias" className="flex items-start gap-3 bg-white rounded-lg px-4 py-3 border border-purple-200 hover:shadow transition-shadow">
+                    {dto?.direction === 'IN' ? (
+                      <ArrowDownLeft size={18} className="text-purple-500 shrink-0 mt-0.5" />
+                    ) : (
+                      <ArrowUpRight size={18} className="text-blue-500 shrink-0 mt-0.5" />
+                    )}
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-purple-600">{b}</span>
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">
+                          {dto?.direction === 'IN' ? 'Entrada' : 'Salida'}
+                        </span>
+                      </div>
+                      {dto && (
+                        <>
+                          <div className="text-sm font-medium text-gray-900 mt-0.5">{dto.title}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">
+                            {dto.from} → {dto.to} | Deadline: {dto.deadline}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <FileText size={14} className="text-gray-400 shrink-0 mt-1 ml-auto" />
+                  </Link>
+                )
+              }
               const dep = tasks.find((t) => t.task_id === b)
               return (
-                <Link key={b} to={`/task/${b}`} className="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 border text-sm hover:shadow">
+                <Link key={b} to={`/task/${b}`} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border text-sm hover:shadow">
                   <span className="font-mono font-bold text-gray-400">{b}</span>
                   {dep && (
                     <>
