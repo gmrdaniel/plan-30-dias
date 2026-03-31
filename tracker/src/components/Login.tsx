@@ -1,6 +1,15 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/use-auth'
 
+// Map short_name to email for Supabase Auth login
+const EMAIL_MAP: Record<string, string> = {
+  Daniel: 'daniel@laneta.com',
+  Gabriel: 'gabriel@laneta.com',
+  Lillian: 'lillian@laneta.com',
+  Dayana: 'dayana@laneta.com',
+  Eugenia: 'eugenia@laneta.com',
+}
+
 export default function Login() {
   const { members, login, loading } = useAuth()
   const [selected, setSelected] = useState<string | null>(null)
@@ -27,8 +36,10 @@ export default function Login() {
   const handleLogin = async () => {
     if (!selected) return
     setError('')
-    const ok = await login(selected, password)
-    if (!ok) setError('Password incorrecto')
+    const email = EMAIL_MAP[selected]
+    if (!email) { setError('Usuario no configurado'); return }
+    const errMsg = await login(email, password)
+    if (errMsg) setError(errMsg)
   }
 
   return (
@@ -41,7 +52,7 @@ export default function Login() {
           {members.map((m) => (
             <button
               key={m.id}
-              onClick={() => { setSelected(m.short_name); setError('') }}
+              onClick={() => { setSelected(m.short_name); setPassword(''); setError('') }}
               className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
                 selected === m.short_name ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'
               }`}

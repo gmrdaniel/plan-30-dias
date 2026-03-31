@@ -5,7 +5,7 @@ import type { TeamMember } from '../lib/types'
 interface AuthCtx {
   user: TeamMember | null
   members: TeamMember[]
-  login: (shortName: string, password: string) => Promise<boolean>
+  login: (email: string, password: string) => Promise<string | null>
   logout: () => void
   loading: boolean
 }
@@ -13,7 +13,7 @@ interface AuthCtx {
 const AuthContext = createContext<AuthCtx>({
   user: null,
   members: [],
-  login: async () => false,
+  login: async () => 'Error',
   logout: () => {},
   loading: true,
 })
@@ -23,41 +23,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    supabase.from('team_members').select('*').then(({ data, error }) => {
-      if (error) {
-        console.error('Supabase error:', error)
-        setLoading(false)
-        return
-      }
-      if (data) setMembers(data)
-      const saved = localStorage.getItem('tracker_user_id')
-      if (saved && data) {
-        const found = data.find((m) => m.id === saved)
-        if (found) setUser(found)
-      }
-      setLoading(false)
-    })
-  }, [])
-
-  const login = async (shortName: string, password: string) => {
-    const { data } = await supabase
-      .from('team_members')
-      .select('*')
-      .eq('short_name', shortName)
-      .eq('password', password)
-      .single()
-    if (data) {
-      setUser(data)
-      localStorage.setItem('tracker_user_id', data.id)
-      return true
-    }
-    return false
+  const loadMembers = async () => {
+    const { data, error } = await supabase.from('team_members').select('*')
+    if (error) console.error('Error loading team_members:', error)
+    if (data) setMembers(data)
+    return data
   }
 
-  const logout = () => {
+  const loadUserFromSession = async (allMembers?: TeamMember[] | null) => {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user) {
+      const memberList = allMembers || members
+      const found = memberList.find((m) => m.id === session.user.id)
+      if (found) setUser(found)
+    }
+  }
+
+  useEffect(() => {
+    loadMembers().then((data) => {
+      loadUserFromSession(data).then(() => setLoading(false))
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        const found = members.find((m) => m.id === session.user.id)
+        if (found) setUser(found)
+      } else {
+        setUser(null)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const login = async (email: string, password: string): Promise<string | null> => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) return error.message
+
+    // Reload session to get user
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user) {
+      const found = members.find((m) => m.id === session.user.id)
+      if (found) setUser(found)
+    }
+    return null
+  }
+
+  const logout = async () => {
+    await supabase.auth.signOut()
     setUser(null)
-    localStorage.removeItem('tracker_user_id')
   }
 
   return (
