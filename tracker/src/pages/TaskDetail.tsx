@@ -4,6 +4,8 @@ import { useAuth } from '../hooks/use-auth'
 import { PRIORITY_CONFIG, STATUS_CONFIG, type TaskStatus } from '../lib/types'
 import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText } from 'lucide-react'
 import { isDto, getDtoInfo } from '../lib/dtos'
+import { getTaskTools } from '../lib/tools'
+import { ExternalLink } from 'lucide-react'
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -125,6 +127,34 @@ export default function TaskDetail() {
           <p className="text-sm text-gray-700">{task.objective}</p>
         </div>
       )}
+
+      {/* Tools */}
+      {(() => {
+        const tools = getTaskTools(task.task_id)
+        if (tools.length === 0) return null
+        return (
+          <div className="bg-white border rounded-xl p-4">
+            <h2 className="text-sm font-semibold mb-3">Herramientas</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {tools.map((tool) => (
+                <a
+                  key={tool.url}
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors group"
+                >
+                  <ExternalLink size={14} className="text-gray-400 group-hover:text-indigo-500 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{tool.name}</div>
+                    {tool.cost && <div className="text-xs text-gray-400">{tool.cost}</div>}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Blocked by */}
       {task.blocked_by.length > 0 && (
