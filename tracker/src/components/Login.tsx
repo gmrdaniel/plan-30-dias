@@ -97,9 +97,9 @@ export default function Login() {
         <div className="mt-6 pt-4 border-t">
           <Link
             to="/docs"
-            className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-indigo-600 transition-colors"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
           >
-            <FileText size={16} />
+            <FileText size={18} />
             Ver documentos del sprint
           </Link>
         </div>
