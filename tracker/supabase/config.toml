@@ -1,2 +1,5 @@
 [project]
 id = "nvbanvwibmghxroybjxp"
+
+[api]
+enabled = true
