@@ -134,20 +134,28 @@ export default function TaskDetail() {
         if (tools.length === 0) return null
         return (
           <div className="bg-white border rounded-xl p-4">
-            <h2 className="text-sm font-semibold mb-3">Herramientas</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            <h2 className="text-sm font-semibold mb-3">Herramientas ({tools.length})</h2>
+            <div className="space-y-2">
               {tools.map((tool) => (
                 <a
                   key={tool.url}
                   href={tool.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors group"
+                  className="flex items-start gap-3 px-4 py-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors group"
                 >
-                  <ExternalLink size={14} className="text-gray-400 group-hover:text-indigo-500 shrink-0" />
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium truncate">{tool.name}</div>
-                    {tool.cost && <div className="text-xs text-gray-400">{tool.cost}</div>}
+                  <ExternalLink size={16} className="text-gray-400 group-hover:text-indigo-500 shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium group-hover:text-indigo-700">{tool.name}</span>
+                      {tool.category && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-gray-200 text-gray-600 rounded-full">{tool.category}</span>
+                      )}
+                      {tool.cost && (
+                        <span className="text-xs text-gray-400 ml-auto shrink-0">{tool.cost}</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-0.5">{tool.description}</p>
                   </div>
                 </a>
               ))}
