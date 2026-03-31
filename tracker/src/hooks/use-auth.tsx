@@ -24,7 +24,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('team_members').select('*').then(({ data }) => {
+    supabase.from('team_members').select('*').then(({ data, error }) => {
+      if (error) {
+        console.error('Supabase error:', error)
+        setLoading(false)
+        return
+      }
       if (data) setMembers(data)
       const saved = localStorage.getItem('tracker_user_id')
       if (saved && data) {

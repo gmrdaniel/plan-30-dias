@@ -9,6 +9,21 @@ export default function Login() {
 
   if (loading) return <div className="flex items-center justify-center h-screen text-gray-500">Cargando...</div>
 
+  if (members.length === 0) return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="text-center p-8 bg-white rounded-xl shadow-lg max-w-md">
+        <h1 className="text-xl font-bold mb-2">Sin conexion a la base de datos</h1>
+        <p className="text-gray-500 text-sm mb-4">No se encontraron miembros del equipo. Verifica que:</p>
+        <ul className="text-left text-sm text-gray-600 space-y-1 mb-4">
+          <li>1. Las migraciones SQL se ejecutaron en Supabase</li>
+          <li>2. Las variables VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY estan correctas</li>
+          <li>3. RLS permite lectura publica en team_members</li>
+        </ul>
+        <p className="text-xs text-gray-400">Abre la consola del navegador (F12) para ver el error exacto</p>
+      </div>
+    </div>
+  )
+
   const handleLogin = async () => {
     if (!selected) return
     setError('')
