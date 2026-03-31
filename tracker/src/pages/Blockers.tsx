@@ -135,6 +135,18 @@ export default function Blockers() {
                     ))}
                   </div>
 
+                  {/* Template download for B16 */}
+                  {item.code === 'B16' && (
+                    <a
+                      href="/templates/empleados-internos-swap-test.csv"
+                      download
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 inline-flex items-center gap-1 text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200"
+                    >
+                      Descargar template CSV (22 empleados)
+                    </a>
+                  )}
+
                   {/* Answer */}
                   {item.answer && !isEditing && (
                     <div className="mt-2 p-2 bg-blue-50 rounded-lg text-sm text-blue-800">
