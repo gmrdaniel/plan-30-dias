@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTasks } from '../hooks/use-tasks'
 import { useAuth } from '../hooks/use-auth'
 import TaskCard from '../components/TaskCard'
@@ -9,9 +9,23 @@ const PHASES: TaskPhase[] = ['pre_sprint', 'semana_1', 'semana_2', 'semana_3_4',
 export default function Board() {
   const { tasks, loading } = useTasks()
   const { members } = useAuth()
-  const [filterPerson, setFilterPerson] = useState<string>('all')
-  const [filterPriority, setFilterPriority] = useState<string>('all')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [params, setParams] = useSearchParams()
+
+  const filterPerson = params.get('person') || 'all'
+  const filterPriority = params.get('priority') || 'all'
+  const filterStatus = params.get('status') || 'all'
+
+  const setFilter = (key: string, value: string) => {
+    setParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value === 'all') {
+        next.delete(key)
+      } else {
+        next.set(key, value)
+      }
+      return next
+    }, { replace: true })
+  }
 
   if (loading) return <div className="p-8 text-gray-400">Cargando...</div>
 
@@ -30,7 +44,7 @@ export default function Board() {
       <div className="flex flex-wrap gap-3">
         <select
           value={filterPerson}
-          onChange={(e) => setFilterPerson(e.target.value)}
+          onChange={(e) => setFilter('person', e.target.value)}
           className="px-3 py-1.5 border rounded-lg text-sm bg-white"
         >
           <option value="all">Todos</option>
@@ -40,7 +54,7 @@ export default function Board() {
         </select>
         <select
           value={filterPriority}
-          onChange={(e) => setFilterPriority(e.target.value)}
+          onChange={(e) => setFilter('priority', e.target.value)}
           className="px-3 py-1.5 border rounded-lg text-sm bg-white"
         >
           <option value="all">Todas las prioridades</option>
@@ -50,7 +64,7 @@ export default function Board() {
         </select>
         <select
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
+          onChange={(e) => setFilter('status', e.target.value)}
           className="px-3 py-1.5 border rounded-lg text-sm bg-white"
         >
           <option value="all">Todos los estados</option>
@@ -59,6 +73,14 @@ export default function Board() {
           <option value="bloqueada">Bloqueada</option>
           <option value="completada">Completada</option>
         </select>
+        {(filterPerson !== 'all' || filterPriority !== 'all' || filterStatus !== 'all') && (
+          <button
+            onClick={() => setParams({}, { replace: true })}
+            className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 underline"
+          >
+            Limpiar filtros
+          </button>
+        )}
       </div>
 
       {/* Phase columns */}

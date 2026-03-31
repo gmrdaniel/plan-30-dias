@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTasks, useChecklist, useComments } from '../hooks/use-tasks'
 import { useAuth } from '../hooks/use-auth'
 import { PRIORITY_CONFIG, STATUS_CONFIG, type TaskStatus } from '../lib/types'
@@ -11,6 +11,7 @@ const STATUSES: TaskStatus[] = ['pendiente', 'en_progreso', 'bloqueada', 'comple
 
 export default function TaskDetail() {
   const { taskId } = useParams<{ taskId: string }>()
+  const navigate = useNavigate()
   const { tasks, updateStatus } = useTasks()
   const { items: checklist, toggleItem } = useChecklist(taskId || '')
   const { comments, addComment } = useComments(taskId || '')
@@ -36,9 +37,9 @@ export default function TaskDetail() {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <Link to="/board" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-3">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-3">
           <ArrowLeft size={16} /> Volver
-        </Link>
+        </button>
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
