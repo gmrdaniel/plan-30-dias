@@ -38,7 +38,8 @@ export default function DocView() {
           prose-td:px-3 prose-td:py-2 prose-td:border-t prose-td:border-gray-100
           prose-tr:border-b prose-tr:border-gray-100
           prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-          prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:overflow-x-auto
+          prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:p-4
+          [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-100 [&_pre_code]:text-xs
           prose-a:text-indigo-600
           prose-li:my-0.5
           prose-strong:text-gray-900
