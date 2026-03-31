@@ -1,0 +1,40 @@
+name: Deploy Migrations to Supabase
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'tracker/supabase/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Verify secrets are set
+        run: |
+          echo "PROJECT_ID is: ${SUPABASE_PROJECT_ID:+set}"
+          echo "ACCESS_TOKEN is: ${SUPABASE_ACCESS_TOKEN:+set}"
+          echo "DB_PASSWORD is: ${SUPABASE_DB_PASSWORD:+set}"
+        shell: bash
+
+      - name: Link Supabase project
+        working-directory: tracker
+        run: supabase link --project-ref $SUPABASE_PROJECT_ID
+
+      - name: Push database migrations
+        working-directory: tracker
+        run: supabase db push
