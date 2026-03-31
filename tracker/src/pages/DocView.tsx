@@ -16,8 +16,8 @@ export default function DocView() {
   )
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="sticky top-0 bg-white border-b px-6 py-3 z-10">
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 bg-white border-b px-6 py-3 z-10 shadow-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <Link to="/docs" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
             <ArrowLeft size={16} /> Documentos
@@ -26,6 +26,7 @@ export default function DocView() {
         </div>
       </div>
       <div className="max-w-5xl mx-auto px-6 py-8">
+        <div className="bg-white border rounded-xl shadow-sm p-8">
         <article className="prose prose-sm prose-gray max-w-none
           prose-headings:font-bold
           prose-h1:text-2xl prose-h1:mb-4
@@ -44,6 +45,7 @@ export default function DocView() {
         ">
           <Markdown remarkPlugins={[remarkGfm]}>{doc.content}</Markdown>
         </article>
+        </div>
       </div>
     </div>
   )
