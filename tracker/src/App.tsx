@@ -7,6 +7,8 @@ import Board from './pages/Board'
 import MyView from './pages/MyView'
 import TaskDetail from './pages/TaskDetail'
 import Milestones from './pages/Milestones'
+import DocsIndex from './pages/DocsIndex'
+import DocView from './pages/DocView'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -31,7 +33,13 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <Routes>
+          {/* Public routes - no auth required */}
+          <Route path="/docs" element={<DocsIndex />} />
+          <Route path="/docs/:slug" element={<DocView />} />
+          {/* Auth-protected routes */}
+          <Route path="/*" element={<AppRoutes />} />
+        </Routes>
       </AuthProvider>
     </BrowserRouter>
   )

@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/use-auth'
+import { FileText } from 'lucide-react'
 
 // Map short_name to email for Supabase Auth login
 const EMAIL_MAP: Record<string, string> = {
@@ -91,6 +93,16 @@ export default function Login() {
             </button>
           </div>
         )}
+
+        <div className="mt-6 pt-4 border-t">
+          <Link
+            to="/docs"
+            className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-indigo-600 transition-colors"
+          >
+            <FileText size={16} />
+            Ver documentos del sprint
+          </Link>
+        </div>
       </div>
     </div>
   )
