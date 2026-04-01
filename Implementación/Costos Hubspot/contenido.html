@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Hub de HubSpot — Precios</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; line-height: 1.6; padding: 2rem; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.3rem; margin: 2rem 0 1rem; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.5rem; }
+    .subtitle { color: #666; margin-bottom: 2rem; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; max-width: 1000px; margin: 2rem 0; }
+    .card { background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem; }
+    .card.recommended { border-color: #4caf50; }
+    .card.enterprise { border-color: #f5a623; }
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.2rem; }
+    .card .desc { color: #666; font-size: 0.85rem; margin-bottom: 1rem; }
+    .price { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; }
+    .price-detail { color: #888; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 0.5rem; }
+    .credits { color: #666; font-size: 0.85rem; margin: 0.5rem 0; }
+    .features { list-style: none; padding: 0; }
+    .features li { padding: 0.3rem 0; padding-left: 1.5rem; position: relative; font-size: 0.9rem; }
+    .features li::before { content: "\2713"; position: absolute; left: 0; color: #4caf50; font-weight: bold; }
+    table { width: 100%; max-width: 1000px; border-collapse: collapse; margin: 1rem 0 2rem; background: white; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 0.82rem; }
+    th { background: #f5f5f5; font-weight: 600; color: #555; }
+    td:nth-child(2), td:nth-child(3), td:nth-child(4), th:nth-child(2), th:nth-child(3), th:nth-child(4) { text-align: center; }
+    .section { max-width: 1000px; margin-bottom: 2rem; }
+    .faq { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.5rem 0; }
+    .faq summary { font-weight: 600; cursor: pointer; font-size: 0.95rem; }
+    @media (max-width: 768px) { .cards { grid-template-columns: 1fr; } body { padding: 1rem; } }
+  </style>
+</head>
+<body>
+
+<h1>Content Hub</h1>
+<p class="subtitle">Crea y gestiona contenido para todo el recorrido del cliente.</p>
+
+<!-- ====== TARJETAS DE PRECIOS ====== -->
+
+<div class="cards">
+  <div class="card recommended">
+    <span class="badge">Recomendado</span>
+    <h3>Starter</h3>
+    <p class="desc">Software esencial de marketing, ventas, servicio al cliente, gestion de contenido y datos.</p>
+    <div class="price">Desde USD $15</div>
+    <div class="price-detail">/mes/licencia (anual: $15 | mensual: $20)</div>
+    <p class="credits">500 creditos de HubSpot incluidos</p>
+    <ul class="features">
+      <li>Paginas de sitio web (hasta 30)</li>
+      <li>Blog</li>
+      <li>Landing pages (hasta 30)</li>
+      <li>Live chat</li>
+      <li>Biblioteca de contenido</li>
+      <li>Editor de arrastrar y soltar</li>
+      <li>Herramientas de gestion de cookies</li>
+      <li>Administrador de diseno</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Pro</h3>
+    <p class="desc">Software de marketing de contenido integral para aprovechar y expandir los resultados.</p>
+    <div class="price">Desde USD $450</div>
+    <div class="price-detail">/mes (incluye 3 licencias) | Adicionales: $45/mes</div>
+    <p class="credits">3,000 creditos de HubSpot incluidos</p>
+    <p><strong>Starter mas:</strong></p>
+    <ul class="features">
+      <li>Casos de exito (Beta)</li>
+      <li>Membresias</li>
+      <li>Contenido e informes inteligentes</li>
+      <li>Informes personalizados</li>
+      <li>Pruebas A/B</li>
+      <li>Reutilizacion de contenido (Beta)</li>
+      <li>Podcasts</li>
+      <li>Creacion y edicion de videos</li>
+    </ul>
+  </div>
+
+  <div class="card enterprise">
+    <h3>Enterprise</h3>
+    <p class="desc">Software de contenido mas potente con control y flexibilidad avanzados.</p>
+    <div class="price">Desde USD $1,500</div>
+    <div class="price-detail">/mes (incluye 5 licencias) | Adicionales: $75/mes</div>
+    <p class="credits">5,000 creditos de HubSpot incluidos</p>
+    <p><strong>Pro, y ademas:</strong></p>
+    <ul class="features">
+      <li>Registro de actividades</li>
+      <li>Sincronizacion de contenido (Beta)</li>
+      <li>Organizar equipos</li>
+      <li>Multisitios (1 dominio principal + 9 adicionales)</li>
+      <li>Limitar acceso al contenido y datos</li>
+      <li>Aprobaciones de contenido</li>
+      <li>Objetos personalizados</li>
+      <li>Aplicaciones web</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== TABLA: CREAR CONTENIDO ====== -->
+
+<div class="section">
+<h2>Crear contenido</h2>
+<table>
+  <thead>
+    <tr><th>Caracteristica</th><th>Starter &mdash; $15/mes</th><th>Pro &mdash; $450/mes</th><th>Enterprise &mdash; $1,500/mes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Gestion de anuncios</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Asistentes de IA</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Generador de imagenes de IA</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>CTA</td><td>Basico</td><td>Avanzado</td><td>Avanzado</td></tr>
+    <tr><td>Formularios</td><td>Sin branding HubSpot</td><td>Sin branding HubSpot</td><td>Sin branding HubSpot</td></tr>
+    <tr><td>Landing pages</td><td>Hasta 30</td><td>Hasta 10K + A/B + SEO</td><td>Hasta 10K + A/B + SEO</td></tr>
+    <tr><td>Live chat</td><td>Sin branding</td><td>Sin branding</td><td>Sin branding</td></tr>
+    <tr><td>Bots conversacionales</td><td>Basico</td><td>Avanzado</td><td>Avanzado</td></tr>
+    <tr><td>Paginas de sitio web</td><td>Hasta 30</td><td>Hasta 10K + contenido inteligente</td><td>Hasta 10K + contenido inteligente</td></tr>
+    <tr><td>Menus avanzados</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Gestion de cookies</td><td>Hasta 100 banners</td><td>Hasta 100 banners</td><td>Hasta 100 banners</td></tr>
+    <tr><td>Dominio personalizado</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Administrador de diseno</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Editor drag &amp; drop</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Desarrollo local</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Multisitios</td><td>&mdash;</td><td>&mdash;</td><td>1 principal + 9 adicionales</td></tr>
+    <tr><td>Biblioteca de contenido</td><td>Modulo basico</td><td>+ Contenido tras login</td><td>+ Contenido tras login</td></tr>
+    <tr><td>Contenido e informes inteligentes</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Pruebas A/B</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Pruebas adaptativas</td><td>&mdash;</td><td>Hasta 5 variantes</td><td>Hasta 5 variantes</td></tr>
+    <tr><td>Traduccion de IA</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Breeze agente de clientes</td><td>&mdash;</td><td>100 creditos/conversacion</td><td>100 creditos/conversacion</td></tr>
+    <tr><td>Casos de exito (Beta)</td><td>&mdash;</td><td>Hasta 10,000</td><td>Hasta 10,000</td></tr>
+    <tr><td>Reutilizacion de contenido (Beta)</td><td>&mdash;</td><td>20 piezas/dia</td><td>50 piezas/dia</td></tr>
+    <tr><td>Podcasts</td><td>&mdash;</td><td>5 podcasts, 1,000 episodios</td><td>50 podcasts, 5,000 episodios</td></tr>
+    <tr><td>Creacion y edicion de videos</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Contenido en varios idiomas</td><td>Hasta 50 idiomas</td><td>Ilimitados</td><td>Ilimitados</td></tr>
+    <tr><td>Sincronizacion de contenido (Beta)</td><td>&mdash;</td><td>&mdash;</td><td>&#10003;</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ====== TABLA: GESTIONAR CONTENIDO ====== -->
+
+<div class="section">
+<h2>Gestionar contenido</h2>
+<table>
+  <thead>
+    <tr><th>Caracteristica</th><th>Starter &mdash; $15/mes</th><th>Pro &mdash; $450/mes</th><th>Enterprise &mdash; $1,500/mes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Panel de Informes</td><td>30 paneles, 50/panel</td><td>75 paneles, 50/panel</td><td>100 paneles, 50/panel</td></tr>
+    <tr><td>Analiticas del trafico web</td><td>Estandar</td><td>Personalizable</td><td>Personalizable</td></tr>
+    <tr><td>Atribucion de creacion de contactos</td><td>&mdash;</td><td>10K interacciones</td><td>10K interacciones</td></tr>
+    <tr><td>Analiticas de SEO</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Google Search Console</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Recomendaciones de SEO</td><td>Basicas</td><td>Avanzadas + auditoria</td><td>Avanzadas + auditoria</td></tr>
+    <tr><td>HubDB</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Paginas dinamicas</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Membresias</td><td>&mdash;</td><td>Hasta 2 grupos</td><td>Hasta 100 grupos</td></tr>
+    <tr><td>Blog para miembro</td><td>&mdash;</td><td>Hasta 2 grupos</td><td>Hasta 100 grupos</td></tr>
+    <tr><td>Alojamiento y gestion de videos</td><td>&mdash;</td><td>Hasta 150 videos</td><td>Hasta 500 videos</td></tr>
+    <tr><td>Aprobaciones de contenido</td><td>&mdash;</td><td>&mdash;</td><td>&#10003;</td></tr>
+    <tr><td>Aplicaciones web</td><td>&mdash;</td><td>&mdash;</td><td>&#10003;</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ====== INTEGRACIONES ====== -->
+
+<div class="section">
+<h2>Integraciones destacadas</h2>
+<ul class="features">
+  <li>Amplitude</li>
+  <li>Jira</li>
+  <li>Adobe Express</li>
+  <li>Aircall</li>
+  <li>LinkedIn</li>
+  <li>Microsoft Teams</li>
+</ul>
+</div>
+
+<!-- ====== FAQ ====== -->
+
+<div class="section">
+<h2>Preguntas frecuentes</h2>
+<details class="faq"><summary>Que es Content Hub?</summary></details>
+<details class="faq"><summary>Puedo usar Content Hub con mi CMS actual (ej. WordPress)?</summary></details>
+<details class="faq"><summary>Puedo crear micrositios o portales de clientes?</summary></details>
+<details class="faq"><summary>Como migro mi sitio web actual a Content Hub?</summary></details>
+<details class="faq"><summary>Que tipo de asistencia ofrece HubSpot?</summary></details>
+<details class="faq"><summary>HubSpot ofrece precios para startups y ONGs?</summary></details>
+</div>
+
+<p style="color:#999;font-size:0.8rem;margin-top:3rem;">Fuente: hubspot.com/pricing/content &mdash; Extraido y formateado para lectura rapida.</p>
+
+</body>
+</html>

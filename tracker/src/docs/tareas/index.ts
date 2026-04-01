@@ -4,6 +4,7 @@ import T03 from './T03-telegram-relay-alertas.md?raw'
 import T04 from './T04-documentos-icp.md?raw'
 import T05 from './T05-linkedin-instagram-outreach.md?raw'
 import T06 from './T06-clay-smartscout-apify.md?raw'
+import T02_LIC from './T02-hubspot-licencias.md?raw'
 import T06_API from './T06-clay-smartscout-apify-api.md?raw'
 import T07 from './T07-smartlead-expandi-justcall.md?raw'
 import T08 from './T08-manychat-whatsapp-branch-twilio.md?raw'
@@ -20,8 +21,9 @@ import T18 from './T18-monitoreo-diario-mantenimiento.md?raw'
 import T19 from './T19-evaluacion-escalamiento.md?raw'
 import T20 from './T20-retrospectiva-sprint.md?raw'
 
-export const TASK_API_MD: Record<string, string> = {
-  'T06': T06_API,
+export const TASK_EXTRA_TABS: Record<string, { label: string; content: string }[]> = {
+  'T02': [{ label: 'Licencias', content: T02_LIC }],
+  'T06': [{ label: 'Detalle API', content: T06_API }],
 }
 
 export const TASK_DETAIL_MD: Record<string, string> = {

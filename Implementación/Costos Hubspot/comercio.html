@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commerce Hub de HubSpot — Precios</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; line-height: 1.6; padding: 2rem; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.3rem; margin: 2rem 0 1rem; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.5rem; }
+    .subtitle { color: #666; margin-bottom: 2rem; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 800px; margin: 2rem 0; }
+    .card { background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem; }
+    .card.enterprise { border-color: #f5a623; }
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.2rem; }
+    .card .desc { color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
+    .price { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
+    .price-old { font-size: 1rem; color: #999; text-decoration: line-through; margin-left: 0.5rem; }
+    .price-detail { color: #888; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; }
+    .badge-promo { background: #fff3e0; color: #e65100; }
+    .credits { color: #666; font-size: 0.85rem; margin: 0.5rem 0; }
+    .features { list-style: none; padding: 0; }
+    .features li { padding: 0.3rem 0; padding-left: 1.5rem; position: relative; font-size: 0.9rem; }
+    .features li::before { content: "\2713"; position: absolute; left: 0; color: #4caf50; font-weight: bold; }
+    table { width: 100%; max-width: 900px; border-collapse: collapse; margin: 1rem 0 2rem; background: white; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 0.85rem; }
+    th { background: #f5f5f5; font-weight: 600; color: #555; }
+    td:nth-child(2), td:nth-child(3), th:nth-child(2), th:nth-child(3) { text-align: center; }
+    .section { max-width: 900px; margin-bottom: 2rem; }
+    .note { background: #fff3e0; border-left: 4px solid #f5a623; padding: 0.8rem 1rem; border-radius: 0 4px 4px 0; font-size: 0.85rem; margin: 1rem 0; }
+    .faq { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.5rem 0; }
+    .faq summary { font-weight: 600; cursor: pointer; font-size: 0.95rem; }
+    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } body { padding: 1rem; } }
+  </style>
+</head>
+<body>
+
+<h1>Commerce Hub</h1>
+<p class="subtitle">Cierra negocios mas rapido, factura facilmente y agiliza el cobro de pagos.</p>
+
+<div class="note">
+  <span class="badge badge-promo">Promocion por adopcion temprana</span><br>
+  Commerce Hub Pro por <strong>USD $48/mes</strong> (antes $95/mes), o Enterprise por <strong>USD $84/mes</strong> (antes $140/mes), con facturacion anual. Disponible por tiempo limitado solo para nuevos clientes.
+</div>
+
+<!-- ====== TARJETAS DE PRECIOS ====== -->
+
+<div class="cards">
+  <div class="card">
+    <h3>Pro</h3>
+    <p class="desc">Todo lo que tu equipo de ventas necesita para crear cotizaciones con IA y cerrar negocios mas rapido.</p>
+    <div class="price">Desde USD $48 <span class="price-old">$95</span></div>
+    <div class="price-detail">/mes/licencia</div>
+    <p class="credits">3,000 creditos de HubSpot incluidos</p>
+    <p><strong>Incluye:</strong></p>
+    <ul class="features">
+      <li>Editor de cotizaciones de una sola pagina</li>
+      <li>Cotizaciones generadas por IA</li>
+      <li>Plantillas de cotizacion</li>
+      <li>Workflows de cotizaciones</li>
+      <li>Firma electronica</li>
+      <li>Precio escalonado</li>
+      <li>Informes de cotizaciones</li>
+      <li>Aprobaciones de cotizaciones estandar</li>
+    </ul>
+  </div>
+
+  <div class="card enterprise">
+    <h3>Enterprise</h3>
+    <p class="desc">Cotizaciones con IA y aprobaciones avanzadas que cumplan con las reglas de tu empresa.</p>
+    <div class="price">Desde USD $84 <span class="price-old">$140</span></div>
+    <div class="price-detail">/mes/licencia</div>
+    <p class="credits">5,000 creditos de HubSpot incluidos</p>
+    <p><strong>Pro, mas limites incrementados:</strong></p>
+    <ul class="features">
+      <li>Firma electronica (50/usuario/mes)</li>
+      <li>Aprobaciones de cotizaciones avanzadas</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== TABLA: COTIZACIONES ====== -->
+
+<div class="section">
+<h2>Cotizaciones</h2>
+<table>
+  <thead>
+    <tr><th>Caracteristica</th><th>Pro &mdash; USD $48/mes</th><th>Enterprise &mdash; USD $84/mes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Cotizaciones generadas por IA</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Seguimiento de actividades de la cotizacion</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Plantillas de cotizacion</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Workflows de cotizaciones</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Informes de cotizaciones</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Editor de cotizaciones de una sola pagina</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Aprobaciones de cotizaciones estandar</td><td>Hasta 10 aprobadores</td><td>Hasta 10 aprobadores</td></tr>
+    <tr><td>Aprobaciones de cotizaciones avanzadas</td><td>&mdash;</td><td>Hasta 10 aprobadores, 5 pasos</td></tr>
+    <tr><td>Biblioteca de productos</td><td>Hasta 15M productos</td><td>Hasta 15M productos</td></tr>
+    <tr><td>Precios fijos</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>API de productos</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Tasas impositivas</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Precio escalonado</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Agente de cierre de Breeze (Beta)</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Firma electronica</td><td>25/usuario/mes</td><td>50/usuario/mes</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ====== TABLA: FACTURACION ====== -->
+
+<div class="section">
+<h2>Facturacion</h2>
+<table>
+  <thead>
+    <tr><th>Caracteristica</th><th>Pro &mdash; USD $48/mes</th><th>Enterprise &mdash; USD $84/mes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Facturas</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Recordatorios automatizados de facturas</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Dominios personalizados de comercio</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Impuesto sobre las ventas automatizado (Beta)</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Suite de analiticas de comercio</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Informes personalizados sobre ingresos</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Integracion con QuickBooks Online</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Suscripciones</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Reintentos de suscripcion</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Integracion con Xero (Beta)</td><td>&#10003;</td><td>&#10003;</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ====== TABLA: PAGOS ====== -->
+
+<div class="section">
+<h2>Recibir pagos</h2>
+<table>
+  <thead>
+    <tr><th>Caracteristica</th><th>Pro &mdash; USD $48/mes</th><th>Enterprise &mdash; USD $84/mes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Pago B2B</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Tarifas de pago predeterminadas (Beta)</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Metodos de pago almacenados</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Herramienta Pagos</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Procesamiento de pagos con Stripe</td><td>&#10003; (requiere cuenta Stripe)</td><td>&#10003; (requiere cuenta Stripe)</td></tr>
+    <tr><td>Enlaces de pago</td><td>&#10003;</td><td>&#10003;</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>Tarifas de Stripe:</strong> Mantiene tus tarifas de procesamiento estandar o negociadas, mas tarifa de plataforma del 0.75% por transaccion.<br>
+  <strong>Metodos de pago:</strong> Tarjetas de credito/debito, Apple Pay, Google Pay, ACH, PAD, debito directo SEPA. Mas de 130 divisas.<br>
+  Disponible con cualquier Hub gratuito, Starter, Pro y Enterprise.
+</div>
+</div>
+
+<!-- ====== INTEGRACIONES ====== -->
+
+<div class="section">
+<h2>Integraciones destacadas</h2>
+<ul class="features">
+  <li>Amplitude</li>
+  <li>Jira</li>
+  <li>Adobe Express</li>
+  <li>Aircall</li>
+  <li>LinkedIn</li>
+  <li>Microsoft Teams</li>
+</ul>
+</div>
+
+<!-- ====== FAQ ====== -->
+
+<div class="section">
+<h2>Preguntas frecuentes</h2>
+<details class="faq"><summary>Que es Commerce Hub?</summary></details>
+<details class="faq"><summary>Cual es la diferencia entre usuarios gratuitos y de pago?</summary></details>
+<details class="faq"><summary>Cuantos usuarios puedo tener con mi plan de Commerce Hub?</summary></details>
+<details class="faq"><summary>Que diferencia hay entre Sales Hub y Commerce Hub?</summary></details>
+<details class="faq"><summary>Que opcion es mas adecuada: la herramienta de pagos de HubSpot o Stripe?</summary></details>
+<details class="faq"><summary>Con Stripe, puedo mantener las tarifas negociadas?</summary></details>
+<details class="faq"><summary>Necesito utilizar todo Commerce Hub a la vez?</summary></details>
+</div>
+
+<p style="color:#999;font-size:0.8rem;margin-top:3rem;">Fuente: hubspot.com/pricing/commerce &mdash; Extraido y formateado para lectura rapida.</p>
+
+</body>
+</html>

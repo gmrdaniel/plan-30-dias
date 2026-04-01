@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Hub de HubSpot — Precios</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; line-height: 1.6; padding: 2rem; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.3rem; margin: 2rem 0 1rem; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.5rem; }
+    .subtitle { color: #666; margin-bottom: 2rem; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; max-width: 1000px; margin: 2rem 0; }
+    .card { background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem; }
+    .card.recommended { border-color: #4caf50; }
+    .card.enterprise { border-color: #f5a623; }
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.2rem; }
+    .card .desc { color: #666; font-size: 0.85rem; margin-bottom: 1rem; }
+    .price { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; }
+    .price-detail { color: #888; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 0.5rem; }
+    .credits { color: #666; font-size: 0.85rem; margin: 0.5rem 0; }
+    .features { list-style: none; padding: 0; }
+    .features li { padding: 0.3rem 0; padding-left: 1.5rem; position: relative; font-size: 0.9rem; }
+    .features li::before { content: "\2713"; position: absolute; left: 0; color: #4caf50; font-weight: bold; }
+    table { width: 100%; max-width: 1000px; border-collapse: collapse; margin: 1rem 0 2rem; background: white; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 0.82rem; }
+    th { background: #f5f5f5; font-weight: 600; color: #555; }
+    td:nth-child(2), td:nth-child(3), td:nth-child(4), th:nth-child(2), th:nth-child(3), th:nth-child(4) { text-align: center; }
+    .section { max-width: 1000px; margin-bottom: 2rem; }
+    .faq { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.5rem 0; }
+    .faq summary { font-weight: 600; cursor: pointer; font-size: 0.95rem; }
+    @media (max-width: 768px) { .cards { grid-template-columns: 1fr; } body { padding: 1rem; } }
+  </style>
+</head>
+<body>
+
+<h1>Data Hub</h1>
+<p class="subtitle">Todo lo que necesitas para conectar tus aplicaciones, sincronizar y organizar los datos de tus clientes y automatizar procesos empresariales.</p>
+
+<!-- ====== TARJETAS DE PRECIOS ====== -->
+
+<div class="cards">
+  <div class="card recommended">
+    <span class="badge">Recomendado</span>
+    <h3>Starter</h3>
+    <p class="desc">Software esencial de marketing, ventas, servicio al cliente, gestion de contenido y datos.</p>
+    <div class="price">Desde USD $15</div>
+    <div class="price-detail">/mes/licencia (anual: $15 | mensual: $20)</div>
+    <p class="credits">500 creditos de HubSpot incluidos</p>
+    <ul class="features">
+      <li>Sincronizacion de datos</li>
+      <li>Mapeo de campos personalizado</li>
+      <li>Recomendaciones de formato de datos con IA</li>
+      <li>Agente de datos</li>
+      <li>Enriquecimiento de empresas</li>
+      <li>Enriquecimiento de contactos</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Pro</h3>
+    <p class="desc">Completo software de gestion de datos para automatizar y ampliar procesos.</p>
+    <div class="price">Desde USD $720</div>
+    <div class="price-detail">/mes (incluye 1 licencia) | Adicionales: $45/mes | Mensual: $800</div>
+    <p class="credits">5,000 creditos de HubSpot incluidos</p>
+    <p><strong>Starter mas:</strong></p>
+    <ul class="features">
+      <li>Data Studio (Beta)</li>
+      <li>Resumen de la calidad de los datos</li>
+      <li>Automatizacion de la calidad de los datos</li>
+      <li>Gestion de duplicados en bloque</li>
+      <li>Automatizacion programable</li>
+    </ul>
+  </div>
+
+  <div class="card enterprise">
+    <h3>Enterprise</h3>
+    <p class="desc">Software mas potente de gestion de datos para control y flexibilidad avanzados.</p>
+    <div class="price">Desde USD $2,000</div>
+    <div class="price-detail">/mes (incluye 1 licencia) | Adicionales: $75/mes</div>
+    <p class="credits">10,000 creditos de HubSpot incluidos</p>
+    <p><strong>Pro, y ademas:</strong></p>
+    <ul class="features">
+      <li>Integraciones del almacen de datos</li>
+      <li>Cuenta de entorno de pruebas estandar</li>
+      <li>Objetos personalizados</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== TABLA: COMBINAR DATOS ====== -->
+
+<div class="section">
+<h2>Combinar datos</h2>
+<table>
+  <thead>
+    <tr><th>Caracteristica</th><th>Starter &mdash; $15/mes</th><th>Pro &mdash; $720/mes</th><th>Enterprise &mdash; $2,000/mes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Data Studio (Beta)</td><td>&mdash;</td><td>&#10003; (usa creditos)</td><td>&#10003; (usa creditos)</td></tr>
+    <tr><td>Integraciones del almacen de datos</td><td>&mdash;</td><td>&mdash;</td><td>&#10003;</td></tr>
+    <tr><td>Sincronizacion de datos</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ====== TABLA: MEJORAR DATOS ====== -->
+
+<div class="section">
+<h2>Mejorar datos</h2>
+<table>
+  <thead>
+    <tr><th>Caracteristica</th><th>Starter &mdash; $15/mes</th><th>Pro &mdash; $720/mes</th><th>Enterprise &mdash; $2,000/mes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Agente de datos</td><td>10 creditos/registro</td><td>10 creditos/registro</td><td>10 creditos/registro</td></tr>
+    <tr><td>Automatizacion de calidad de datos</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Resumen de calidad de datos</td><td>Cada 2 semanas</td><td>Cada 2 semanas</td><td>Cada 2 semanas</td></tr>
+    <tr><td>Tendencias de estado de datos</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Gestion de duplicados</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Gestion de duplicados en bloque</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Automatizacion programable</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Desencadenantes de workflows programados</td><td>&mdash;</td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Desencadenantes de workflows de webhook</td><td>&mdash;</td><td>Hasta 10</td><td>Hasta 100</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ====== INTEGRACIONES ====== -->
+
+<div class="section">
+<h2>Integraciones destacadas</h2>
+<ul class="features">
+  <li>Amplitude</li>
+  <li>Jira</li>
+  <li>Adobe Express</li>
+  <li>Aircall</li>
+  <li>LinkedIn</li>
+  <li>Microsoft Teams</li>
+</ul>
+</div>
+
+<!-- ====== FAQ ====== -->
+
+<div class="section">
+<h2>Preguntas frecuentes</h2>
+<details class="faq"><summary>Que es Data Hub?</summary></details>
+<details class="faq"><summary>Que es Data Studio?</summary></details>
+<details class="faq"><summary>En que se diferencia Data Hub del Smart CRM?</summary></details>
+<details class="faq"><summary>Por que la conexion de Data Studio es diferente a las integraciones tradicionales?</summary></details>
+<details class="faq"><summary>Con que aplicaciones y almacenes de datos se conecta Data Hub?</summary></details>
+<details class="faq"><summary>Como funciona el sistema de creditos de Data Hub?</summary></details>
+<details class="faq"><summary>Que tipo de asistencia ofrece HubSpot para Data Hub?</summary></details>
+</div>
+
+<p style="color:#999;font-size:0.8rem;margin-top:3rem;">Fuente: hubspot.com/pricing/data &mdash; Extraido y formateado para lectura rapida.</p>
+
+</body>
+</html>

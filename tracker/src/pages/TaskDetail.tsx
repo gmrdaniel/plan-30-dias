@@ -5,7 +5,7 @@ import { PRIORITY_CONFIG, STATUS_CONFIG, type TaskStatus } from '../lib/types'
 import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText, ExternalLink } from 'lucide-react'
 import { isDto, getDtoInfo } from '../lib/dtos'
 import { getTaskTools } from '../lib/tools'
-import { TASK_DETAIL_MD, TASK_API_MD } from '../docs/tareas'
+import { TASK_DETAIL_MD, TASK_EXTRA_TABS } from '../docs/tareas'
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -14,7 +14,7 @@ import remarkGfm from 'remark-gfm'
 
 const STATUSES: TaskStatus[] = ['pendiente', 'en_progreso', 'bloqueada', 'completada']
 
-type Tab = 'resumen' | 'detalle' | 'detalle_api'
+type Tab = string
 
 export default function TaskDetail() {
   const { taskId } = useParams<{ taskId: string }>()
@@ -35,7 +35,7 @@ export default function TaskDetail() {
   const responsables = task.assignments.filter((a) => a.assignment_role === 'responsable' || a.assignment_role === 'co-ejecuta')
   const apoyo = task.assignments.filter((a) => a.assignment_role === 'apoyo')
   const detailMd = TASK_DETAIL_MD[task.task_id] || null
-  const apiMd = TASK_API_MD[task.task_id] || null
+  const extraTabs = TASK_EXTRA_TABS[task.task_id] || []
 
   const handleComment = async () => {
     if (!newComment.trim() || !user) return
@@ -90,16 +90,17 @@ export default function TaskDetail() {
             Detalle completo
           </button>
         )}
-        {apiMd && (
+        {extraTabs.map((tab, i) => (
           <button
-            onClick={() => setActiveTab('detalle_api')}
+            key={i}
+            onClick={() => setActiveTab(`extra_${i}`)}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              activeTab === 'detalle_api' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              activeTab === `extra_${i}` ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            Detalle API
+            {tab.label}
           </button>
-        )}
+        ))}
       </div>
 
       {/* Tab: Detalle */}
@@ -127,30 +128,32 @@ export default function TaskDetail() {
         </div>
       )}
 
-      {/* Tab: Detalle API */}
-      {activeTab === 'detalle_api' && apiMd && (
-        <div className="bg-white border rounded-xl shadow-sm p-8">
-          <article className="prose prose-sm prose-gray max-w-none
-            prose-headings:font-bold
-            prose-h1:text-2xl prose-h1:mb-4
-            prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3
-            prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2
-            prose-table:w-full prose-table:text-sm prose-table:border-collapse
-            prose-thead:bg-gray-50 prose-thead:border-b-2 prose-thead:border-gray-200
-            prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-th:text-gray-700
-            prose-td:px-3 prose-td:py-2 prose-td:border-t prose-td:border-gray-100
-            prose-tr:border-b prose-tr:border-gray-100
-            prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-            prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:p-4
-            [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-100 [&_pre_code]:text-xs
-            prose-a:text-indigo-600
-            prose-li:my-0.5
-            prose-strong:text-gray-900
-          ">
-            <Markdown remarkPlugins={[remarkGfm]}>{apiMd}</Markdown>
-          </article>
-        </div>
-      )}
+      {/* Extra Tabs */}
+      {extraTabs.map((tab, i) => (
+        activeTab === `extra_${i}` && (
+          <div key={i} className="bg-white border rounded-xl shadow-sm p-8">
+            <article className="prose prose-sm prose-gray max-w-none
+              prose-headings:font-bold
+              prose-h1:text-2xl prose-h1:mb-4
+              prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3
+              prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2
+              prose-table:w-full prose-table:text-sm prose-table:border-collapse
+              prose-thead:bg-gray-50 prose-thead:border-b-2 prose-thead:border-gray-200
+              prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-th:text-gray-700
+              prose-td:px-3 prose-td:py-2 prose-td:border-t prose-td:border-gray-100
+              prose-tr:border-b prose-tr:border-gray-100
+              prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+              prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:p-4
+              [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-100 [&_pre_code]:text-xs
+              prose-a:text-indigo-600
+              prose-li:my-0.5
+              prose-strong:text-gray-900
+            ">
+              <Markdown remarkPlugins={[remarkGfm]}>{tab.content}</Markdown>
+            </article>
+          </div>
+        )
+      ))}
 
       {/* Tab: Resumen */}
       {activeTab === 'resumen' && (
