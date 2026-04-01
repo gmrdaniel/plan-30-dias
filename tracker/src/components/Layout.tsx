@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/use-auth'
-import { LayoutDashboard, List, User, LogOut, Target, FileText, GitBranch, ShoppingCart, AlertTriangle } from 'lucide-react'
+import { LayoutDashboard, List, User, LogOut, Target, FileText, GitBranch, ShoppingCart, AlertTriangle, BarChart3 } from 'lucide-react'
 
 export default function Layout() {
   const { user, logout } = useAuth()
@@ -13,6 +13,7 @@ export default function Layout() {
     { to: '/milestones', icon: Target, label: 'Hitos' },
     { to: '/procurement', icon: ShoppingCart, label: 'Contratacion' },
     { to: '/blockers', icon: AlertTriangle, label: 'Bloqueantes' },
+    { to: '/pipeline', icon: BarChart3, label: 'Pipeline B2B' },
     { to: '/docs', icon: FileText, label: 'Documentos' },
     { to: '/docs/dtos-dependencias', icon: GitBranch, label: 'DTOs / Contratos' },
   ]

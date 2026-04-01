@@ -9,6 +9,7 @@ import TaskDetail from './pages/TaskDetail'
 import Milestones from './pages/Milestones'
 import Procurement from './pages/Procurement'
 import Blockers from './pages/Blockers'
+import Pipeline from './pages/Pipeline'
 import DocsIndex from './pages/DocsIndex'
 import DocView from './pages/DocView'
 
@@ -28,6 +29,7 @@ function AppRoutes() {
         <Route path="/task/:taskId" element={<TaskDetail />} />
         <Route path="/procurement" element={<Procurement />} />
         <Route path="/blockers" element={<Blockers />} />
+        <Route path="/pipeline" element={<Pipeline />} />
       </Route>
     </Routes>
   )
