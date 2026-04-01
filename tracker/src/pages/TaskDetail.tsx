@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTasks, useChecklist, useComments } from '../hooks/use-tasks'
 import { useAuth } from '../hooks/use-auth'
 import { PRIORITY_CONFIG, STATUS_CONFIG, type TaskStatus } from '../lib/types'
-import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText, ExternalLink } from 'lucide-react'
+import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText, ExternalLink, Pencil, Trash2, X, Check } from 'lucide-react'
 import { isDto, getDtoInfo } from '../lib/dtos'
 import { getTaskTools } from '../lib/tools'
 import { TASK_DETAIL_MD, TASK_EXTRA_TABS } from '../docs/tareas'
@@ -21,10 +21,12 @@ export default function TaskDetail() {
   const navigate = useNavigate()
   const { tasks, updateStatus } = useTasks()
   const { items: checklist, toggleItem } = useChecklist(taskId || '')
-  const { comments, addComment } = useComments(taskId || '')
+  const { comments, addComment, editComment, deleteComment } = useComments(taskId || '')
   const { user, members } = useAuth()
   const [newComment, setNewComment] = useState('')
   const [activeTab, setActiveTab] = useState<Tab>('resumen')
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null)
+  const [editingContent, setEditingContent] = useState('')
 
   const task = tasks.find((t) => t.task_id === taskId)
   if (!task) return <div className="p-8 text-gray-400">Tarea no encontrada</div>
@@ -326,7 +328,7 @@ export default function TaskDetail() {
             </h2>
             <div className="space-y-3 mb-4">
               {comments.map((c: any) => (
-                <div key={c.id} className="flex gap-2">
+                <div key={c.id} className="flex gap-2 group">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
                     style={{ backgroundColor: c.team_members?.avatar_color }}>
                     {c.team_members?.short_name?.[0]}
@@ -337,8 +339,59 @@ export default function TaskDetail() {
                       <span className="text-xs text-gray-400">
                         {formatDistanceToNow(new Date(c.created_at), { addSuffix: true, locale: es })}
                       </span>
+                      {c.updated_at && <span className="text-xs text-gray-400 italic">(editado)</span>}
                     </div>
-                    <p className="text-sm text-gray-700 mt-0.5">{c.content}</p>
+                    {editingCommentId === c.id ? (
+                      <div className="flex gap-2 mt-1">
+                        <input
+                          value={editingContent}
+                          onChange={(e) => setEditingContent(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && editingContent.trim()) {
+                              editComment(c.id, editingContent.trim())
+                              setEditingCommentId(null)
+                            }
+                            if (e.key === 'Escape') setEditingCommentId(null)
+                          }}
+                          autoFocus
+                          className="flex-1 px-2 py-1 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                        <button
+                          onClick={() => { editComment(c.id, editingContent.trim()); setEditingCommentId(null) }}
+                          className="p-1 text-green-600 hover:bg-green-50 rounded"
+                        >
+                          <Check size={14} />
+                        </button>
+                        <button
+                          onClick={() => setEditingCommentId(null)}
+                          className="p-1 text-gray-400 hover:bg-gray-100 rounded"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-1">
+                        <p className="text-sm text-gray-700 mt-0.5 flex-1">{c.content}</p>
+                        {user && user.id === c.author_id && (
+                          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                            <button
+                              onClick={() => { setEditingCommentId(c.id); setEditingContent(c.content) }}
+                              className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded"
+                              title="Editar"
+                            >
+                              <Pencil size={13} />
+                            </button>
+                            <button
+                              onClick={() => { if (confirm('Eliminar comentario?')) deleteComment(c.id) }}
+                              className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                              title="Eliminar"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

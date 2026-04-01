@@ -54,6 +54,7 @@ export interface TaskComment {
   author_id: string
   content: string
   created_at: string
+  updated_at: string | null
   team_members?: TeamMember
 }
 

@@ -96,7 +96,7 @@ export function useComments(taskId: string) {
     fetchComments()
     const channel = supabase
       .channel(`comments-${taskId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'task_comments', filter: `task_id=eq.${taskId}` }, fetchComments)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_comments', filter: `task_id=eq.${taskId}` }, fetchComments)
       .subscribe()
     return () => { supabase.removeChannel(channel) }
   }, [taskId, fetchComments])
@@ -106,7 +106,17 @@ export function useComments(taskId: string) {
     await fetchComments()
   }
 
-  return { comments, addComment }
+  const editComment = async (commentId: string, content: string) => {
+    await supabase.from('task_comments').update({ content, updated_at: new Date().toISOString() }).eq('id', commentId)
+    await fetchComments()
+  }
+
+  const deleteComment = async (commentId: string) => {
+    await supabase.from('task_comments').delete().eq('id', commentId)
+    await fetchComments()
+  }
+
+  return { comments, addComment, editComment, deleteComment }
 }
 
 export function useMilestones() {
