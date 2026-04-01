@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowDown, CheckCircle2, Zap, Mail, XCircle, Database, Search, BarChart3 } from 'lucide-react'
+import { ArrowDown, CheckCircle2, Zap, Mail, XCircle, Database, Search, BarChart3, Bot, UserRound, Unplug, RefreshCw } from 'lucide-react'
 
 interface PipelineStep {
   id: string
@@ -335,11 +335,11 @@ export default function Pipeline() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 text-xs bg-white border rounded-lg p-3 mb-4">
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> Automático</span>
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" /> Manual</span>
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" /> No conectado / Gap</span>
-        <span className="flex items-center gap-1">→ Sync a otro sistema</span>
+      <div className="flex flex-wrap gap-5 text-xs bg-white border rounded-lg p-3 mb-4">
+        <span className="flex items-center gap-1.5"><Bot size={14} className="text-green-600" /> Automático</span>
+        <span className="flex items-center gap-1.5"><UserRound size={14} className="text-amber-600" /> Manual</span>
+        <span className="flex items-center gap-1.5"><Unplug size={14} className="text-red-500" /> No conectado / Gap</span>
+        <span className="flex items-center gap-1.5"><RefreshCw size={14} className="text-blue-500" /> Sync a otro sistema</span>
       </div>
 
       {PHASES.map((phase, pi) => (
@@ -375,17 +375,19 @@ export default function Pipeline() {
                       {/* Tools */}
                       <div className="flex flex-wrap gap-2 mt-2">
                         {step.tools.map((t, i) => (
-                          <span key={i} className={`text-xs px-2 py-0.5 rounded-full border ${
+                          <span key={i} className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${
                             t.auto ? 'bg-green-50 text-green-700 border-green-200' : 'bg-amber-50 text-amber-700 border-amber-200'
                           }`}>
+                            {t.auto ? <Bot size={12} /> : <UserRound size={12} />}
                             {t.name}: {t.role}
                           </span>
                         ))}
                         {step.syncs.map((s, i) => (
-                          <span key={`s${i}`} className={`text-xs px-2 py-0.5 rounded-full border ${
+                          <span key={`s${i}`} className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${
                             s.auto ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-gray-50 text-gray-600 border-gray-200'
                           }`}>
-                            → {s.target} ({s.method})
+                            <RefreshCw size={12} />
+                            {s.target} ({s.method})
                           </span>
                         ))}
                       </div>
@@ -394,8 +396,8 @@ export default function Pipeline() {
                       {step.gaps && step.gaps.length > 0 && (
                         <div className="flex gap-1 mt-2">
                           {step.gaps.map((g) => (
-                            <Link key={g} to="/blockers" className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full border border-red-200 hover:bg-red-200">
-                              ⚠ {g}
+                            <Link key={g} to="/blockers" className="inline-flex items-center gap-1 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full border border-red-200 hover:bg-red-200">
+                              <Unplug size={12} /> {g}
                             </Link>
                           ))}
                         </div>
