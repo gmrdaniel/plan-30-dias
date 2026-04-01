@@ -98,56 +98,86 @@ COLUMNA 5: Video Gap Score
   Si > 5% → video_gap_score = 1-4 (ya invierte en video)
   Config: Fórmula Clay (no enrichment, no gasta créditos)
       ↓
-COLUMNA 6: Export a Smartlead (NATIVO — integración directa)
-  Config: Enrichment tipo "Smartlead: Add lead to campaign"
-  API Key: desde app.smartlead.ai/app/settings/profile
-  Campaña: seleccionar campaña pre-creada en Smartlead
-  Campos mapeados:
-    email → Email Address (requerido)
-    first_name → First Name
-    last_name → Last Name
-    empresa → Company Name
-    linkedin_url → Personal LinkedIn URL
-    phone → Phone Number
-    website → Company URL
-  Conditional run: solo si email_valid = true
-  Duplicados: Smartlead rechaza automáticamente emails ya existentes en campaña
+--- EXPORTS: dependen del plan de Clay contratado (ver bloqueante B11) ---
+
+COLUMNA 6: Export a Smartlead
+  ┌─ Si plan Launch ($185) o Growth ($495): NATIVO dentro de Clay
+  │   Config: Enrichment tipo "Smartlead: Add lead to campaign"
+  │   API Key: desde app.smartlead.ai/app/settings/profile
+  │   Campaña: seleccionar campaña pre-creada en Smartlead
+  │   Campos mapeados:
+  │     email → Email Address (requerido)
+  │     first_name → First Name
+  │     last_name → Last Name
+  │     empresa → Company Name
+  │     linkedin_url → Personal LinkedIn URL
+  │     phone → Phone Number
+  │     website → Company URL
+  │   Conditional run: solo si email_valid = true
+  │   Duplicados: Smartlead rechaza automáticamente emails ya existentes
+  │
+  └─ Si plan Starter ($149): MANUAL
+      1. Export CSV desde Clay (filtrar filas con email_valid = true)
+      2. Importar CSV en Smartlead UI → campaña
+      3. O script Python de Gabriel: clay_export.csv → Smartlead API
+      Frecuencia: después de cada batch de enrichment
       ↓
-COLUMNA 7: Export a Expandi (HTTP API POST — no hay integración nativa)
-  URL: https://api.expandi.io/api/v1/leads (verificar endpoint exacto)
-  Header: Authorization: Bearer {EXPANDI_API_KEY}
-  Body: {
-    "linkedin_url": "/LinkedIn URL",
-    "first_name": "/First Name",
-    "last_name": "/Last Name",
-    "company": "/Company Name"
-  }
-  Conditional run: solo si linkedin_url tiene valor
-  Rate limit: 10 requests/segundo
+COLUMNA 7: Export a Expandi
+  ┌─ Si plan Growth ($495): HTTP API dentro de Clay
+  │   URL: https://api.expandi.io/api/v1/leads
+  │   Header: Authorization: Bearer {EXPANDI_API_KEY}
+  │   Body: {
+  │     "linkedin_url": "/LinkedIn URL",
+  │     "first_name": "/First Name",
+  │     "last_name": "/Last Name",
+  │     "company": "/Company Name"
+  │   }
+  │   Conditional run: solo si linkedin_url tiene valor
+  │
+  └─ Si plan Starter ($149) o Launch ($185): MANUAL
+      1. Export CSV desde Clay (filtrar filas con linkedin_url)
+      2. Importar CSV en Expandi UI
+      3. O script Python de Gabriel: clay_export.csv → Expandi API
+      Frecuencia: después de cada batch de enrichment
       ↓
-COLUMNA 8: Sync a Supabase (HTTP API POST — webhook a Edge Function)
-  URL: https://nvbanvwibmghxroybjxp.supabase.co/functions/v1/sync-clay-prospect
-  Header: Authorization: Bearer {SUPABASE_ANON_KEY}
-  Content-Type: application/json
-  Body: {
-    "empresa": "/Company Name",
-    "website": "/Website",
-    "industria": "/Industry",
-    "country": "/Country",
-    "email": "/Email",
-    "email_valid": "/Email Valid",
-    "linkedin_url": "/LinkedIn URL",
-    "job_title": "/Job Title",
-    "first_name": "/First Name",
-    "last_name": "/Last Name",
-    "icp_score": /ICP Score,
-    "video_gap_score": /Video Gap Score,
-    "revenue": /Revenue,
-    "classification": "/Classification"
-  }
-  Conditional run: solo si icp_score tiene valor AND email tiene valor
-  Resultado: registro en client_inventory + client_contacts + lista "Sprint-Abr-B2B"
+COLUMNA 8: Sync a Supabase
+  ┌─ Si plan Growth ($495): Webhook dentro de Clay
+  │   URL: https://nvbanvwibmghxroybjxp.supabase.co/functions/v1/sync-clay-prospect
+  │   Header: Authorization: Bearer {SUPABASE_ANON_KEY}
+  │   Content-Type: application/json
+  │   Body: {
+  │     "empresa": "/Company Name",
+  │     "website": "/Website",
+  │     "industria": "/Industry",
+  │     "country": "/Country",
+  │     "email": "/Email",
+  │     "email_valid": "/Email Valid",
+  │     "linkedin_url": "/LinkedIn URL",
+  │     "job_title": "/Job Title",
+  │     "first_name": "/First Name",
+  │     "last_name": "/Last Name",
+  │     "icp_score": /ICP Score,
+  │     "video_gap_score": /Video Gap Score,
+  │     "revenue": /Revenue,
+  │     "classification": "/Classification"
+  │   }
+  │   Conditional run: solo si icp_score tiene valor AND email tiene valor
+  │
+  └─ Si plan Starter ($149) o Launch ($185): Script Python
+      1. Export CSV desde Clay (todos los campos)
+      2. Gabriel corre script: python sync_clay_to_supabase.py --file clay_export.csv
+      3. Script hace upsert en client_inventory + client_contacts + lista
+      Frecuencia: después de cada batch de enrichment
 ```
+
+### Resumen de exports por plan
+
+| Export | Starter $149 | Launch $185 | Growth $495 |
+|---|---|---|---|
+| Smartlead | CSV manual / script | **Nativo automático** | **Nativo automático** |
+| Expandi | CSV manual / script | CSV manual / script | **HTTP API automático** |
+| Supabase | Script Python | Script Python | **Webhook automático** |
+| Esfuerzo Gabriel por batch | ~1 hora (3 exports manuales) | ~30 min (2 exports manuales) | ~0 min (todo automático) |
 
 ### Paso 1.5: Test con 20 prospectos (datos de prueba)
 
@@ -163,9 +193,9 @@ Usar las 20 empresas seleccionadas del CSV de prueba (B17). Swapear emails/telé
 | CP04 | Email valid rate | >=75% de los encontrados | "Bounce rate >25% — verificar calidad fuente" |
 | CP05 | LinkedIn fill rate | >=70% (14/20) | "LinkedIn bajo — verificar Sales Nav acceso" |
 | CP06 | ICP score generado | 100% (20/20) | "Sculptor no generó score — revisar prompt" |
-| CP07 | Push a Smartlead | == rows con email válido | "Push falló — verificar API key y campaña" |
-| CP08 | Push a Expandi | == rows con linkedin_url | "HTTP API falló — verificar endpoint Expandi" |
-| CP09 | Sync Supabase | == rows con icp_score + email | "Edge Function falló — verificar webhook URL" |
+| CP07 | Datos en Smartlead | == rows con email válido | Si nativo (Launch+): "Push falló — verificar API key y campaña". Si manual: "CSV no importó — verificar formato" |
+| CP08 | Datos en Expandi | == rows con linkedin_url | Si HTTP API (Growth): "API falló — verificar endpoint". Si manual: "CSV no importó — verificar formato" |
+| CP09 | Datos en Supabase | == rows con icp_score + email | Si webhook (Growth): "Edge Function falló — verificar URL". Si script: "Script falló — verificar conexión Supabase" |
 | CP10 | Créditos consumidos | Registrar en spreadsheet | "Si >4 créditos/prospecto → alertar Daniel upgrade" |
 
 ### Paso 1.6: Batch de 200 prospectos (medir créditos reales)

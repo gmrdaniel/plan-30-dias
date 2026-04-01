@@ -237,3 +237,70 @@ La Neta
 | Datos de contacto (email, decisor) | 0% | Lo cubre Clay, no SmartScout |
 
 **Score general: la API cubre ~80% de lo que T06 necesita de SmartScout.**
+
+---
+
+## Automatización completa desde Clay (requiere plan Growth $495/mes)
+
+> **NOTA:** Esta sección solo aplica si se contrata el plan Growth de Clay. Con Launch ($185) o Starter ($149), los exports a Expandi y Supabase se hacen via CSV + scripts Python.
+
+### HTTP API: Clay → Expandi (automático por fila)
+
+```
+Enrichment type: HTTP API
+Method: POST
+URL: https://api.expandi.io/api/v1/leads
+Headers:
+  Authorization: Bearer {EXPANDI_API_KEY}
+  Content-Type: application/json
+Body:
+{
+  "linkedin_url": "/LinkedIn URL",
+  "first_name": "/First Name",
+  "last_name": "/Last Name",
+  "company": "/Company Name"
+}
+Conditional run: /LinkedIn URL is not empty
+Rate limit: 10 requests/second
+```
+
+### Webhook: Clay → Supabase Edge Function (automático por fila)
+
+```
+Enrichment type: HTTP API
+Method: POST
+URL: https://nvbanvwibmghxroybjxp.supabase.co/functions/v1/sync-clay-prospect
+Headers:
+  Authorization: Bearer {SUPABASE_ANON_KEY}
+  Content-Type: application/json
+Body:
+{
+  "empresa": "/Company Name",
+  "website": "/Website",
+  "industria": "/Industry",
+  "country": "/Country",
+  "email": "/Email",
+  "email_valid": "/Email Valid",
+  "linkedin_url": "/LinkedIn URL",
+  "job_title": "/Job Title",
+  "first_name": "/First Name",
+  "last_name": "/Last Name",
+  "icp_score": /ICP Score,
+  "video_gap_score": /Video Gap Score,
+  "revenue": /Revenue,
+  "classification": "/Classification"
+}
+Conditional run: /ICP Score is not empty AND /Email is not empty
+```
+
+### Comparación: manual vs automático
+
+| Aspecto | Manual (Starter/Launch) | Automático (Growth) |
+|---|---|---|
+| Smartlead | CSV export → import UI (Launch: nativo) | Nativo |
+| Expandi | CSV export → import UI o script | HTTP API por fila |
+| Supabase | CSV export → script Python | Webhook por fila |
+| Tiempo Gabriel por batch | ~30-60 min | ~0 min |
+| Errores humanos | Posibles (CSV mal formateado) | Mínimos (config una vez) |
+| Frecuencia práctica | 1-2 veces/semana (batches) | Real-time (cada fila) |
+| Escalabilidad Mes 2 | Limitada (manual no escala a 2,500+) | Excelente |
