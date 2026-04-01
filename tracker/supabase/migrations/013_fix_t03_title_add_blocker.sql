@@ -6,7 +6,7 @@ UPDATE tasks SET
   objective = 'Telegram operativo con canales por función. Relay.app configurado para notificar a ventas SOLO cuando deben actuar. Logging de eventos es responsabilidad de cada herramienta (T07/T08/T12).'
 WHERE task_id = 'T03';
 
--- Blocker: Expandi not in Relay
+-- Blockers: upsert to be idempotent (safe if 013_blockers_hubspot already ran)
 INSERT INTO blockers (code, category, question, context, owner, asks_to, needed_by, related_tasks) VALUES
 ('B19', 'Infraestructura',
  'Expandi NO está en Relay.app — notificaciones de LinkedIn replies solo via HubSpot',
@@ -16,4 +16,12 @@ INSERT INTO blockers (code, category, question, context, owner, asks_to, needed_
 ('B20', 'Definicion',
  'Daniel/Pepe: validar lista de notificaciones — cuáles activar para ventas',
  'T03 tiene 12 tipos de eventos (N1-N12). Recomendación: activar N1 (email reply), N2 (LinkedIn reply), N3 (WhatsApp reply), N4 (reunión agendada), N6 (score alto), N7 (creador cualificado). Los demás solo log en HubSpot. Daniel y Pepe deben confirmar antes de configurar los relays.',
- 'Daniel', 'Daniel + Pepe (Eq1)', '7 Abr (Dia 2)', 'T03');
+ 'Daniel', 'Daniel + Pepe (Eq1)', '7 Abr (Dia 2)', 'T03')
+ON CONFLICT (code) DO UPDATE SET
+  category      = EXCLUDED.category,
+  question      = EXCLUDED.question,
+  context       = EXCLUDED.context,
+  owner         = EXCLUDED.owner,
+  asks_to       = EXCLUDED.asks_to,
+  needed_by     = EXCLUDED.needed_by,
+  related_tasks = EXCLUDED.related_tasks;

@@ -1,5 +1,6 @@
 export interface ProcurementRow {
   tool: string
+  url?: string
   currentPlan: string
   discovered: string
   options: { label: string; cost: string; note: string }[]
@@ -12,6 +13,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   // --- Suscripciones con nivel por definir ---
   {
     tool: 'Clay',
+    url: 'https://www.clay.com/pricing',
     currentPlan: 'Starter $149/mes',
     discovered: 'Starter no tiene Smartlead nativo ni HTTP API. Si se quiere automatización completa se necesita Growth.',
     options: [
@@ -25,6 +27,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'HubSpot CRM (3 cuentas)',
+    url: 'https://www.hubspot.com/pricing',
     currentPlan: 'Free $0',
     discovered: 'Free no tiene workflows automáticos. Se necesitan 3 cuentas: 1 Equipo 3 + 1 Pepe (Eq1) + 1 Mery (Eq2). Upgrade a Pro en Semana 3 para workflows.',
     options: [
@@ -37,6 +40,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Unbounce',
+    url: 'https://unbounce.com/pricing',
     currentPlan: '$99/mes (solo B2B)',
     discovered: 'Plan Build $99 cubre AMBOS micrositios (B2B + Creadores). Reemplaza Leadpages. DTR, hidden fields, webhooks, HubSpot nativo.',
     options: [
@@ -49,6 +53,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Expandi',
+    url: 'https://expandi.io/pricing',
     currentPlan: '$99/mes',
     discovered: 'Tiene integración nativa con HubSpot (bidireccional). Verificar que plan $99 la incluye (B19).',
     options: [
@@ -60,6 +65,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'ManyChat Pro',
+    url: 'https://manychat.com/pricing',
     currentPlan: '$65/mes (5K contactos)',
     discovered: 'Correcto para sprint. Si Mes 2 escala a 25K contactos → $235/mes.',
     options: [
@@ -73,6 +79,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   // --- Herramientas sin cambio de plan ---
   {
     tool: 'Smartlead',
+    url: 'https://smartlead.ai/pricing',
     currentPlan: '$94/mes',
     discovered: 'Ya contratado. 15 cuentas warmup + rotación. Correcto.',
     options: [{ label: 'Plan actual $94', cost: '$94/mes', note: 'Ya contratado. Sin cambios.' }],
@@ -82,6 +89,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Google Workspace (15 cuentas)',
+    url: 'https://workspace.google.com/pricing',
     currentPlan: '~$108/mes',
     discovered: '15 cuentas nuevas en 5 dominios (4 existentes + 1 por comprar).',
     options: [{ label: '$7.20 × 15 cuentas', cost: '$108/mes', note: 'Business Starter. SMTP/IMAP para Smartlead.' }],
@@ -91,6 +99,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'SmartScout',
+    url: 'https://www.smartscout.com/pricing',
     currentPlan: '$97/mes',
     discovered: 'Ya contratado. API no incluida (plan superior). UI manual suficiente para sprint.',
     options: [{ label: 'Plan actual $97', cost: '$97/mes', note: 'API no incluida. Para Fase 2 (Mes 2) evaluar plan con API.' }],
@@ -100,6 +109,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Apify',
+    url: 'https://apify.com/pricing',
     currentPlan: '$49/mes',
     discovered: 'Ya contratado. API incluida. Correcto.',
     options: [{ label: 'Plan actual $49', cost: '$49/mes', note: 'Ya contratado. API incluida.' }],
@@ -109,6 +119,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Sendspark',
+    url: 'https://www.sendspark.com/pricing',
     currentPlan: '$129/mes',
     discovered: 'Video personalizado B2B. Correcto.',
     options: [{ label: 'Pro $129', cost: '$129/mes', note: 'Variables dinámicas por prospecto.' }],
@@ -118,6 +129,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'ElevenLabs',
+    url: 'https://elevenlabs.io/pricing',
     currentPlan: '$99/mes',
     discovered: 'Clonación de voz IA. Correcto.',
     options: [{ label: 'Creator $99', cost: '$99/mes', note: 'Entrenamiento clon + API ManyChat.' }],
@@ -127,6 +139,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Klaviyo',
+    url: 'https://www.klaviyo.com/pricing',
     currentPlan: '$20/mes',
     discovered: 'SMS recuperación abandono Elevn. Correcto.',
     options: [{ label: 'Plan base $20', cost: '$20/mes', note: 'Correcto para sprint.' }],
@@ -136,6 +149,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'JustCall',
+    url: 'https://justcall.io/pricing',
     currentPlan: '$30/mes',
     discovered: '1 usuario. Correcto.',
     options: [{ label: 'Plan base $30', cost: '$30/mes', note: '1 usuario, llamadas Día 18.' }],
@@ -145,6 +159,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Twilio',
+    url: 'https://www.twilio.com/pricing',
     currentPlan: '~$30/mes',
     discovered: 'Pay per use. Registro A2P puede tardar semanas.',
     options: [{ label: 'Pay per use', cost: '~$30/mes', note: 'Iniciar registro A2P temprano.' }],
@@ -154,6 +169,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Relay.app',
+    url: 'https://www.relay.app/pricing',
     currentPlan: '$9/mes',
     discovered: 'Tiene: Smartlead, ManyChat, Twilio, Calendly, HubSpot, Telegram. No tiene: Expandi, Sendspark, Unbounce.',
     options: [{ label: 'Plan base $9', cost: '$9/mes', note: 'Correcto. Expandi via HubSpot.' }],
@@ -163,6 +179,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Outgrow',
+    url: 'https://outgrow.co/pricing',
     currentPlan: '$22/mes',
     discovered: 'Calculadoras interactivas. Correcto.',
     options: [{ label: 'Freelancer $22', cost: '$22/mes', note: 'Correcto.' }],
@@ -172,6 +189,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Social Blade',
+    url: 'https://socialblade.com',
     currentPlan: '$4/mes',
     discovered: 'Analytics creadores. Correcto.',
     options: [{ label: 'Plan base $4', cost: '$4/mes', note: 'Correcto.' }],
@@ -181,6 +199,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Visualping',
+    url: 'https://visualping.io/pricing',
     currentPlan: '$25/mes',
     discovered: 'Monitoreo competitivo. Semana 3+.',
     options: [{ label: 'Plan base $25', cost: '$25/mes', note: 'Semana 3+.' }],
@@ -191,6 +210,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   // --- Costos únicos ---
   {
     tool: '1 Dominio (GoDaddy)',
+    url: 'https://www.godaddy.com',
     currentPlan: '5 dominios ~$60',
     discovered: '4 ya comprados. Solo 1 por comprar (nombre por definir B01).',
     options: [{ label: '1 dominio', cost: '~$12 único', note: '4 ya existen: elevnhub, elevnpro, lanetahub, lanetapro.' }],
@@ -200,6 +220,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Slybroadcast',
+    url: 'https://www.slybroadcast.com',
     currentPlan: '$175 paquete',
     discovered: 'Voicemail sin timbre. No tiene HubSpot (G1).',
     options: [{ label: 'Paquete $175', cost: '$175 único', note: 'No logea en HubSpot. Ver G1.' }],
@@ -210,6 +231,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   // --- Eliminadas ---
   {
     tool: 'Leadpages',
+    url: 'https://www.leadpages.com/pricing',
     currentPlan: '$49/mes',
     discovered: 'DESCARTADA. Unbounce Build cubre B2B + Creadores.',
     options: [{ label: 'Eliminar', cost: '$0', note: 'Ahorro $49/mes. Unbounce Build lo reemplaza.' }],
@@ -220,6 +242,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   // --- Gratuitas ---
   {
     tool: 'Telegram',
+    url: 'https://telegram.org',
     currentPlan: 'Free',
     discovered: 'Reemplazó Slack.',
     options: [{ label: 'Free', cost: '$0', note: '' }],
@@ -229,6 +252,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Branch.io',
+    url: 'https://www.branch.io/pricing',
     currentPlan: 'Free',
     discovered: 'Deep linking <10K clicks.',
     options: [{ label: 'Free', cost: '$0', note: '' }],
@@ -238,6 +262,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Calendly',
+    url: 'https://calendly.com/pricing',
     currentPlan: 'No estaba',
     discovered: 'CTA micrositios. HubSpot nativo.',
     options: [{ label: 'Free', cost: '$0', note: '' }],
@@ -247,6 +272,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Zapier',
+    url: 'https://zapier.com/pricing',
     currentPlan: 'No estaba',
     discovered: 'Backup integraciones (ManyChat→HubSpot).',
     options: [{ label: 'Free (100 tasks)', cost: '$0', note: '' }],
@@ -257,6 +283,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   // --- Opcionales ---
   {
     tool: 'LinkedIn Sales Navigator',
+    url: 'https://business.linkedin.com/sales-solutions/compare-plans',
     currentPlan: 'Opcional',
     discovered: 'Para enrichment Clay mejorado.',
     options: [{ label: '$100/usuario', cost: '$100/mes', note: 'Evaluar Día 3.' }],
@@ -266,6 +293,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Agente voz IA (Synthflow)',
+    url: 'https://www.synthflow.ai/pricing',
     currentPlan: 'Opcional',
     discovered: 'Llamadas autónomas B2B.',
     options: [{ label: '$29-500', cost: '$29-500/mes', note: 'Evaluar Día 4.' }],
@@ -275,6 +303,7 @@ export const PROCUREMENT_ANALYSIS: ProcurementRow[] = [
   },
   {
     tool: 'Routable',
+    url: 'https://routable.com',
     currentPlan: 'Opcional',
     discovered: 'Pagos masivos creadores. Puede ser Mes 2.',
     options: [{ label: '~$500', cost: '~$500/mes', note: 'Evaluar Semana 3.' }],

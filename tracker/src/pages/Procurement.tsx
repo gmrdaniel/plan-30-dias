@@ -148,7 +148,11 @@ function AnalysisTab() {
             <div key={row.tool} className="bg-white border rounded-xl p-4">
               <div className="flex items-start justify-between gap-4 mb-2">
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900">{row.tool}</h3>
+                  <h3 className="text-sm font-bold text-gray-900">
+                    {row.url ? (
+                      <a href={row.url} target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 underline decoration-dotted underline-offset-2">{row.tool}</a>
+                    ) : row.tool}
+                  </h3>
                   <span className="text-xs text-gray-400">Actual: {row.currentPlan}</span>
                 </div>
                 <div className="text-right shrink-0">
@@ -181,7 +185,11 @@ function AnalysisTab() {
           <h2 className="font-bold text-sm mb-3 text-red-600">Eliminadas (ahorro)</h2>
           {removed.map((row) => (
             <div key={row.tool} className="bg-red-50 border border-red-200 rounded-xl p-3">
-              <span className="text-sm font-medium line-through text-red-400">{row.tool}</span>
+              <span className="text-sm font-medium line-through text-red-400">
+                {row.url ? (
+                  <a href={row.url} target="_blank" rel="noopener noreferrer" className="hover:text-red-600">{row.tool}</a>
+                ) : row.tool}
+              </span>
               <span className="text-xs text-red-600 ml-2">— {row.currentPlan} → {row.discovered}</span>
             </div>
           ))}
@@ -194,7 +202,9 @@ function AnalysisTab() {
         <div className="flex flex-wrap gap-2">
           {free.map((row) => (
             <span key={row.tool} className="text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-1.5 rounded-full">
-              {row.tool} — Free
+              {row.url ? (
+                <a href={row.url} target="_blank" rel="noopener noreferrer" className="hover:text-green-900 underline decoration-dotted underline-offset-2">{row.tool}</a>
+              ) : row.tool} — Free
             </span>
           ))}
         </div>
@@ -206,7 +216,11 @@ function AnalysisTab() {
         <div className="space-y-1">
           {optional.map((row) => (
             <div key={row.tool} className="flex items-center justify-between text-xs bg-gray-50 border rounded-lg px-3 py-2">
-              <span className="text-gray-700">{row.tool}</span>
+              <span className="text-gray-700">
+                {row.url ? (
+                  <a href={row.url} target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 underline decoration-dotted underline-offset-2">{row.tool}</a>
+                ) : row.tool}
+              </span>
               <span className="text-gray-400">{row.options[0]?.cost}</span>
             </div>
           ))}
