@@ -65,7 +65,7 @@ Telegram operativo con canales por función. Relay.app configurado para notifica
 | # | Evento | Herramienta origen | Relay escucha a | Flujo técnico | Notificar? | Canal | Tiempo respuesta |
 |---|---|---|---|---|---|---|---|
 | N1 | Prospecto respondió email | Smartlead | **Smartlead (directo)** | Smartlead → Relay → Telegram | ☐ **SI (recomendado)** | #leads-b2b-calientes | <1 hora |
-| N2 | Prospecto respondió LinkedIn DM | Expandi | **HubSpot** (Expandi no está en Relay) | Expandi → HubSpot webhook → Relay → Telegram | ☐ **SI (recomendado)** | #leads-b2b-calientes | <1 hora |
+| N2 | Prospecto respondió LinkedIn DM | Expandi | **HubSpot** (Expandi sync nativo a HubSpot) | Expandi → HubSpot (integración nativa) → Relay → Telegram | ☐ **SI (recomendado)** | #leads-b2b-calientes | <1 hora |
 | N3 | Prospecto respondió WhatsApp | ManyChat | **ManyChat (directo)** | ManyChat → Relay → Telegram | ☐ **SI (recomendado)** | #leads-b2b-calientes | <30 min |
 | N4 | Prospecto agendó reunión | Calendly | **Calendly (directo)** | Calendly → Relay → Telegram | ☐ **SI (recomendado)** | #leads-b2b-calientes | Preparar antes de reunión |
 | N5 | Prospecto respondió SMS | Twilio | **Twilio (directo)** | Twilio → Relay → Telegram | ☐ **PREGUNTAR** | #leads-b2b-calientes | Evaluar contenido |
@@ -87,7 +87,7 @@ Telegram operativo con canales por función. Relay.app configurado para notifica
 | ManyChat | **SI** | SI — trigger por evento |
 | Twilio | **SI** | SI — trigger por SMS recibido |
 | Calendly | **SI** | SI — trigger por reunión agendada |
-| Expandi | **NO** | Solo via HubSpot (Expandi → HubSpot webhook → Relay) |
+| Expandi | **NO en Relay, pero SI tiene HubSpot nativo** | Via HubSpot: Expandi → HubSpot (sync nativo) → Relay escucha HubSpot. Ref: https://intercom.help/expandi/en/articles/11697776-hubspot-integration |
 | Sendspark | **NO** | Solo via HubSpot |
 | Unbounce | **NO** | Solo via HubSpot |
 

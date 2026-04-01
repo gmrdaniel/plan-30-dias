@@ -122,8 +122,18 @@ COLUMNA 6: Export a Smartlead
       3. O script Python de Gabriel: clay_export.csv → Smartlead API
       Frecuencia: después de cada batch de enrichment
       ↓
-COLUMNA 7: Export a Expandi
-  ┌─ Si plan Growth ($495): HTTP API dentro de Clay
+COLUMNA 7: Prospectos a Expandi (via HubSpot o directo)
+
+  ┌─ Opción A — Via HubSpot (Launch $185, recomendada):
+  │   Clay NO pushea a Expandi directo.
+  │   Flujo: Clay → Smartlead (nativo) → HubSpot (webhook)
+  │          → Expandi syncea desde HubSpot (integración nativa)
+  │   Dayana importa prospectos con LinkedIn URL desde HubSpot a campaña Expandi
+  │   Import: manual en batches de 10 desde Expandi UI
+  │   Ref: https://intercom.help/expandi/en/articles/11697776-hubspot-integration
+  │   Nota: NO hay columna de enrichment en Clay para esto — se hace en T07
+  │
+  ├─ Opción C — Growth ($495): HTTP API directo desde Clay
   │   URL: https://api.expandi.io/api/v1/leads
   │   Header: Authorization: Bearer {EXPANDI_API_KEY}
   │   Body: {
@@ -133,12 +143,12 @@ COLUMNA 7: Export a Expandi
   │     "company": "/Company Name"
   │   }
   │   Conditional run: solo si linkedin_url tiene valor
+  │   Nota: depende de licencia Growth de Clay
   │
-  └─ Si plan Starter ($149) o Launch ($185): MANUAL
+  └─ Fallback — CSV manual:
       1. Export CSV desde Clay (filtrar filas con linkedin_url)
       2. Importar CSV en Expandi UI
-      3. O script Python de Gabriel: clay_export.csv → Expandi API
-      Frecuencia: después de cada batch de enrichment
+      Frecuencia: después de cada batch
       ↓
 COLUMNA 8: Sync a Supabase
   ┌─ Si plan Growth ($495): Webhook dentro de Clay
