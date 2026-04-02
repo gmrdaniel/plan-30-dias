@@ -1,7 +1,7 @@
 
 
-Herramientas — Sprint 30 días (Equipo 3: Infraestructura)
 
+## 1. Herramientas — Sprint 30 días (Equipo 3: Infraestructura)
 
 Con base en el análisis detallado del plan de implementación y el documento
 de presupuesto de herramientas del Equipo 3, envío este resumen para revisión

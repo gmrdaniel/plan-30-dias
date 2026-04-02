@@ -1,12 +1,51 @@
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowDown, CheckCircle2, Zap, Mail, XCircle, Database, Search, BarChart3, Bot, UserRound, Unplug, RefreshCw } from 'lucide-react'
 import { B2B_PHASES, CREATOR_PHASES, type PhaseData } from '../lib/pipeline-data'
+import { useTasks, type TaskFull } from '../hooks/use-tasks'
 
 const ICONS = { Search, Database, Zap, Mail, CheckCircle2, XCircle }
 
 type PipelineTab = 'b2b' | 'creators'
 
-function PipelineTimeline({ phases }: { phases: PhaseData[] }) {
+function StepAssignees({ taskId, tasks }: { taskId: string; tasks: TaskFull[] }) {
+  const task = tasks.find((t) => t.task_id === taskId)
+  if (!task || task.assignments.length === 0) return null
+
+  const responsables = task.assignments.filter((a) => a.assignment_role === 'responsable' || a.assignment_role === 'co-ejecuta')
+  const apoyo = task.assignments.filter((a) => a.assignment_role === 'apoyo')
+
+  return (
+    <div className="flex items-center gap-1">
+      {responsables.map((a) => (
+        <div
+          key={a.id}
+          title={`${a.team_members?.name} (${a.assignment_role})`}
+          className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold ring-1 ring-white"
+          style={{ backgroundColor: a.team_members?.avatar_color }}
+        >
+          {a.team_members?.short_name?.[0]}
+        </div>
+      ))}
+      {apoyo.length > 0 && (
+        <>
+          <span className="text-gray-300 text-[10px] mx-0.5">|</span>
+          {apoyo.map((a) => (
+            <div
+              key={a.id}
+              title={`${a.team_members?.name} (apoyo)`}
+              className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[8px] font-bold opacity-50 ring-1 ring-white"
+              style={{ backgroundColor: a.team_members?.avatar_color }}
+            >
+              {a.team_members?.short_name?.[0]}
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  )
+}
+
+function PipelineTimeline({ phases, tasks }: { phases: PhaseData[]; tasks: TaskFull[] }) {
   return (
     <div className="space-y-4">
       {phases.map((phase, pi) => {
@@ -68,10 +107,11 @@ function PipelineTimeline({ phases }: { phases: PhaseData[] }) {
                           </div>
                         )}
 
-                        <div className="mt-1">
+                        <div className="mt-1 flex items-center gap-2">
                           <Link to={`/task/${step.task}`} className="text-xs text-indigo-500 hover:text-indigo-700 underline">
                             {step.task}
                           </Link>
+                          <StepAssignees taskId={step.task} tasks={tasks} />
                         </div>
                       </div>
                     </div>
@@ -95,6 +135,7 @@ function PipelineTimeline({ phases }: { phases: PhaseData[] }) {
 export default function Pipeline() {
   const [params, setParams] = useSearchParams()
   const activeTab = (params.get('tab') as PipelineTab) || 'b2b'
+  const { tasks } = useTasks()
 
   const setTab = (tab: PipelineTab) => {
     setParams({ tab }, { replace: true })
@@ -138,7 +179,7 @@ export default function Pipeline() {
       </div>
 
       {/* Timeline */}
-      <PipelineTimeline phases={activeTab === 'b2b' ? B2B_PHASES : CREATOR_PHASES} />
+      <PipelineTimeline phases={activeTab === 'b2b' ? B2B_PHASES : CREATOR_PHASES} tasks={tasks} />
     </div>
   )
 }
