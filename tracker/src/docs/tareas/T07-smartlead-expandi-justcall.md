@@ -174,10 +174,10 @@ Clay puede pushear directo a Expandi via HTTP API. No necesita pasar por HubSpot
 ## Costo
 | Item | Costo |
 |------|-------|
-| Smartlead | Ya comprado en T01 ($94/mes) |
-| Expandi | $99/mes |
-| JustCall | $30/mes |
-| Agente voz IA (opcional) | $29-500/mes |
+| Smartlead | Ya comprado en T01 ($94/mes) | herramientas@laneta.com |
+| Expandi | $99/mes | herramientas@laneta.com |
+| JustCall | $30/mes | herramientas@laneta.com |
+| Agente voz IA (opcional) | $29-500/mes | |
 
 ## Notas
 - **La integración Expandi ↔ HubSpot es la más importante de esta tarea.** Sin ella, no hay logging de actividad LinkedIn ni notificaciones de replies.

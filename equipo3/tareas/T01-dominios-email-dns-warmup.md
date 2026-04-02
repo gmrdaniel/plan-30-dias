@@ -162,7 +162,7 @@ Tener 15 cuentas de email con DNS correctamente configurado y en warmup activo e
 |------|-------|------|
 | 1 dominio GoDaddy (elevngo.me) | ~$12 | Único |
 | 9 licencias Google Workspace nuevas | ~$65/mes | Recurrente |
-| Smartlead | $94/mes | Recurrente |
+| Smartlead | $94/mes | Recurrente | herramientas@laneta.com |
 
 ## Riesgos
 - **DNS no propaga a tiempo:** Esperar 24-48h. Conectar a Smartlead las que ya propagaron, el resto al Día 2.

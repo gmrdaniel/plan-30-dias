@@ -16,7 +16,7 @@
 Configurar Clay como hub central de enriquecimiento con pipeline automático: importar prospectos → enriquecer (email, LinkedIn, score) → exportar a Smartlead + Expandi + Supabase. Todo en una sola tabla con enrichments encadenados.
 
 ## Contexto
-- Clay (plan base $149, ~2,000 créditos): CSV import SI, HTTP API enrichment SI, Smartlead export nativo SI
+- Clay (plan actual Launch $185/mes): CSV import SI, HTTP API enrichment SI, Smartlead export NATIVO. Upgrade a Growth $495 pendiente de aprobación
 - SmartScout ($97): Export CSV desde UI SI, API propia NO (requiere plan superior — bloqueante para Fase 2)
 - Apify ($49): API SI, actors configurables
 
@@ -270,7 +270,7 @@ Cuando se agregan rows nuevas a una tabla que ya tiene enrichments configurados:
 
 ## Estrategia de créditos Clay
 
-### Plan actual: Base ($149/mes, ~2,000 créditos)
+### Plan actual: Launch ($185/mes) — upgrade a Growth pendiente
 
 | Enrichment | Créditos/fila | Para 1,000 prospectos |
 |---|---|---|
@@ -284,12 +284,12 @@ Cuando se agregan rows nuevas a una tabla que ya tiene enrichments configurados:
 | Sync Supabase (HTTP) | 0 | 0 |
 | **Total estimado** | **4-7** | **4,000-7,000** |
 
-**Conclusión:** El plan Base ($149) probablemente NO alcanza para 1,000 prospectos con pipeline completo. El batch de 200 (Paso 1.6) confirma esto con datos reales.
+**Conclusión:** El plan Launch ($185) incluye Smartlead nativo pero NO HTTP API para Expandi/Supabase directo. El upgrade a Growth ($495) está pendiente de aprobación — habilitaría automatización completa. El batch de 200 (Paso 1.6) confirma consumo real de créditos.
 
 ### Plan de acción
 1. Batch de 20 (test) → medir créditos
 2. Batch de 200 → confirmar métrica
-3. Si >2 créditos/prospecto → Daniel aprueba upgrade a Pro ($495, ~50,000 créditos) el mismo día
+3. Si >2 créditos/prospecto → Daniel aprueba upgrade a Growth ($495, ~6,000 créditos) el mismo día
 4. Continuar batches hasta completar 1,000
 
 ---
@@ -325,11 +325,11 @@ Cuando se agregan rows nuevas a una tabla que ya tiene enrichments configurados:
 ## Costo
 | Item | Costo |
 |------|-------|
-| Clay (plan actual Base) | $149/mes |
-| Clay upgrade a Pro (si necesario) | +$346/mes |
-| SmartScout | Ya contratado ($97/mes) |
-| SmartScout API (Fase 2) | Por cotizar |
-| Apify | Ya contratado ($49/mes) |
+| Clay (plan actual Launch) | $185/mes | herramientas@laneta.com |
+| Clay upgrade a Growth (pendiente aprobación) | +$310/mes ($495 total) | |
+| SmartScout | Ya contratado ($97/mes) | herramientas@laneta.com |
+| SmartScout API (Fase 2) | Por cotizar | |
+| Apify | Ya contratado ($49/mes) | herramientas@laneta.com |
 
 ## Notas para Gabriel
 - **La tabla Clay con sus columnas de enrichment ES el pipeline.** No hay que programar nada extra — cada columna es un paso.

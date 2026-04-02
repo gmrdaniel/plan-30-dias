@@ -83,7 +83,7 @@
 ## Costo
 | Item | Costo adicional |
 |------|----------------|
-| Créditos Clay | Incluido en plan (verificar) |
+| Créditos Clay (Launch $185, upgrade a Growth $495 pendiente) | Incluido en plan | herramientas@laneta.com |
 | Validación email (Bouncer) | ~$8-18 por batch si necesario |
 
 ---
