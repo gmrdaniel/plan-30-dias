@@ -1,299 +1,354 @@
 # T16 — Micrositios B2B + Creadores + Lead Magnets Outgrow
 
-## Informacion General
+## Información General
 | Campo | Valor |
 |-------|-------|
 | **ID** | T16 |
 | **Prioridad** | 🔴 CRITICA |
-| **Responsable** | Lillian Lucio (micrositios — reporta avance a Daniel), Eugenia Garcia (calculadoras Outgrow) |
-| **Co-ejecuta** | Dayana Vizcaya (Directora Creativa: assets visuales, copy, direccion de diseno) |
-| **Apoyo** | Daniel (compra Unbounce), Gabriel (middleware webhook → HubSpot API) |
+| **Responsable** | Lillian Lucio (micrositios — reporta avance a Daniel), Eugenia García (calculadoras Outgrow) |
+| **Co-ejecuta** | Dayana Vizcaya (Directora Creativa: assets visuales, copy, dirección de diseño) |
+| **Apoyo** | Daniel (compra Landingi) |
 | **Fecha Inicio** | Viernes 17 Abril |
 | **Fecha Entrega** | Martes 21 Abril |
-| **Bloqueada por** | T10 (Outgrow adquirido), T02 (HubSpot con API key y propiedades custom) |
-| **Bloquea a** | DTO-OUT-10 (→ Equipos 1+2 para aprobacion) |
+| **Bloqueada por** | T10 (Outgrow adquirido), B21 (definir micrositios con Mery) |
+| **Bloquea a** | DTO-OUT-10 (→ Equipos 1+2 para aprobación) |
 
 ## Objetivo
-2 micrositios personalizados (B2B + Creadores) en **Unbounce** y 2 herramientas interactivas (auditoria video + calculadora ingresos) en **Outgrow**, todas conectadas a HubSpot via webhook directo.
+5 micrositios dinámicos (1 B2B + 4 Creadores) y 2 herramientas interactivas (auditoría video + calculadora ingresos) activas y capturando leads a HubSpot. Todos los micrositios usan Dynamic Text Replacement (DTR) para personalizar contenido por prospecto/creador.
+
+## Decisión: Landingi Professional ($49/mes)
+
+**Unbounce y Leadpages descartadas.** Landingi Professional ($69/mes) cubre los 5 sitios con más funcionalidad y menor costo:
+
+- **DTR nativo** para texto dinámico (igual que Unbounce)
+- **Imágenes dinámicas** — puede cambiar logos, fotos del creador por URL (Unbounce no puede)
+- **Smart Sections** — secciones condicionales por datos del visitante (Unbounce no puede)
+- **Programmatic Landing Pages** — crear páginas programáticamente
+- **API con CRUD** — el CRM Laneta puede crear/modificar páginas (Unbounce API es solo lectura)
+- **Landing pages ilimitadas + conversiones ilimitadas**
+- **50,000 visitas/mes + 10 dominios custom**
+- **HubSpot nativo** + webhooks
+- **Embeds** (Outgrow, Sendspark, Calendly) via Custom HTML — sin restricciones
+- **Trial 14 días gratis**
+- **Ahorro:** $30/mes vs Unbounce ($69 vs $99)
+
+**Migración a CRM propio planeada para Mes 2** (ver tab "Migración CRM").
 
 ---
 
-## Por que Unbounce para ambos micrositios (no Leadpages)
+## Los 5 micrositios a crear
 
-Basado en el analisis tecnico y considerando que Lillian tiene perfil no tecnico:
+> **NOTA:** Los 5 micrositios son preliminares. Los nombres de productos, estructura y contenido están **por definir con el equipo de Mery (Equipo 2)**. Ver bloqueante B21.
 
-1. **Paginas ilimitadas desde plan base ($99).** Leadpages Standard ($49) limita a 5 paginas. Para tener ilimitadas en Leadpages hay que subir a un plan que no tiene precio publico.
+| # | Sitio | Producto | Audiencia | URL ejemplo |
+|---|---|---|---|---|
+| 1 | B2B — The Ads Factory | Auditoría video Amazon | Marcas B2B | `landing.com/b2b?empresa=TechBrand&revenue=707000&contacto=María` |
+| 2 | Creadores Plantilla A — Linguana | Doblaje + Expansión | Creadores YouTube/TikTok | `landing.com/linguana-a?nombre=Juan&subs=500000&idioma=Español` |
+| 3 | Creadores Plantilla B — Linguana | Doblaje + Expansión | Creadores YouTube/TikTok | `landing.com/linguana-b?nombre=Juan&subs=500000&idioma=Español` |
+| 4 | Creadores Plantilla A — Meta | Streaming 24/7 | Creadores YouTube/Twitch | `landing.com/meta-a?nombre=Ana&subs=200000&plataforma=YouTube` |
+| 5 | Creadores Plantilla B — Meta | Streaming 24/7 | Creadores YouTube/Twitch | `landing.com/meta-b?nombre=Ana&subs=200000&plataforma=YouTube` |
 
-2. **DTR nativo y visual.** Unbounce tiene Dynamic Text Replacement integrado: seleccionas texto en el editor, le asignas un parametro de URL, listo. Leadpages requiere JavaScript custom para lo mismo.
-
-3. **Integracion HubSpot one-click.** Unbounce conecta con HubSpot CRM directo (mapeas campos del form a propiedades de contacto, incluyendo hidden fields). Leadpages Standard NO tiene integracion nativa con HubSpot.
-
-4. **Webhooks nativos.** Unbounce puede enviar form data como JSON a cualquier endpoint. Leadpages no tiene webhooks — solo Zapier.
-
-5. **Ahorro:** Unbounce $99/mes reemplaza Unbounce $99 + Leadpages $49 = **ahorro de $49/mes**.
-
----
-
-## REQUISITOS PREVIOS (antes de que Lillian empiece)
-
-### En HubSpot (Daniel — T02 Paso 7-8):
-- [ ] API key generada con scopes: `crm.objects.contacts.write`, `crm.objects.contacts.read`
-- [ ] Propiedades custom creadas:
-  - `utm_source` (text)
-  - `utm_campaign` (text)
-  - `landing_page` (dropdown: B2B, Creadores)
-  - `video_gap_score_outgrow` (number)
-  - `revenue_potential` (number)
-  - `creator_income_estimate` (number)
-  - `social_handle` (text)
-  - `micrositio_url` (text) — URL personalizada generada por Clay
-
-### En Clay (Gabriel — T06/T11):
-- [ ] Columna `micrositio_url` en la tabla de enriquecimiento que genere el URL con params:
-  ```
-  https://laneta-b2b.unbounce.com?empresa={empresa}&nombre={nombre}&revenue={revenue}&competidor={competidor}&rank_change={rank_change}&video_audit={sendspark_url}
-  ```
-- [ ] Columna equivalente para creadores:
-  ```
-  https://laneta-creadores.unbounce.com?nombre={nombre}&suscriptores={subs}&plataforma={platform}&proyeccion={income_estimate}
-  ```
-
-### Middleware webhook (Gabriel — antes de T16):
-- [ ] Edge Function en Supabase que reciba JSON de Unbounce/Outgrow y haga POST a HubSpot API
-- Unbounce envia valores en arrays (`"email": ["test@test.com"]`) — el middleware los desempaca
-- Outgrow envia JSON plano — el middleware mapea campos a propiedades de HubSpot
-- Endpoint: `https://nvbanvwibmghxroybjxp.supabase.co/functions/v1/webhook-to-hubspot`
+Las plantillas A y B de cada producto sirven para A/B testing en Landingi.
 
 ---
 
-## Lillian: Micrositio B2B en Unbounce (Vie 17 - Lun 20 Abr)
+## Lillian: Sitio 1 — B2B The Ads Factory (Vie 17 - Sáb 18 Abr)
 
 ### Wireframe
 ```
-[Header] Logo La Neta + Nombre dinamico de la empresa
-[Hero] "{{empresa}}, estas perdiendo ${{revenue_perdido}} en video" + CTA
-[Seccion 1] El problema: stats de la industria
-[Seccion 2] Video de auditoria Sendspark (embed con URL dinamica)
-[Seccion 3] Comparacion con competidores (datos pre-calculados en URL)
-[Seccion 4] Calculadora ROI (embed Outgrow)
-[CTA Final] "Agenda tu Sprint Estrategico de 15 minutos" → Calendly
+[Header] Logo La Neta + Nombre dinámico de la empresa
+[Hero] "{{empresa}}, estás perdiendo $X en video" + CTA
+[Sección 1] El problema: stats de la industria
+[Sección 2] Video de auditoría Sendspark (embed dinámico)
+[Sección 3] Comparación con competidores (datos de SmartScout)
+[Sección 4] Calculadora ROI (embed Outgrow)
+[CTA Final] "Agenda tu Sprint Estratégico de 15 minutos" → Calendly
 [Footer] La Neta / Global Media Review
 ```
 
-### Configuracion paso a paso
+### DTR — Campos dinámicos (texto)
 
-**1. Crear cuenta Unbounce (Daniel compra Plan Build $99/mes)**
-- Ir a unbounce.com → Sign up → Plan Build
-- Email: herramientas@laneta.com
-
-**2. Crear landing page B2B**
-- New Page → elegir template o empezar en blanco
-- Nombre: "Micrositio B2B - Sprint Abril"
-- Dominio: usar subdominio de Unbounce (laneta-b2b.unbounce.com) o dominio custom
-
-**3. Configurar Dynamic Text Replacement (DTR)**
-
-Para cada texto dinamico en la pagina:
-1. Seleccionar el texto en el editor (ej. "Acme Inc")
-2. Click en **Properties → Action → Dynamic Text**
-3. Configurar:
-
-| Texto default (lo que ve Google/trafico directo) | URL Parameter | Ejemplo |
+| Texto default en la página | Parámetro URL | Ejemplo |
 |---|---|---|
-| "Tu empresa" | `empresa` | ?empresa=Acme+Inc |
-| "Juan" | `nombre` | &nombre=Juan |
-| "$50,000" | `revenue` | &revenue=50000 |
-| "CompetidorX" | `competidor` | &competidor=BrandX |
-| "8 posiciones" | `rank_change` | &rank_change=8 |
+| "Tu empresa" | `empresa` | TechBrand LLC |
+| "Tu contacto" | `contacto` | María García |
+| "$X" (revenue) | `revenue` | $707,000 |
+| "Tu competidor" | `competidor` | CeraVe |
+| "Tu categoría" | `categoria` | Health & Wellness |
 
-**4. Configurar Hidden Fields en el formulario**
+### Imágenes dinámicas (ventaja Landingi)
 
-En el formulario de contacto, agregar campos ocultos:
-1. Click en formulario → Add Field → Hidden Field
-2. Crear estos hidden fields (el ID debe coincidir EXACTO con el URL param, case-sensitive):
-
-| Hidden Field ID | URL Parameter | Para que |
+| Imagen default | Parámetro URL | Ejemplo |
 |---|---|---|
-| `empresa` | `empresa` | Se captura al enviar form |
-| `revenue` | `revenue` | Revenue del prospecto |
-| `utm_source` | `utm_source` | Fuente de trafico |
-| `utm_campaign` | `utm_campaign` | Campana |
-| `landing_page` | — | Valor fijo: "B2B" |
+| Logo genérico | `logo_url` | URL del logo de la empresa (scrapeado por Apify) |
+| Screenshot genérico | `listing_img` | Screenshot del listing de Amazon del prospecto |
 
-**5. Configurar webhook → HubSpot**
+### Embeds
+- **Outgrow:** Calculadora ROI — embed via bloque HTML (`<iframe src="https://app.outgrow.co/calculadora-roi">`)
+- **Sendspark:** Video personalizado — embed via bloque HTML
+- **Calendly:** Agendamiento — embed o link directo
 
-En el form:
-1. Click en **Form Confirmation → Integrations → Webhook**
-2. URL: `https://nvbanvwibmghxroybjxp.supabase.co/functions/v1/webhook-to-hubspot`
-3. Content type: JSON
-4. **Nota:** El webhook de Unbounce envia valores como arrays. El middleware de Gabriel los reshape antes de enviar a HubSpot.
+URL completa:
+```
+landing.com/b2b?empresa=TechBrand+LLC&contacto=María+García&revenue=707000&competidor=CeraVe&categoria=Health&logo_url=https://...
+```
 
-**Alternativa sin middleware:** Usar la integracion nativa de Unbounce con HubSpot:
-1. Form → Integrations → HubSpot
-2. Conectar cuenta HubSpot
-3. Mapear campos del form a propiedades de contacto de HubSpot
-4. Incluir hidden fields en el mapeo
+### Configuración técnica
+1. Login Landingi (herramientas@laneta.com — Daniel compra Día 11)
+2. Crear landing page desde template o custom
+3. Configurar DTR en cada texto dinámico:
+   - Click en texto → activar Dynamic Content → URL Parameter: `empresa`
+4. Configurar imágenes dinámicas:
+   - Click en imagen → Dynamic Content → URL Parameter: `logo_url`
+5. Agregar bloques HTML para embeds (Outgrow, Sendspark, Calendly)
+6. Form → HubSpot:
+   - Integración nativa Landingi → HubSpot
+   - Campos: email, nombre, empresa, teléfono
+   - Pipeline: B2B Ventas, etapa: "Prospecto Nuevo"
+7. Responsive: verificar desktop + tablet + mobile
 
-> **Para Lillian:** Si la integracion nativa con HubSpot funciona (probar primero), usarla. Es mas simple que el webhook. Solo si falla o no mapea los hidden fields, usar el webhook.
-
-**6. Embeds**
-- Video Sendspark: usar `<iframe>` con URL que incluye params del prospecto. El URL viene pre-armado en el param `video_audit` de la URL.
-  ```html
-  <!-- El src se personaliza con DTR o con JavaScript simple -->
-  <iframe src="https://www.sendspark.com/share/VIDEO_ID" width="100%" height="400"></iframe>
-  ```
-  > **Nota:** DTR solo reemplaza texto, no atributos de iframe. Para el video dinamico, Lillian puede usar un boton/link en vez de embed: "Ver tu auditoria personalizada →" con href dinamico.
-
-- Calculadora Outgrow: embed code que Eugenia genera (ver seccion Outgrow abajo)
-
-**7. Responsive**
-- Unbounce tiene preview mobile integrado en el editor
-- Verificar que el texto DTR no desborde en pantallas chicas
-- Verificar que embeds se redimensionan
-
-### Entregable: Micrositio B2B live en Unbounce con DTR funcionando
+### Entregable: Micrositio B2B live con DTR texto + imágenes, form → HubSpot, embeds funcionando
 
 ---
 
-## Lillian: Micrositio Creadores en Unbounce (Lun 20 - Mar 21 Abr)
+## Lillian: Sitios 2-3 — Creadores Linguana (Sáb 18 - Dom 19 Abr)
 
-### Estructura
+### Wireframe (ambas plantillas)
 ```
-[Header] Logo Elevn/La Neta
-[Hero] "{{nombre}}, tus {{suscriptores}} suscriptores podrian generarte ${{proyeccion}}/mes"
-[Seccion 1] Servicios: Streaming 24/7, Doblaje, Expansion
-[Seccion 2] Testimonial video (embed - placeholder)
-[Seccion 3] Calculadora de ingresos (embed Outgrow)
-[Seccion 4] "Unete a {{num_creadores}}+ creadores que ya ganan mas"
-[CTA] "Firma tu contrato ahora" → DocuSign o formulario
+[Header] Logo Elevn / Linguana
+[Hero] "{{nombre}}, tus {{suscriptores}} suscriptores podrían llegar a {{proyeccion}} con doblaje"
+[Sección 1] Qué es Linguana: doblaje IA + expansión a nuevos idiomas
+[Sección 2] Caso de éxito video (embed — placeholder)
+[Sección 3] Calculadora de ingresos (embed Outgrow)
+[Sección 4] "Únete a {{num_creadores}}+ creadores que ya expanden su audiencia"
+[CTA] "Comienza tu expansión" → formulario
 [Footer] Elevn / La Neta
 ```
 
-### Configuracion
-1. **Misma cuenta Unbounce** (paginas ilimitadas en plan Build)
-2. Crear nueva landing page: "Micrositio Creadores - Sprint Abril"
-3. **DTR:** misma mecanica que B2B
+### DTR — Campos dinámicos
 
-| Texto default | URL Parameter | Ejemplo |
+| Texto default | Parámetro URL | Ejemplo |
 |---|---|---|
-| "Creador" | `nombre` | ?nombre=Maria |
-| "10,000" | `suscriptores` | &suscriptores=50000 |
-| "$2,500" | `proyeccion` | &proyeccion=4200 |
-| "YouTube" | `plataforma` | &plataforma=YouTube |
+| "Creador" | `nombre` | Juan Pérez |
+| "tus suscriptores" | `subs` | 500,000 |
+| "tu canal" | `canal` | @juanperez |
+| "tu idioma" | `idioma` | Español |
+| "X nuevos mercados" | `mercados` | 3 |
+| "$X/mes proyectado" | `proyeccion` | $8,500 |
 
-4. **Hidden fields:** `nombre`, `suscriptores`, `plataforma`, `utm_source`, con `landing_page` fijo = "Creadores"
-5. **Webhook/integracion:** igual que B2B (probar nativa HubSpot primero)
-6. **Embed calculadora Outgrow** (Eugenia genera el code)
-7. **Responsive check**
+### Imágenes dinámicas
 
-### Entregable: Micrositio Creadores live en Unbounce
+| Imagen default | Parámetro URL | Ejemplo |
+|---|---|---|
+| Foto genérica creador | `foto_url` | Foto de perfil del creador |
+| Logo plataforma | `plataforma_logo` | Logo YouTube/TikTok según plataforma |
+
+**Plantilla A:** Enfoque en datos y números (revenue, CPM, proyección)
+**Plantilla B:** Enfoque en storytelling y testimoniales (casos de éxito, comunidad)
+
+### Configuración
+- Mismos pasos que Sitio 1 (DTR texto + imágenes + embeds)
+- Form → HubSpot pipeline: Creadores Onboarding, etapa: "Lead"
+- A/B test en Landingi: 50/50 tráfico entre plantilla A y B
+- Embed Outgrow: calculadora de ingresos creadores
+
+### Entregable: 2 micrositios Linguana live con DTR, A/B test activo
 
 ---
 
-## Eugenia: Herramienta Auditoria Video B2B en Outgrow (Vie 17 - Lun 20 Abr)
+## Lillian: Sitios 4-5 — Creadores Meta (Dom 19 - Lun 20 Abr)
 
-### Especificacion
+### Wireframe (ambas plantillas)
+```
+[Header] Logo Elevn / Meta Streaming
+[Hero] "{{nombre}}, tu contenido podría generar {{proyeccion}}/mes en streaming 24/7"
+[Sección 1] Qué es Meta Streaming: tu canal transmite 24/7 sin esfuerzo
+[Sección 2] Demo/preview (embed video — placeholder)
+[Sección 3] Calculadora de ingresos streaming (embed Outgrow)
+[Sección 4] "{{subs}}+ suscriptores × 24h = ingresos que no estás capturando"
+[CTA] "Activa tu streaming 24/7" → formulario
+[Footer] Elevn / La Neta
+```
+
+### DTR — Campos dinámicos
+
+| Texto default | Parámetro URL | Ejemplo |
+|---|---|---|
+| "Creador" | `nombre` | Ana López |
+| "tus suscriptores" | `subs` | 200,000 |
+| "tu canal" | `canal` | @analopez |
+| "tu plataforma" | `plataforma` | YouTube |
+| "$X/mes" | `proyeccion` | $3,200 |
+
+**Plantilla A:** Enfoque en ingresos pasivos (streaming 24/7 = dinero mientras duermes)
+**Plantilla B:** Enfoque en alcance y comunidad (llega a fans en otras zonas horarias)
+
+### Configuración
+- Mismos pasos técnicos
+- Form → HubSpot pipeline: Creadores Onboarding
+- A/B test 50/50
+- Embed Outgrow: calculadora de ingresos streaming
+
+### Entregable: 2 micrositios Meta live con DTR, A/B test activo
+
+---
+
+## Cómo el CRM genera las URLs personalizadas
+
+El CRM Laneta genera la URL con DTR para cada prospecto/creador:
+
+```
+Para B2B (desde client_inventory + client_contacts):
+  landing.com/b2b?empresa={name}&contacto={first_name}+{last_name}&revenue={estimated_budget_usd}&competidor={competitor_name}&categoria={industry}&logo_url={logo_url}
+
+Para Creadores (desde creator_inventory):
+  landing.com/linguana-a?nombre={display_name}&subs={subscribers}&canal={handle}&idioma={language}&proyeccion={projected_revenue}&foto_url={avatar_url}
+```
+
+Estas URLs se incluyen en:
+- Emails de Smartlead (como link personalizado en la secuencia)
+- DMs de ManyChat/Expandi
+- Cualquier punto de contacto del pipeline
+
+### Ventaja Landingi API (futuro)
+
+Con la API CRUD de Landingi, el CRM también podría:
+- Crear variaciones de páginas programáticamente
+- Modificar contenido sin entrar al editor
+- Generar landing pages por lote para cada prospecto
+
+Esto no es necesario para el sprint (DTR por URL es suficiente) pero es una opción para escalar.
+
+---
+
+## Eugenia: Herramienta Auditoría Video B2B en Outgrow (Vie 17 - Lun 20 Abr)
+
+### Especificación
 - **Tipo:** Assessment/Calculator
 - **Inputs del usuario:**
   1. URL de su listing de Amazon o sitio web
-  2. Categoria de producto
-  3. Tiene video en sus listings? (Si/No/Algunos)
+  2. Categoría de producto
+  3. ¿Tiene video en sus listings? (Sí/No/Algunos)
   4. Presupuesto mensual de marketing
-- **Pre-fill desde URL:** Si el prospecto llega desde el micrositio con `?email=x&empresa=y`, Outgrow pre-llena esos campos para reducir friccion.
-  - Configurar en: Configure → Integrations → Outgoing Data → activar keys `email` y `empresa`
 - **Outputs (calculados):**
   1. "Video Gap Score": 1-10 basado en respuestas
-  2. "Revenue potencial con video optimizado": formula basada en categoria + presupuesto
+  2. "Revenue potencial con video optimizado": fórmula basada en categoría + presupuesto
   3. Recomendaciones (3 bullets)
-  4. CTA: "Agenda tu auditoria completa gratuita"
+  4. CTA: "Agenda tu auditoría completa gratuita"
 - **Captura de lead:** Antes de mostrar resultados, pedir email + nombre + empresa
-- **Integracion → HubSpot:**
-  - **Opcion A (simple):** Integracion nativa Outgrow → HubSpot. Mapear campos en Configure → Integrations → HubSpot. Con plan Essentials ($22/mes) solo llegan lead form fields (email, nombre, empresa).
-  - **Opcion B (completa):** Webhook de Outgrow → middleware Gabriel → HubSpot API. El webhook SI envia los resultados calculados (video_gap_score, revenue_potential) en todos los planes. Configurar en: Configure → Integrations → Webhooks → URL del middleware.
-  - **Recomendacion:** Usar **ambos** — nativa para el contacto, webhook para los scores.
+- **Integración:** Form submission → HubSpot vía webhook
+- **Embed:** `<iframe>` en bloque HTML de Landingi
 
-### Donde buscar formulas:
-- Los datos de benchmark por categoria estan en el ICP B2B (T04)
-- Si no hay datos especificos, usar: "empresas con video profesional ven 30-50% mas conversiones" (dato de Amazon)
+### Dónde buscar fórmulas:
+- Los datos de benchmark por categoría están en el ICP B2B (T04)
+- Si no hay datos específicos, usar: "empresas con video profesional ven 30-50% más conversiones" (dato de Amazon)
 
-### Entregable: Auditoria activa en Outgrow, embed code generado para Lillian
+### Entregable: Auditoría activa en Outgrow, embed code generado para Lillian
 
 ---
 
 ## Eugenia: Calculadora Ingresos Creadores en Outgrow (Lun 20 - Mar 21 Abr)
 
-### Especificacion
+### Especificación
 - **Tipo:** Calculator
 - **Inputs:**
   1. Plataforma (YouTube/TikTok/Instagram/Twitch)
-  2. Numero de suscriptores
+  2. Número de suscriptores
   3. Vistas mensuales promedio
   4. Idioma principal del contenido
-  5. Ya hace streaming? (Si/No)
-  6. Contenido disponible para doblaje? (Si/No)
-- **Pre-fill desde URL:** `?plataforma=YouTube&suscriptores=50000` pre-llena los primeros campos
+  5. ¿Ya hace streaming? (Sí/No)
+  6. ¿Contenido disponible para doblaje? (Sí/No)
 - **Outputs:**
   1. "Ingreso estimado actual": basado en CPM por plataforma
   2. "Ingreso potencial con La Neta": actual + streaming 24/7 + doblaje
-  3. "Diferencia": cuanto mas podria ganar
-  4. Grafico visual: actual vs potencial
+  3. "Diferencia": cuánto más podría ganar
+  4. Gráfico visual: actual vs potencial
 - **Captura de lead:** email + nombre + handle de la plataforma
-  - Crear propiedad `social_handle` en HubSpot antes (Daniel, T02)
-- **Integracion:** Nativa para contacto + webhook para resultados (misma logica que auditoria)
+- **Integración:** → HubSpot
+- **Embed:** `<iframe>` en bloque HTML de Landingi
 
-### Formulas sugeridas:
-- YouTube CPM espanol: ~$1.50-3.00
-- YouTube CPM ingles: ~$4.00-8.00
+### Fórmulas sugeridas:
+- YouTube CPM español: ~$1.50-3.00
+- YouTube CPM inglés: ~$4.00-8.00
 - Streaming 24/7 uplift: +40-60% de ad revenue
 - Doblaje (nuevo idioma): +80-150% de audiencia potencial
 
-### Donde buscar: ICP Creadores (T04) + datos de Social Blade
+### Dónde buscar: ICP Creadores (T04) + datos de Social Blade
 
 ### Entregable: Calculadora activa en Outgrow, embed code generado para Lillian
 
 ---
 
-## Flujo completo de datos: Clay → Micrositio → HubSpot
+## QA Final (Mar 21 Abr — todo el equipo)
 
-```
-PROSPECTO B2B:
-  Clay enriquece prospecto
-    → Genera columna micrositio_url con todos los params
-    → Push contacto a HubSpot (con micrositio_url como propiedad)
-    → Smartlead usa micrositio_url en el email
-      → Prospecto hace click → llega a Unbounce con params
-        → DTR personaliza la pagina
-        → Prospecto llena form / completa calculadora Outgrow
-          → Datos van a HubSpot (integracion nativa o webhook)
-            → Si icp_score >= 7: alerta Telegram via Relay.app
+- [ ] Sitio 1 B2B: DTR texto + imágenes funciona, responsive, form → HubSpot, embeds (Outgrow + Sendspark + Calendly)
+- [ ] Sitio 2 Linguana A: DTR funciona, responsive, form → HubSpot, embed Outgrow
+- [ ] Sitio 3 Linguana B: DTR funciona, A/B test activo con Sitio 2
+- [ ] Sitio 4 Meta A: DTR funciona, responsive, form → HubSpot, embed Outgrow
+- [ ] Sitio 5 Meta B: DTR funciona, A/B test activo con Sitio 4
+- [ ] Auditoría video Outgrow: inputs → outputs correctos, captura leads
+- [ ] Calculadora ingresos Outgrow: fórmulas correctas, captura leads
+- [ ] Todos los embeds (Outgrow, Sendspark, Calendly) funcionan dentro de Landingi
+- [ ] Probado en mobile (iOS y/o Android)
+- [ ] URLs de prueba generadas desde el CRM con datos reales de las 10 empresas test
 
-CREADOR:
-  ManyChat cualifica creador en WhatsApp
-    → Datos van a HubSpot
-    → Secuencia incluye link al micrositio con params
-      → Creador llega a Unbounce → ve proyeccion personalizada
-        → Completa calculadora Outgrow
-          → Datos van a HubSpot
-```
+## Costo
+| Item | Costo |
+|------|-------|
+| Landingi (Professional — cubre los 5 sitios) | $69/mes | herramientas@laneta.com |
+| ~~Unbounce~~ | ~~$99/mes~~ | **DESCARTADA** — Landingi cubre todo con más features y menor costo |
+| ~~Leadpages~~ | ~~$49/mes~~ | **DESCARTADA** — sin DTR nativo |
+| Outgrow | Ya comprado ($22/mes) | herramientas@laneta.com |
 
 ---
 
-## QA Final (Mar 21 Abr — todo el equipo)
+## Por qué Landingi y no Unbounce o Instapage — Comparativa para Lillian
 
-- [ ] Micrositio B2B: DTR funciona con URL de prueba, responsive, datos llegan a HubSpot
-- [ ] Micrositio Creadores: DTR funciona, responsive, datos llegan a HubSpot
-- [ ] Auditoria video Outgrow: inputs → outputs correctos, captura leads, webhook envia scores
-- [ ] Calculadora ingresos Outgrow: formulas correctas, captura leads, webhook envia resultados
-- [ ] Todos los embeds de Outgrow funcionan dentro de los micrositios Unbounce
-- [ ] Probado en mobile (iOS y/o Android)
-- [ ] Hidden fields capturan params del URL correctamente
-- [ ] Integracion nativa HubSpot O webhook funcionan (al menos uno)
+Se evaluaron 3 plataformas para los 5 micrositios dinámicos. Landingi ganó en precio, funcionalidad y flexibilidad:
 
-## Costo
-| Item | Costo | Nota |
-|------|-------|------|
-| Unbounce (Plan Build) | $99/mes | Ambos micrositios (B2B + Creadores) |
-| ~~Leadpages~~ | ~~$49/mes~~ | Eliminado — Unbounce cubre ambos |
-| Outgrow | Ya comprado ($22/mes) | Webhook para enviar resultados completos |
-| Zapier | Free (solo si se necesita) | Solo como backup si integracion nativa falla |
-| **Total** | **$99/mes** (antes $148) | **Ahorro: $49/mes** |
+### Precios
+
+- **Landingi Professional:** $69/mes (trial 14 días gratis)
+- **Unbounce Build:** $99/mes (anual: $74/mes)
+- **Instapage Optimize:** $159/mes (anual: $119/mes)
+
+### Funcionalidades clave
+
+| Feature | Landingi $69 | Unbounce $99 | Instapage $159 |
+|---|---|---|---|
+| Landing pages | Ilimitadas | Ilimitadas | Ilimitadas |
+| Visitas/mes | 50,000 | — | Ilimitadas |
+| Conversiones/mes | Ilimitadas | 1,000 | Ilimitadas |
+| Dominios custom | 10 | 1 | — |
+| DTR texto dinámico | **Si** | **Si** | **Si** |
+| Imágenes dinámicas por URL | **Si** | No | No |
+| Secciones condicionales | **Si** (Smart Sections) | No | **Si** |
+| API para crear/modificar páginas | **Si (CRUD)** | No (solo lectura) | No |
+| A/B testing | Si | Si | Si |
+| HubSpot nativo | Si | Si | Si |
+| Webhooks | Si | Si | Si |
+| Embed custom HTML (Outgrow, Sendspark, Calendly) | Si | Si | Si |
+| Personalización por audiencia/firmographics | No | No | **Si** |
+| AI copy variations | No | No | **Si** |
+
+### Por qué Landingi
+
+1. **$30/mes más barato** que Unbounce con más funcionalidad
+2. **Imágenes dinámicas** — podemos cambiar logos y fotos del creador por URL parameter. Unbounce solo cambia texto.
+3. **Smart Sections** — podemos mostrar/ocultar secciones según datos del visitante. Unbounce no puede.
+4. **Programmatic Landing Pages** — crear páginas programáticamente desde el CRM via API.
+5. **API con CRUD** — el CRM Laneta puede crear y modificar páginas. Unbounce e Instapage solo permiten leer datos.
+6. **Conversiones ilimitadas** vs 1,000 de Unbounce.
+7. **10 dominios custom** vs 1 de Unbounce.
+8. **50,000 visitas/mes** — suficiente para el sprint.
+9. **Trial 14 días gratis** — podemos probar antes de comprometernos.
+6. **Embeds** — Outgrow, Sendspark y Calendly funcionan igual en las 3 plataformas via Custom HTML/iframe.
+
+### Qué NO tiene Landingi vs competidores
+
+- **vs Unbounce:** Editor visual ligeramente menos pulido (pero funcional)
+- **vs Instapage:** Sin personalización por audiencia/firmographics ni AI copy (features de $159/mes que no necesitamos para el sprint)
+
+### Conclusión
+
+Landingi cubre todo lo que necesitamos para los 5 sitios dinámicos a $30/mes menos que Unbounce, con más features. Las features extra de Instapage ($159/mes) son overkill para el sprint. Si en Mes 2 migramos al CRM propio, Landingi es aún mejor puente porque su API CRUD facilita la transición.

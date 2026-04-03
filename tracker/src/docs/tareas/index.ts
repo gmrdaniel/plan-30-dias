@@ -8,6 +8,7 @@ import T02_LIC from './T02-hubspot-licencias.md?raw'
 import T06_API from './T06-clay-smartscout-apify-api.md?raw'
 import T06_IMPL from './T06-implementacion-crm-orquestador.md?raw'
 import T06_TEST from './T06-datos-prueba.md?raw'
+import T16_MIG from './T16-migracion-crm.md?raw'
 import T07 from './T07-smartlead-expandi-justcall.md?raw'
 import T08 from './T08-manychat-whatsapp-branch-twilio.md?raw'
 import T09 from './T09-sendspark-elevenlabs-klaviyo.md?raw'
@@ -26,6 +27,7 @@ import T20 from './T20-retrospectiva-sprint.md?raw'
 export const TASK_EXTRA_TABS: Record<string, { label: string; content: string }[]> = {
   'T02': [{ label: 'Licencias', content: T02_LIC }],
   'T06': [{ label: 'Detalle API', content: T06_API }],
+  'T16': [{ label: 'Migración CRM', content: T16_MIG }],
 }
 
 export const TASK_ANNEXES: Record<string, { label: string; filename: string; content: string }[]> = {
