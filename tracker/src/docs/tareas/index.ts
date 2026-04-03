@@ -7,6 +7,7 @@ import T06 from './T06-clay-smartscout-apify.md?raw'
 import T02_LIC from './T02-hubspot-licencias.md?raw'
 import T06_API from './T06-clay-smartscout-apify-api.md?raw'
 import T06_IMPL from './T06-implementacion-crm-orquestador.md?raw'
+import T06_TEST from './T06-datos-prueba.md?raw'
 import T07 from './T07-smartlead-expandi-justcall.md?raw'
 import T08 from './T08-manychat-whatsapp-branch-twilio.md?raw'
 import T09 from './T09-sendspark-elevenlabs-klaviyo.md?raw'
@@ -28,7 +29,10 @@ export const TASK_EXTRA_TABS: Record<string, { label: string; content: string }[
 }
 
 export const TASK_ANNEXES: Record<string, { label: string; filename: string; content: string }[]> = {
-  'T06': [{ label: 'Implementación CRM Orquestador', filename: 'T06-implementacion-crm-orquestador.md', content: T06_IMPL }],
+  'T06': [
+    { label: 'Implementación CRM Orquestador', filename: 'T06-implementacion-crm-orquestador.md', content: T06_IMPL },
+    { label: 'Datos de prueba (10 empresas)', filename: 'T06-datos-prueba.md', content: T06_TEST },
+  ],
 }
 
 export const TASK_DETAIL_MD: Record<string, string> = {
