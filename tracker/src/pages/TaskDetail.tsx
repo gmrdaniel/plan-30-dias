@@ -2,10 +2,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTasks, useChecklist, useComments } from '../hooks/use-tasks'
 import { useAuth } from '../hooks/use-auth'
 import { PRIORITY_CONFIG, STATUS_CONFIG, type TaskStatus } from '../lib/types'
-import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText, ExternalLink, Pencil, Trash2, X, Check } from 'lucide-react'
+import { ArrowLeft, CheckSquare, Square, MessageCircle, Send, ArrowDownLeft, ArrowUpRight, FileText, ExternalLink, Pencil, Trash2, X, Check, Download, Eye, Paperclip } from 'lucide-react'
 import { isDto, getDtoInfo } from '../lib/dtos'
 import { getTaskTools } from '../lib/tools'
-import { TASK_DETAIL_MD, TASK_EXTRA_TABS } from '../docs/tareas'
+import { TASK_DETAIL_MD, TASK_EXTRA_TABS, TASK_ANNEXES } from '../docs/tareas'
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -27,6 +27,7 @@ export default function TaskDetail() {
   const [activeTab, setActiveTab] = useState<Tab>('resumen')
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null)
   const [editingContent, setEditingContent] = useState('')
+  const [annexModalIdx, setAnnexModalIdx] = useState<number | null>(null)
 
   const task = tasks.find((t) => t.task_id === taskId)
   if (!task) return <div className="p-8 text-gray-400">Tarea no encontrada</div>
@@ -38,6 +39,17 @@ export default function TaskDetail() {
   const apoyo = task.assignments.filter((a) => a.assignment_role === 'apoyo')
   const detailMd = TASK_DETAIL_MD[task.task_id] || null
   const extraTabs = TASK_EXTRA_TABS[task.task_id] || []
+  const annexes = TASK_ANNEXES[task.task_id] || []
+
+  const downloadAnnex = (annex: { filename: string; content: string }) => {
+    const blob = new Blob([annex.content], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = annex.filename
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   const handleComment = async () => {
     if (!newComment.trim() || !user) return
@@ -156,6 +168,93 @@ export default function TaskDetail() {
           </div>
         )
       ))}
+
+      {/* Annexes section — visible on any tab */}
+      {annexes.length > 0 && (
+        <div className="bg-white border rounded-xl p-4">
+          <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <Paperclip size={16} /> Anexos ({annexes.length})
+          </h2>
+          <div className="space-y-2">
+            {annexes.map((annex, i) => (
+              <div key={i} className="flex items-center justify-between gap-3 px-4 py-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileText size={16} className="text-gray-400 shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{annex.label}</div>
+                    <div className="text-xs text-gray-400">{annex.filename}</div>
+                  </div>
+                </div>
+                <div className="flex gap-1 shrink-0">
+                  <button
+                    onClick={() => setAnnexModalIdx(i)}
+                    className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                    title="Ver"
+                  >
+                    <Eye size={16} />
+                  </button>
+                  <button
+                    onClick={() => downloadAnnex(annex)}
+                    className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                    title="Descargar"
+                  >
+                    <Download size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Annex Modal */}
+      {annexModalIdx !== null && annexes[annexModalIdx] && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-8 pb-8 overflow-y-auto" onClick={() => setAnnexModalIdx(null)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white rounded-t-xl z-10">
+              <div>
+                <h3 className="font-semibold">{annexes[annexModalIdx].label}</h3>
+                <p className="text-xs text-gray-400">{annexes[annexModalIdx].filename}</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => downloadAnnex(annexes[annexModalIdx])}
+                  className="px-3 py-1.5 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100 flex items-center gap-1"
+                >
+                  <Download size={14} /> Descargar
+                </button>
+                <button
+                  onClick={() => setAnnexModalIdx(null)}
+                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
+            <div className="p-8">
+              <article className="prose prose-sm prose-gray max-w-none
+                prose-headings:font-bold
+                prose-h1:text-2xl prose-h1:mb-4
+                prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3
+                prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2
+                prose-table:w-full prose-table:text-sm prose-table:border-collapse
+                prose-thead:bg-gray-50 prose-thead:border-b-2 prose-thead:border-gray-200
+                prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-th:text-gray-700
+                prose-td:px-3 prose-td:py-2 prose-td:border-t prose-td:border-gray-100
+                prose-tr:border-b prose-tr:border-gray-100
+                prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+                prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:p-4
+                [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-gray-100 [&_pre_code]:text-xs
+                prose-a:text-indigo-600
+                prose-li:my-0.5
+                prose-strong:text-gray-900
+              ">
+                <Markdown remarkPlugins={[remarkGfm]}>{annexes[annexModalIdx].content}</Markdown>
+              </article>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tab: Resumen */}
       {activeTab === 'resumen' && (
