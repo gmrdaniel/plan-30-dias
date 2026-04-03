@@ -16,7 +16,7 @@
 ## Objetivo
 5 micrositios dinámicos (1 B2B + 4 Creadores) y 2 herramientas interactivas (auditoría video + calculadora ingresos) activas y capturando leads a HubSpot. Todos los micrositios usan Dynamic Text Replacement (DTR) para personalizar contenido por prospecto/creador.
 
-## Decisión: Landingi Professional ($49/mes)
+## Decisión: Landingi Professional ($69/mes)
 
 **Unbounce y Leadpages descartadas.** Landingi Professional ($69/mes) cubre los 5 sitios con más funcionalidad y menor costo:
 
