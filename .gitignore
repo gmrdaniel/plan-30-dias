@@ -10,3 +10,4 @@ tracker/.env
 
 # Claude Code local
 .claude/
+.mcp.json

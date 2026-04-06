@@ -2,10 +2,11 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowDown, CheckCircle2, Zap, Mail, XCircle, Database, Search, BarChart3, Bot, UserRound, Unplug, RefreshCw } from 'lucide-react'
 import { B2B_PHASES, CREATOR_PHASES, type PhaseData } from '../lib/pipeline-data'
 import { useTasks, type TaskFull } from '../hooks/use-tasks'
+import PipelineDiagram from '../components/PipelineDiagram'
 
 const ICONS = { Search, Database, Zap, Mail, CheckCircle2, XCircle }
 
-type PipelineTab = 'b2b' | 'creators'
+type PipelineTab = 'diagrama' | 'b2b' | 'creators'
 
 function StepAssignees({ taskId, tasks }: { taskId: string; tasks: TaskFull[] }) {
   const task = tasks.find((t) => t.task_id === taskId)
@@ -134,7 +135,7 @@ function PipelineTimeline({ phases, tasks }: { phases: PhaseData[]; tasks: TaskF
 
 export default function Pipeline() {
   const [params, setParams] = useSearchParams()
-  const activeTab = (params.get('tab') as PipelineTab) || 'b2b'
+  const activeTab = (params.get('tab') as PipelineTab) || 'diagrama'
   const { tasks } = useTasks()
 
   const setTab = (tab: PipelineTab) => {
@@ -153,6 +154,14 @@ export default function Pipeline() {
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
         <button
+          onClick={() => setTab('diagrama')}
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+            activeTab === 'diagrama' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Diagrama
+        </button>
+        <button
           onClick={() => setTab('b2b')}
           className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
             activeTab === 'b2b' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
@@ -170,16 +179,21 @@ export default function Pipeline() {
         </button>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-5 text-xs bg-white border rounded-lg p-3">
-        <span className="flex items-center gap-1.5"><Bot size={14} className="text-green-600" /> Automático</span>
-        <span className="flex items-center gap-1.5"><UserRound size={14} className="text-amber-600" /> Manual</span>
-        <span className="flex items-center gap-1.5"><Unplug size={14} className="text-red-500" /> Gap / No conectado</span>
-        <span className="flex items-center gap-1.5"><RefreshCw size={14} className="text-blue-500" /> Sync a otro sistema</span>
-      </div>
-
-      {/* Timeline */}
-      <PipelineTimeline phases={activeTab === 'b2b' ? B2B_PHASES : CREATOR_PHASES} tasks={tasks} />
+      {/* Content */}
+      {activeTab === 'diagrama' ? (
+        <PipelineDiagram />
+      ) : (
+        <>
+          {/* Legend */}
+          <div className="flex flex-wrap gap-5 text-xs bg-white border rounded-lg p-3">
+            <span className="flex items-center gap-1.5"><Bot size={14} className="text-green-600" /> Automático</span>
+            <span className="flex items-center gap-1.5"><UserRound size={14} className="text-amber-600" /> Manual</span>
+            <span className="flex items-center gap-1.5"><Unplug size={14} className="text-red-500" /> Gap / No conectado</span>
+            <span className="flex items-center gap-1.5"><RefreshCw size={14} className="text-blue-500" /> Sync a otro sistema</span>
+          </div>
+          <PipelineTimeline phases={activeTab === 'b2b' ? B2B_PHASES : CREATOR_PHASES} tasks={tasks} />
+        </>
+      )}
     </div>
   )
 }

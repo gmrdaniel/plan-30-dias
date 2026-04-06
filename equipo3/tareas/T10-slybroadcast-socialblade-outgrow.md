@@ -17,18 +17,26 @@ Adquirir y configurar las herramientas de apoyo: voicemail masivo, analytics de 
 
 ---
 
-## Daniel: Slybroadcast ($175 paquete)
+## Daniel: VoiceDrop.ai ($95/mes)
+
+> Reemplaza Slybroadcast. Ventaja principal: HubSpot nativo (resuelve gap G1) + voz IA clonada.
 
 ### Pasos
-1. Comprar Slybroadcast (slybroadcast.com) — paquete de $175
-2. Subir guión de buzón de voz:
-   - Audio pregrabado de 30-45 segundos
-   - Contenido: presentación breve + propuesta de valor + CTA
-   - Si no hay audio grabado todavía: preparar guión escrito para grabación posterior
-3. Importar lista de teléfonos de prospectos (de Clay, cuando T11 esté lista)
-4. Configurar horario de envío: 9 AM - 5 PM zona del prospecto
+1. Activar trial en voicedrop.ai ($20 de crédito gratis, 5 días)
+2. **Clonar voz IA:**
+   - Grabar 60 segundos de audio de muestra (voz natural, sin ruido)
+   - VoiceDrop genera clon de voz para personalización automática
+3. **Configurar integración HubSpot:**
+   - Ir a HubSpot Marketplace → buscar "VoiceDrop"
+   - Instalar la app y autenticar
+   - Crear workflow: cuando contacto llega a etapa "Contactado" en pipeline B2B → disparar voicemail automático
+4. **Configurar mensaje:**
+   - Template con variables: "Hola {{firstname}}, vi que {{company}}..."
+   - VoiceDrop genera el audio personalizado con la voz clonada
+5. Configurar horario de envío: 9 AM - 5 PM zona del prospecto
+6. Si el trial funciona, contratar plan $95/mes (1,000 voicemails)
 
-### Entregable: Slybroadcast activo, guión subido (o guión escrito listo para grabar)
+### Entregable: VoiceDrop activo, voz IA clonada, workflow HubSpot configurado, voicemail de prueba enviado
 
 ---
 
@@ -69,7 +77,7 @@ Adquirir y configurar las herramientas de apoyo: voicemail masivo, analytics de 
 ---
 
 ## Criterios de Aceptación
-- [ ] Slybroadcast: cuenta activa, guión subido o escrito
+- [ ] VoiceDrop.ai: cuenta activa, voz IA clonada, workflow HubSpot configurado
 - [ ] Social Blade: API key obtenida, 5 búsquedas exitosas
 - [ ] Outgrow: cuenta activa, calculator de prueba creado, embed funciona
 - [ ] Credenciales documentadas en gestor compartido
@@ -77,6 +85,6 @@ Adquirir y configurar las herramientas de apoyo: voicemail masivo, analytics de 
 ## Costo
 | Item | Costo |
 |------|-------|
-| Slybroadcast | $175 (paquete único) |
+| VoiceDrop.ai | $95/mes (trial $20 gratis) |
 | Social Blade API | $4/mes |
 | Outgrow | $22/mes |
