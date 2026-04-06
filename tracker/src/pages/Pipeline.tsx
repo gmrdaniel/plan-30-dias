@@ -2,7 +2,6 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowDown, CheckCircle2, Zap, Mail, XCircle, Database, Search, BarChart3, Bot, UserRound, Unplug, RefreshCw } from 'lucide-react'
 import { B2B_PHASES, CREATOR_PHASES, type PhaseData } from '../lib/pipeline-data'
 import { useTasks, type TaskFull } from '../hooks/use-tasks'
-import PipelineDiagram from '../components/PipelineDiagram'
 
 const ICONS = { Search, Database, Zap, Mail, CheckCircle2, XCircle }
 
@@ -181,7 +180,12 @@ export default function Pipeline() {
 
       {/* Content */}
       {activeTab === 'diagrama' ? (
-        <PipelineDiagram />
+        <iframe
+          src="/diagrama-prospecting.html"
+          className="w-full border rounded-xl bg-white"
+          style={{ height: 'calc(100vh - 180px)', minHeight: '600px' }}
+          title="Diagrama de Prospección"
+        />
       ) : (
         <>
           {/* Legend */}
