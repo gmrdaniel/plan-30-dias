@@ -8,3 +8,6 @@ port = 54322
 [studio]
 enabled = true
 port = 54323
+
+[functions.clay-webhook-test]
+verify_jwt = false
