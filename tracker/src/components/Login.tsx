@@ -1,19 +1,29 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/use-auth'
+import { TEAM_CONFIG } from '../lib/types'
 import { FileText } from 'lucide-react'
 
-// Map short_name to email for Supabase Auth login
-const EMAIL_MAP: Record<string, string> = {
-  Daniel: 'daniel@laneta.com',
-  Gabriel: 'gabriel@laneta.com',
-  Lillian: 'lillian@laneta.com',
-  Dayana: 'dayana@laneta.com',
-  Eugenia: 'eugenia@laneta.com',
+// Map short_name to email for Supabase Auth login.
+// Kept per-team so the same short_name (if ever reused) stays unambiguous.
+const EMAIL_MAP: Record<string, Record<string, string>> = {
+  team3: {
+    Daniel: 'daniel@laneta.com',
+    Gabriel: 'gabriel@laneta.com',
+    Lillian: 'lillian@laneta.com',
+    Dayana: 'dayana@laneta.com',
+    Eugenia: 'eugenia@laneta.com',
+  },
+  team2: {
+    Pepe: 'pepe@laneta.com',
+    Mafer: 'mafer@laneta.com',
+    Robert: 'robert@laneta.com',
+    MariaLaura: 'marialaura@laneta.com',
+  },
 }
 
 export default function Login() {
-  const { members, login, loading } = useAuth()
+  const { members, login, loading, currentTeam } = useAuth()
   const [selected, setSelected] = useState<string | null>(null)
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -38,7 +48,7 @@ export default function Login() {
   const handleLogin = async () => {
     if (!selected) return
     setError('')
-    const email = EMAIL_MAP[selected]
+    const email = EMAIL_MAP[currentTeam]?.[selected]
     if (!email) { setError('Usuario no configurado'); return }
     const errMsg = await login(email, password)
     if (errMsg) setError(errMsg)
@@ -47,7 +57,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-2">Equipo 3: Infraestructura</h1>
+        <h1 className="text-2xl font-bold text-center mb-2">{TEAM_CONFIG[currentTeam].name}</h1>
         <p className="text-gray-500 text-center mb-6">Sprint Tracker</p>
 
         <div className="space-y-2 mb-6">

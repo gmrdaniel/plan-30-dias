@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import type { TaskFull } from '../hooks/use-tasks'
+import { useAuth } from '../hooks/use-auth'
 import { PRIORITY_CONFIG, STATUS_CONFIG } from '../lib/types'
 
 export default function TaskCard({ task }: { task: TaskFull }) {
+  const { currentTeam } = useAuth()
   const pri = PRIORITY_CONFIG[task.priority]
   const st = STATUS_CONFIG[task.status]
   const responsables = task.assignments.filter((a) => a.assignment_role === 'responsable' || a.assignment_role === 'co-ejecuta')
@@ -10,7 +12,7 @@ export default function TaskCard({ task }: { task: TaskFull }) {
 
   return (
     <Link
-      to={`/task/${task.task_id}`}
+      to={`/${currentTeam}/task/${task.task_id}`}
       className="block bg-white border rounded-lg p-4 hover:shadow-md transition-shadow"
     >
       <div className="flex items-start justify-between gap-2 mb-2">

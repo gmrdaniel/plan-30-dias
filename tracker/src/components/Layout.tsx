@@ -1,30 +1,33 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/use-auth'
+import { TEAM_CONFIG } from '../lib/types'
 import { LayoutDashboard, List, User, LogOut, Target, FileText, GitBranch, ShoppingCart, AlertTriangle, BarChart3 } from 'lucide-react'
 
 export default function Layout() {
-  const { user, logout } = useAuth()
+  const { user, logout, currentTeam } = useAuth()
   if (!user) return null
 
+  const cfg = TEAM_CONFIG[currentTeam]
+  const base = `/${currentTeam}`
+
   const links = [
-    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/board', icon: List, label: 'Board' },
-    { to: '/my', icon: User, label: 'Mi Vista' },
-    { to: '/milestones', icon: Target, label: 'Hitos' },
-    { to: '/procurement', icon: ShoppingCart, label: 'Contratacion' },
-    { to: '/blockers', icon: AlertTriangle, label: 'Bloqueantes' },
-    { to: '/pipeline', icon: BarChart3, label: 'Pipeline B2B' },
+    { to: `${base}`, icon: LayoutDashboard, label: 'Dashboard', end: true },
+    { to: `${base}/board`, icon: List, label: 'Board' },
+    { to: `${base}/my`, icon: User, label: 'Mi Vista' },
+    { to: `${base}/milestones`, icon: Target, label: 'Hitos' },
+    ...(cfg.modules.procurement ? [{ to: `${base}/procurement`, icon: ShoppingCart, label: 'Contratacion' }] : []),
+    ...(cfg.modules.blockers ? [{ to: `${base}/blockers`, icon: AlertTriangle, label: 'Bloqueantes' }] : []),
+    ...(cfg.modules.pipeline ? [{ to: `${base}/pipeline`, icon: BarChart3, label: 'Pipeline B2B' }] : []),
     { to: '/docs', icon: FileText, label: 'Documentos' },
-    { to: '/docs/dtos-dependencias', icon: GitBranch, label: 'DTOs / Contratos' },
+    ...(cfg.modules.procurement ? [{ to: '/docs/dtos-dependencias', icon: GitBranch, label: 'DTOs / Contratos' }] : []),
   ]
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
       <aside className="w-14 md:w-56 bg-white border-r shrink-0 flex flex-col transition-all duration-200">
         <div className="p-2 md:p-4 border-b flex items-center justify-center md:justify-start">
-          <h1 className="hidden md:block font-bold text-sm text-gray-900">Equipo 3</h1>
-          <span className="md:hidden font-bold text-sm text-gray-900">E3</span>
+          <h1 className="hidden md:block font-bold text-sm text-gray-900">{cfg.shortName}</h1>
+          <span className="md:hidden font-bold text-sm text-gray-900">{cfg.shortName.replace(/\s/g, '').slice(0, 2)}</span>
           <p className="hidden md:block text-xs text-gray-500 ml-0">Sprint Tracker</p>
         </div>
         <nav className="flex-1 p-1 md:p-2 space-y-1">
@@ -32,7 +35,7 @@ export default function Layout() {
             <NavLink
               key={l.to}
               to={l.to}
-              end={l.to === '/'}
+              end={l.end}
               title={l.label}
               className={({ isActive }) =>
                 `flex items-center justify-center md:justify-start gap-2 px-2 md:px-3 py-2 rounded-lg text-sm transition-colors ${
@@ -64,7 +67,6 @@ export default function Layout() {
         </div>
       </aside>
 
-      {/* Content */}
       <main className="flex-1 overflow-auto">
         <Outlet />
       </main>

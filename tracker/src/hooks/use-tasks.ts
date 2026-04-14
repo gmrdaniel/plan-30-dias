@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from './use-auth'
 import type { Task, TaskAssignment, TeamMember, ChecklistItem, Milestone, TaskStatus } from '../lib/types'
 
 export interface TaskFull extends Task {
@@ -7,6 +8,7 @@ export interface TaskFull extends Task {
 }
 
 export function useTasks() {
+  const { currentTeam } = useAuth()
   const [tasks, setTasks] = useState<TaskFull[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -14,6 +16,7 @@ export function useTasks() {
     const { data } = await supabase
       .from('tasks')
       .select('*, task_assignments(*, team_members(*))')
+      .eq('team_id', currentTeam)
       .order('start_date')
     if (data) {
       setTasks(
@@ -24,12 +27,12 @@ export function useTasks() {
       )
     }
     setLoading(false)
-  }, [])
+  }, [currentTeam])
 
   useEffect(() => {
     fetchTasks()
     const channel = supabase
-      .channel('tasks-changes')
+      .channel(`tasks-changes-${currentTeam}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, fetchTasks)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'task_checklist' }, fetchTasks)
       .subscribe()
@@ -120,21 +123,22 @@ export function useComments(taskId: string) {
 }
 
 export function useMilestones() {
+  const { currentTeam } = useAuth()
   const [milestones, setMilestones] = useState<Milestone[]>([])
 
   useEffect(() => {
-    supabase.from('milestones').select('*').order('target_date').then(({ data }) => {
-      if (data) setMilestones(data)
+    supabase.from('milestones').select('*').eq('team_id', currentTeam).order('target_date').then(({ data }) => {
+      if (data) setMilestones(data as Milestone[])
     })
-  }, [])
+  }, [currentTeam])
 
   const toggleMilestone = async (id: string, completed: boolean) => {
     await supabase.from('milestones').update({
       is_completed: completed,
       completed_at: completed ? new Date().toISOString() : null,
     }).eq('id', id)
-    const { data } = await supabase.from('milestones').select('*').order('target_date')
-    if (data) setMilestones(data)
+    const { data } = await supabase.from('milestones').select('*').eq('team_id', currentTeam).order('target_date')
+    if (data) setMilestones(data as Milestone[])
   }
 
   return { milestones, toggleMilestone }

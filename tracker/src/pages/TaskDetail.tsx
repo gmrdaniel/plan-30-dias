@@ -22,7 +22,8 @@ export default function TaskDetail() {
   const { tasks, updateStatus } = useTasks()
   const { items: checklist, toggleItem } = useChecklist(taskId || '')
   const { comments, addComment, editComment, deleteComment } = useComments(taskId || '')
-  const { user, members } = useAuth()
+  const { user, members, currentTeam } = useAuth()
+  const teamBase = `/${currentTeam}`
   const [newComment, setNewComment] = useState('')
   const [activeTab, setActiveTab] = useState<Tab>('resumen')
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null)
@@ -280,7 +281,7 @@ export default function TaskDetail() {
                   isDto(b) ? (
                     <Link key={b} to="/docs/dtos-dependencias" className="text-xs font-mono bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded hover:bg-purple-200">{b}</Link>
                   ) : (
-                    <Link key={b} to={`/task/${b}`} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded hover:bg-gray-200">{b}</Link>
+                    <Link key={b} to={`${teamBase}/task/${b}`} className="text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded hover:bg-gray-200">{b}</Link>
                   )
                 )) : <span className="text-xs text-gray-400">Ninguna</span>}
               </div>
@@ -397,7 +398,7 @@ export default function TaskDetail() {
                   }
                   const dep = tasks.find((t) => t.task_id === b)
                   return (
-                    <Link key={b} to={`/task/${b}`} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border text-sm hover:shadow">
+                    <Link key={b} to={`${teamBase}/task/${b}`} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border text-sm hover:shadow">
                       <span className="font-mono font-bold text-gray-400">{b}</span>
                       {dep && (
                         <>
