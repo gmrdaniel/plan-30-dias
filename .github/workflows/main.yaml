@@ -37,7 +37,7 @@ jobs:
 
       - name: Push database migrations
         working-directory: tracker
-        run: supabase db push
+        run: supabase db push --include-all
 
       - name: Deploy Edge Functions
         working-directory: tracker
