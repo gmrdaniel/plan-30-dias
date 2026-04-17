@@ -1,0 +1,16 @@
+No,Area,Dominio,Subdominio,Estatus,Nombre,Correo,Correo viejo,Estatus,Nota
+1,B2B,lanetahub.com,brands,pendiente,collabs,collabs@brands.lanetahub.com,hello@partners.lanetapro.com,Active,Reciclar licencia
+2,B2B,lanetahub.com,partners,Configurado,brands,brands@partners.lanetahub.com,join@go.elevnhub.me,Active,Reciclar licencia
+3,B2B,lanetahub.com,go,pendiente,partners,partners@go.lanetahub.com,taylor@laneta.com,Active,Reciclar licencia
+4,B2B,lanetapro.com,brands,pendiente,collabs,collabs@brands.lanetapro.com,daniel.r@laneta.com,Active,Reciclar licencia
+5,B2B,lanetapro.com,partners,Configurado,brands,brands@partners.lanetapro.com,join@partners.lanetapro.com,pendiente,Sin licencia
+6,B2B,lanetapro.com,go,pendiente,partners,partners@go.lanetapro.com,join@partners.laneta.com,pendiente,Sin licencia
+1,Creators,elevngo.me,creators,pendiente,apply,apply@creators.elevngo.me,,pendiente,Sin licencia
+2,Creators,elevngo.me,hello,pendiente,apply,apply@hello.elevngo.me,,pendiente,Sin licencia
+3,Creators,elevnhub.me,go,pendiente,join,join@go.elevnhub.me,,pendiente,Sin licencia
+4,Creators,elevnhub.me,hello,pendiente,apply,apply@hello.elevnhub.me,,pendiente,Sin licencia
+5,Creators,elevnhub.me,we,pendiente,join,join@we.elevnhub.me,,pendiente,Sin licencia
+6,Creators,elevnhub.me,app,pendiente,join,join@app.elevnhub.me,,pendiente,Sin licencia
+7,Creators,elevnpro.me,go,pendiente,apply,apply@go.elevnpro.me,,pendiente,Sin licencia
+8,Creators,elevnpro.me,hello,pendiente,join,join@hello.elevnpro.me,,pendiente,Sin licencia
+9,Creators,elevnpro.me,we,pendiente,hello,hello@we.elevnpro.me,,pendiente,Sin licencia
