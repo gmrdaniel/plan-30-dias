@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>La Neta - B2B</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,300i,400,400i,700,700i&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Lato', sans-serif; color: #fff; background: #0a0a0a; overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'Unbounded', sans-serif; }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 24px;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(120, 50, 255, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-logo {
+            max-width: 280px;
+            height: auto;
+            margin-bottom: 32px;
+        }
+        .hero h1 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            line-height: 1.2;
+            max-width: 800px;
+            margin-bottom: 16px;
+        }
+        .hero h1 .brand-name {
+            color: #a78bfa;
+        }
+        .hero .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: #ccc;
+            max-width: 650px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .cta-group { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(120, 50, 255, 0.3); }
+        .btn-primary { background: #7c3aed; color: #fff; }
+        .btn-secondary { background: transparent; color: #a78bfa; border: 2px solid #a78bfa; }
+
+        /* Video Audit */
+        .audit-section {
+            padding: 80px 24px;
+            text-align: center;
+            background: #0f0f0f;
+        }
+        .audit-section h2 { font-size: 1.5rem; margin-bottom: 32px; color: #a78bfa; }
+        .video-container {
+            max-width: 700px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(120, 50, 255, 0.15);
+        }
+        .video-container img, .video-container video, .video-container iframe {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+        .video-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Flash CTA */
+        .flash-cta {
+            padding: 20px 24px;
+            text-align: center;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            animation: pulse-bg 3s ease-in-out infinite;
+        }
+        @keyframes pulse-bg {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+        .flash-cta p { font-size: 1.1rem; font-weight: 700; }
+
+        /* Process */
+        .process-section {
+            padding: 80px 24px;
+            background: #0a0a0a;
+        }
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .process-card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .process-card:hover { border-color: #7c3aed; }
+        .process-card .icon { font-size: 2.5rem; margin-bottom: 16px; }
+        .process-card h3 { font-size: 1.1rem; margin-bottom: 12px; color: #a78bfa; }
+        .process-card p { font-size: 0.9rem; color: #999; line-height: 1.5; }
+
+        /* Partners */
+        .partners-section {
+            padding: 80px 24px;
+            background: #0f0f0f;
+        }
+        .partners-section h2 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 48px;
+            color: #a78bfa;
+        }
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .partner-card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .partner-card:hover { border-color: #7c3aed; }
+        .partner-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .partner-info {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .partner-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        .partner-info h3 { font-size: 1rem; font-family: 'Lato', sans-serif; }
+        .partner-info p { font-size: 0.85rem; color: #999; }
+
+        /* About */
+        .about-section {
+            padding: 80px 24px;
+            background: #0a0a0a;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .about-section p {
+            font-size: 1.05rem;
+            color: #bbb;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+        .about-section h2 { font-size: 1.3rem; margin-bottom: 16px; color: #fff; }
+
+        /* Form */
+        .form-section {
+            padding: 80px 24px;
+            background: linear-gradient(180deg, #0f0f0f 0%, #1a0a2e 100%);
+        }
+        .form-wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .form-wrapper h2 { font-size: 1.5rem; margin-bottom: 8px; }
+        .form-wrapper .form-sub { color: #999; margin-bottom: 32px; font-size: 1rem; }
+        .form-wrapper form { display: flex; flex-direction: column; gap: 16px; }
+        .form-wrapper input {
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #111;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Lato', sans-serif;
+        }
+        .form-wrapper input:focus { outline: none; border-color: #7c3aed; }
+        .form-wrapper button {
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            background: #7c3aed;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .form-wrapper button:hover { background: #6d28d9; }
+
+        /* Footer */
+        footer {
+            padding: 48px 24px;
+            background: #050505;
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        footer a { color: #a78bfa; text-decoration: none; }
+
+        /* Dynamic image with fallback */
+        .dynamic-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #1a1a2e;
+        }
+
+        @media (max-width: 600px) {
+            .partners-grid { grid-template-columns: 1fr; }
+            .process-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="hero">
+    <img class="hero-logo" id="dyn-logo"
+         src="https://images.assets-landingi.com/uc/989706bd-cdf1-4005-98a1-e054bcbc94ad/Texto1.crop_2700x584_0,1045.png"
+         alt="La Neta">
+    <h1>
+        <span class="brand-name" id="dyn-brand">Nombre de Marca</span>:
+        <br>Cada dia sin video son clics que gana su competencia.
+    </h1>
+    <p class="subtitle" id="dyn-subtitle">
+        Analizamos tu presencia en Amazon y detectamos una increible oportunidad de crecimiento de casi el 40%.
+    </p>
+    <div class="cta-group">
+        <a class="btn btn-primary" id="dyn-video-link" href="https://sendspark.com/share/eut5xk44yyggba0j1lby0g0rto7bxq2w" target="_blank" rel="noopener">Ver mi auditoria</a>
+        <a class="btn btn-secondary" href="https://calendly.com/laly-laneta/30min" target="_blank" rel="noopener">Agenda tu reunion</a>
+    </div>
+</section>
+
+<!-- ==================== VIDEO AUDIT ==================== -->
+<section class="audit-section" id="audit">
+    <h2>Tu auditoria</h2>
+    <div class="video-container" id="dyn-video-container">
+        <div class="video-placeholder">Video personalizado aparecera aqui</div>
+    </div>
+</section>
+
+<!-- ==================== FLASH CTA ==================== -->
+<section class="flash-cta">
+    <p>Review the personalized audit we performed for you</p>
+</section>
+
+<!-- ==================== PROCESS ==================== -->
+<section class="process-section">
+    <div class="process-grid">
+        <div class="process-card">
+            <div class="icon">&#128269;</div>
+            <h3>Analyze</h3>
+            <p>We identify revenue gap by benchmarking your current listings against the category standards</p>
+        </div>
+        <div class="process-card">
+            <div class="icon">&#127919;</div>
+            <h3>Strategize</h3>
+            <p>We handpick the best UGC creators and sales angles designed to stop the scroll for your ideal audience.</p>
+        </div>
+        <div class="process-card">
+            <div class="icon">&#127916;</div>
+            <h3>Manufacture</h3>
+            <p>We produce high-performance video assets using a blend of raw UGC and AI efficiency, ready to scale in 72 hours.</p>
+        </div>
+        <div class="process-card">
+            <div class="icon">&#128640;</div>
+            <h3>Scale</h3>
+            <p>We implement, iterate, and lower your CPA while dominating the search results and market share.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== PARTNERS ==================== -->
+<section class="partners-section" id="partners">
+    <h2>Partners</h2>
+    <div class="partners-grid">
+        <div class="partner-card">
+            <img class="dynamic-img" src="https://images.assets-landingi.com/uc/169518dc-f09c-47e8-b927-610e3aa3c3a1/foto1.webp" alt="Nestle">
+            <div class="partner-info">
+                <img class="partner-logo" src="https://cdn.lugc.link/145da6cd-1faf-4265-bec6-785261b8ddf4/-/preview/60x51/-/format/auto/" alt="">
+                <div>
+                    <h3>Nestle</h3>
+                    <p>Conversion optimization at scale.</p>
+                </div>
+            </div>
+        </div>
+        <div class="partner-card">
+            <img class="dynamic-img" src="https://images.assets-landingi.com/uc/e90bd776-8cb5-4303-8903-9c2b2e6e40a8/foto2.webp" alt="Mercado Pago">
+            <div class="partner-info">
+                <img class="partner-logo" src="https://cdn.lugc.link/513ea15e-6684-4acb-9963-3df290c8642a/-/preview/79x34/-/format/auto/" alt="">
+                <div>
+                    <h3>Mercado Pago</h3>
+                    <p>High-impact content strategies.</p>
+                </div>
+            </div>
+        </div>
+        <div class="partner-card">
+            <img class="dynamic-img" src="https://images.assets-landingi.com/uc/9bfd3540-e96f-4276-a919-6ed80baed5a8/foto3.webp" alt="Pepsico">
+            <div class="partner-info">
+                <img class="partner-logo" src="https://cdn.lugc.link/c57798b8-b8e9-4872-88f1-5f9c5172d5de/-/preview/60x51/-/format/auto/" alt="">
+                <div>
+                    <h3>Pepsico</h3>
+                    <p>Dominating the CPG visual market.</p>
+                </div>
+            </div>
+        </div>
+        <div class="partner-card">
+            <img class="dynamic-img" src="https://images.assets-landingi.com/uc/29f5033d-e274-40a5-acf8-541c9704bee9/foto4.webp" alt="Sony Latin">
+            <div class="partner-info">
+                <img class="partner-logo" src="https://cdn.lugc.link/27aafc1b-7ca9-4e61-ac5d-c98fd724f1a7/-/preview/60x45/-/format/auto/" alt="">
+                <div>
+                    <h3>Sony Latin</h3>
+                    <p>Innovation in dynamic video assets.</p>
+                </div>
+            </div>
+        </div>
+        <div class="partner-card">
+            <img class="dynamic-img" src="https://images.assets-landingi.com/uc/f20e0a6c-2d6d-469a-8415-51364465e7c7/foto5.webp" alt="Burger King">
+            <div class="partner-info">
+                <img class="partner-logo" src="https://cdn.lugc.link/bc212de4-a65d-4961-824a-8673eb694055/-/preview/53x59/-/format/auto/" alt="">
+                <div>
+                    <h3>Burger King</h3>
+                    <p>Scroll-stopping native content.</p>
+                </div>
+            </div>
+        </div>
+        <div class="partner-card">
+            <img class="dynamic-img" src="https://images.assets-landingi.com/uc/b421c850-ff3a-438a-a4f6-eea227456919/foto6.webp" alt="AMD">
+            <div class="partner-info">
+                <img class="partner-logo" src="https://cdn.lugc.link/45577d12-f200-45a3-bd28-0f7510352842/-/preview/60x45/-/format/auto/" alt="">
+                <div>
+                    <h3>AMD</h3>
+                    <p>Creative performance for tech-driven audiences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== ABOUT ==================== -->
+<section class="about-section">
+    <h2>That's what makes us experts</h2>
+    <p>Traditional advertising no longer sells; the algorithm has shifted. Today, you're not just competing with other brands - you're competing for user attention. Static images no longer stop the scroll. What stops the scroll is authenticity.</p>
+    <p>The Ad Factory is exclusively designed to solve the creative bottleneck for leading brands. We are a high-performance video asset factory that combines the power of User-Generated Content (UGC) with the surgical efficiency of Artificial Intelligence.</p>
+    <div style="text-align: center; margin-top: 24px;">
+        <a class="btn btn-primary" href="tel:+15551234567">Call</a>
+    </div>
+</section>
+
+<!-- ==================== FORM ==================== -->
+<section class="form-section" id="contact">
+    <div class="form-wrapper">
+        <h2>Ready to convert and earn more?</h2>
+        <p class="form-sub">We'll show you in detail the ideal video strategy for your brand</p>
+        <form id="lead-form">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="tel" name="phone" placeholder="Telefono">
+            <input type="hidden" name="source" value="landing-b2b">
+            <input type="hidden" name="brand" id="dyn-brand-hidden" value="">
+            <button type="submit">Send</button>
+        </form>
+        <p id="form-msg" style="margin-top: 16px; display: none;"></p>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+    <p><strong>The Ad Factory</strong></p>
+    <p style="margin-top: 8px;">Phone: +1 (555) 123-4567 &middot; Email: info@soundwaves.com</p>
+    <p style="margin-top: 8px;">123 Harmony Lane, Los Angeles, CA 90001, USA</p>
+</footer>
+
+<!-- ==================== DYNAMIC REPLACEMENT SCRIPT ==================== -->
+<script>
+(function() {
+    const params = new URLSearchParams(window.location.search);
+
+    // === PARAMETER MAP ===
+    // ?empresa=Nestle
+    // ?subtitulo=Texto personalizado para el subtitulo
+    // ?logo=https://url-de-imagen/logo.png
+    // ?video=https://sendspark.com/share/xxx
+    // ?video_thumb=https://thumbnail.sendspark.com/animated/xxx
+    // ?hero_img=https://url-de-imagen/hero-background.jpg
+    // ?calendly=https://calendly.com/tu-link
+    // ?cta_text=Texto del boton principal
+
+    // Dynamic text: Brand name
+    const brand = params.get('empresa');
+    if (brand) {
+        const decoded = decodeURIComponent(brand);
+        document.getElementById('dyn-brand').textContent = decoded;
+        document.getElementById('dyn-brand-hidden').value = decoded;
+        document.title = `La Neta - ${decoded}`;
+    }
+
+    // Dynamic text: Subtitle
+    const subtitle = params.get('subtitulo');
+    if (subtitle) {
+        document.getElementById('dyn-subtitle').textContent = decodeURIComponent(subtitle);
+    }
+
+    // Dynamic image: Logo
+    const logo = params.get('logo');
+    if (logo) {
+        document.getElementById('dyn-logo').src = decodeURIComponent(logo);
+    }
+
+    // Dynamic image: Hero background
+    const heroImg = params.get('hero_img');
+    if (heroImg) {
+        document.querySelector('.hero').style.backgroundImage =
+            `linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.85)), url('${decodeURIComponent(heroImg)}')`;
+    }
+
+    // Dynamic: Video link & thumbnail
+    const video = params.get('video');
+    const videoThumb = params.get('video_thumb');
+    if (video) {
+        const decodedVideo = decodeURIComponent(video);
+        document.getElementById('dyn-video-link').href = decodedVideo;
+
+        const container = document.getElementById('dyn-video-container');
+        if (videoThumb) {
+            container.innerHTML = `<a href="${decodedVideo}" target="_blank" rel="noopener">
+                <img src="${decodeURIComponent(videoThumb)}" alt="Video personalizado" style="width:100%;aspect-ratio:16/9;object-fit:cover;">
+            </a>`;
+        } else {
+            container.innerHTML = `<a href="${decodedVideo}" target="_blank" rel="noopener" class="video-placeholder" style="text-decoration:none;color:#a78bfa;font-weight:700;">
+                &#9654; Ver video personalizado
+            </a>`;
+        }
+    }
+
+    // Dynamic: CTA text
+    const ctaText = params.get('cta_text');
+    if (ctaText) {
+        document.getElementById('dyn-video-link').textContent = decodeURIComponent(ctaText);
+    }
+
+    // Dynamic: Calendly link
+    const calendly = params.get('calendly');
+    if (calendly) {
+        document.querySelector('.btn-secondary').href = decodeURIComponent(calendly);
+    }
+
+    // === FORM SUBMISSION TO SUPABASE ===
+    document.getElementById('lead-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        const msg = document.getElementById('form-msg');
+
+        // Add all URL params as metadata
+        const meta = {};
+        params.forEach(function(value, key) { meta[key] = value; });
+        data.url_params = JSON.stringify(meta);
+        data.page_url = window.location.href;
+
+        try {
+            // Post to Supabase edge function or direct insert
+            // For now, show success and log data
+            console.log('Lead captured:', data);
+            msg.style.display = 'block';
+            msg.style.color = '#4ade80';
+            msg.textContent = 'Gracias! Nos pondremos en contacto contigo pronto.';
+            this.reset();
+        } catch (err) {
+            msg.style.display = 'block';
+            msg.style.color = '#f87171';
+            msg.textContent = 'Error al enviar. Intenta de nuevo.';
+        }
+    });
+})();
+</script>
+</body>
+</html>
