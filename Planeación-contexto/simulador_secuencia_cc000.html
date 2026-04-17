@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Secuencia B2B — The Ad Factory</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#1a1a18;min-height:100vh;padding:0}
+.topbar{background:#0e0e0e;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar-brand{font-size:13px;font-weight:600;color:#fff;letter-spacing:.02em}
+.topbar-sub{font-size:11px;color:#888780}
+.container{max-width:860px;margin:0 auto;padding:24px 20px}
+.page-title{font-size:20px;font-weight:500;color:#0e0e0e;margin-bottom:4px}
+.page-sub{font-size:13px;color:#888780;margin-bottom:20px}
+
+/* Tabs */
+.tabs2{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.t2btn{padding:8px 18px;font-size:13px;font-weight:500;border:1px solid #d3d1c7;border-radius:8px;background:transparent;color:#888780;cursor:pointer;transition:all .15s}
+.t2btn.on{background:#fff;color:#0e0e0e;border-color:#888780;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.t2btn:hover:not(.on){background:#f1efe8}
+.tc{display:none}.tc.on{display:block}
+
+/* Step bar */
+.stepbar{display:flex;align-items:center;gap:3px;margin-bottom:18px;flex-wrap:wrap;padding:12px 16px;background:#fff;border-radius:10px;border:1px solid #e8e6e0}
+.sdot{width:26px;height:26px;border-radius:50%;font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center;border:1px solid;flex-shrink:0;transition:all .2s;cursor:default}
+.sdot.pending{background:#f1efe8;border-color:#d3d1c7;color:#888780}
+.sdot.active{background:#e6f1fb;border-color:#378add;color:#185fa5}
+.sdot.sig-A{background:#eaf3de;border-color:#639922;color:#3b6d11}
+.sdot.sig-B{background:#faeeda;border-color:#ba7517;color:#633806}
+.sdot.sig-C{background:#fcebeb;border-color:#e24b4a;color:#a32d2d}
+.sdot.sig-D{background:#f1efe8;border-color:#b4b2a9;color:#5f5e5a}
+.sdot.sig-ok{background:#eaf3de;border-color:#639922;color:#3b6d11}
+.sconn{width:10px;height:1px;background:#d3d1c7;flex-shrink:0}
+
+/* Step card */
+.step-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;overflow:hidden;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.step-hdr{display:flex;align-items:center;gap:8px;padding:12px 16px;background:#f8f7f4;border-bottom:1px solid #e8e6e0;flex-wrap:wrap;gap:8px}
+.step-day{font-size:11px;font-weight:600;color:#888780;min-width:44px;flex-shrink:0}
+.ch-pill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.cp-e{background:#e6f1fb;color:#185fa5}
+.cp-l{background:#e6f1fb;color:#185fa5}
+.cp-w{background:#eaf3de;color:#3b6d11}
+.cp-p{background:#faeeda;color:#633806}
+.step-title{font-size:13px;font-weight:500;color:#0e0e0e;flex:1}
+.var-badge{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid #d3d1c7;color:#888780;background:#fff;white-space:nowrap}
+.step-body{padding:16px}
+.msg-subj{font-size:11px;color:#888780;margin-bottom:10px;padding:6px 10px;background:#f8f7f4;border-radius:6px;border-left:3px solid #d3d1c7}
+.msg-subj b{color:#0e0e0e;font-weight:500}
+.msg-body{font-size:12px;line-height:1.85;color:#1a1a18;white-space:pre-wrap;font-family:'Courier New',monospace;background:#f8f7f4;padding:12px 14px;border-radius:8px;border:1px solid #e8e6e0}
+
+/* Signal selector */
+.sig-section{margin-top:14px}
+.sig-label{font-size:12px;font-weight:500;color:#5f5e5a;margin-bottom:8px}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+@media(max-width:480px){.sig-grid{grid-template-columns:1fr}}
+.sig-btn{padding:10px 12px;font-size:11px;border:1px solid #d3d1c7;border-radius:8px;background:#fff;color:#5f5e5a;cursor:pointer;text-align:left;line-height:1.5;transition:all .15s}
+.sig-btn:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.sig-btn .sig-code{font-weight:700;font-size:12px;display:block;margin-bottom:2px}
+.sig-btn.sA{border-color:#639922;color:#3b6d11}.sig-btn.sA:hover{background:#eaf3de}
+.sig-btn.sB{border-color:#ba7517;color:#633806}.sig-btn.sB:hover{background:#faeeda}
+.sig-btn.sC{border-color:#e24b4a;color:#a32d2d}.sig-btn.sC:hover{background:#fcebeb}
+.sig-btn.sD{border-color:#b4b2a9;color:#5f5e5a}.sig-btn.sD:hover{background:#f1efe8}
+
+.nav-row{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.next-btn{padding:9px 20px;font-size:12px;font-weight:500;border:1px solid #d3d1c7;border-radius:8px;background:#fff;color:#0e0e0e;cursor:pointer;transition:all .15s}
+.next-btn:hover{background:#f1efe8;border-color:#888780}
+.reset-btn{padding:7px 14px;font-size:11px;border:1px solid #e8e6e0;border-radius:8px;background:transparent;color:#888780;cursor:pointer}
+.reset-btn:hover{background:#f1efe8}
+
+/* Fast track & done */
+.ft-box{border:1px solid #639922;border-radius:10px;padding:16px;background:#eaf3de;margin-bottom:14px}
+.ft-title{font-size:13px;font-weight:600;color:#3b6d11;margin-bottom:6px}
+.ft-body{font-size:12px;color:#3b6d11;line-height:1.6}
+.done-box{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:24px;text-align:center;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.done-title{font-size:15px;font-weight:500;color:#0e0e0e;margin-bottom:6px}
+.done-sub{font-size:12px;color:#888780;margin-bottom:14px;line-height:1.6}
+.path-summary{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:16px}
+.path-pill{font-size:11px;padding:3px 10px;border-radius:10px;border:1px solid;font-weight:500}
+.pp-A{background:#eaf3de;border-color:#639922;color:#3b6d11}
+.pp-B{background:#faeeda;border-color:#ba7517;color:#633806}
+.pp-C{background:#fcebeb;border-color:#e24b4a;color:#a32d2d}
+.pp-D{background:#f1efe8;border-color:#b4b2a9;color:#5f5e5a}
+.pp-ok{background:#eaf3de;border-color:#639922;color:#3b6d11}
+
+/* Legend */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;padding:10px 14px;background:#fff;border-radius:8px;border:1px solid #e8e6e0}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#5f5e5a}
+.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* Library */
+.lib-tp{background:#fff;border:1px solid #e8e6e0;border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.lib-hdr{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;transition:background .15s;flex-wrap:wrap}
+.lib-hdr:hover{background:#f8f7f4}
+.lib-exp{font-size:10px;color:#888780;transition:transform .2s;flex-shrink:0;margin-left:auto}
+.lib-exp.open{transform:rotate(180deg)}
+.lib-body{display:none;padding:14px;border-top:1px solid #e8e6e0;background:#f8f7f4}
+.lib-body.on{display:block}
+.vtabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.vtab{font-size:11px;padding:5px 12px;border:1px solid #d3d1c7;border-radius:6px;cursor:pointer;background:#fff;color:#888780;transition:all .15s}
+.vtab.on{background:#e6f1fb;color:#185fa5;border-color:#378add}
+.vc{display:none}.vc.on{display:block}
+.var-desc{font-size:11px;color:#633806;margin-bottom:8px;padding:6px 10px;background:#faeeda;border-radius:6px;border-left:2px solid #ba7517}
+.lib-subj{font-size:11px;color:#888780;margin-bottom:8px;padding:6px 10px;background:#fff;border-radius:6px;border:1px solid #e8e6e0}
+.lib-subj b{color:#0e0e0e;font-weight:500}
+.lib-msg{font-size:12px;line-height:1.85;white-space:pre-wrap;color:#1a1a18;font-family:'Courier New',monospace;padding:12px;background:#fff;border-radius:6px;border:1px solid #e8e6e0}
+.copy-btn{font-size:11px;padding:5px 12px;border:1px solid #d3d1c7;border-radius:6px;cursor:pointer;background:#fff;color:#5f5e5a;margin-top:8px;display:inline-block;transition:all .15s}
+.copy-btn:hover{background:#f1efe8;border-color:#888780}
+.copy-btn.copied{background:#eaf3de;color:#3b6d11;border-color:#639922}
+.fijo-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:#f1efe8;color:#888780;border:1px solid #d3d1c7;flex-shrink:0}
+.adap-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:#e6f1fb;color:#185fa5;border:1px solid #85b7eb;flex-shrink:0}
+
+.footer{text-align:center;padding:20px;font-size:11px;color:#888780;border-top:1px solid #e8e6e0;margin-top:20px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand">THE AD FACTORY · LA NETA</span>
+  <span class="topbar-sub">Simulador de Secuencia B2B — CC-000</span>
+</div>
+
+<div class="container">
+  <div class="page-title">Mensajes adaptados por señal del prospecto</div>
+  <div class="page-sub">Secuencia de 21 días · 9 touchpoints · Variantes según comportamiento en tiempo real</div>
+
+  <div class="tabs2">
+    <button class="t2btn on" onclick="switchMain('sim',this)">Simulador de caminos</button>
+    <button class="t2btn" onclick="switchMain('lib',this)">Biblioteca completa</button>
+  </div>
+
+  <div id="sim" class="tc on">
+    <div class="legend">
+      <span class="li"><span class="ld" style="background:#3b6d11"></span>A — Respondió + agendó</span>
+      <span class="li"><span class="ld" style="background:#ba7517"></span>B — Abrió/Leyó + no agendó</span>
+      <span class="li"><span class="ld" style="background:#e24b4a"></span>C — Abrió + sin respuesta</span>
+      <span class="li"><span class="ld" style="background:#888780"></span>D — No abrió / no llegó</span>
+      <span class="li"><span class="ld" style="background:#378add"></span>Paso activo</span>
+    </div>
+    <div class="stepbar" id="sbar"></div>
+    <div id="scontent"></div>
+  </div>
+
+  <div id="lib" class="tc">
+    <div id="library"></div>
+  </div>
+</div>
+
+<div class="footer">The Ad Factory · La Neta — Documento interno confidencial · 2026</div>
+
+<script>
+const M={
+  d1:{type:'email',subject:'Asunto: {{marca}} pierde visibilidad sin video',
+    body:`Hola {{nombre}},
+
+Soy Pepe de The Ad Factory, producimos hasta 120 piezas de video en 21 días para marcas que venden online.
+
+Revisando la página de {{marca}} en {{marketplace}} noté algo: tu listing ({{url_listing}}) no tiene video.
+
+Los marketplaces priorizan listings con contenido multimedia. Sin video, tu producto pierde visibilidad frente a competidores que sí lo tienen, incluso con el mismo precio y reseñas.
+
+Preparé un breve video analizando esta oportunidad.
+
+Ve tu auditoría gratuita: {{enlace_landing}}
+
+Saludos, Pepe`},
+  d4:{type:'linkedin',
+    body:`Hola {{nombre}}, te envié un correo esta semana con un análisis de los listings de {{marca}} en {{marketplace}}. Hay un dato puntual que creo que te va a llamar la atención. Conecto por aquí por si preferís verlo desde LinkedIn.`},
+  d5:{
+    B:{type:'email',desc:'D1 — abrió + hizo click + no agendó',subject:'Asunto: Re: {{marca}} en {{marketplace}}',
+      body:`Hola {{nombre}},
+
+Vi que revisaste la auditoría de {{marca}} — ¿algo te llamó la atención?
+
+Si tienes una pregunta puntual, respóndeme aquí y te la resuelvo de inmediato.
+
+El análisis sigue aquí: {{enlace_landing}}
+
+Saludos, Pepe`},
+    C:{type:'email',desc:'D1 — abrió + no hizo click',subject:'Asunto: Re: {{marca}} en {{marketplace}}',
+      body:`Hola {{nombre}},
+
+Te escribí hace unos días con un análisis de {{marca}} en {{marketplace}}.
+
+Solo quería asegurarme de que el correo llegó bien — el análisis que preparé sigue activo.
+
+{{enlace_landing}}
+
+Saludos, Pepe`},
+    D:{type:'email',desc:'D1 — no abrió',subject:'Asunto: Una nota sobre {{marca}}',
+      body:`Hola {{nombre}},
+
+Soy Pepe de The Ad Factory.
+
+Noté que {{marca}} no tiene video en {{marketplace}} — y en tu categoría eso ya está costando clics y ranking.
+
+Te preparé un análisis de 90 segundos que vale la pena ver:
+
+{{enlace_landing}}
+
+Saludos, Pepe`}
+  },
+  d7:{
+    B:{type:'whatsapp',desc:'D5 — abrió + hizo click + no agendó',
+      body:`Hola {{nombre}}, Pepe de The Ad Factory.
+
+Vi que revisaste la auditoría de {{marca}} — creo que algo te llamó la atención.
+
+¿Tienes una pregunta puntual? Respóndeme aquí y te la resuelvo.`},
+    C:{type:'whatsapp',desc:'D5 — abrió + no hizo click',
+      body:`Hola {{nombre}}, Pepe de The Ad Factory.
+
+Te mandé un correo hace unos días sobre {{marca}} — quería asegurarme de que te llegó.
+
+Vi algo en tu página de producto que creo que te va a interesar. Está en el correo que te envié.
+
+¿Lo pudiste ver?`},
+    D:{type:'whatsapp',desc:'D5 — no abrió',
+      body:`Hola {{nombre}}, Pepe de The Ad Factory.
+
+Te escribí por correo sobre {{marca}} en {{marketplace}} — puede que no haya llegado bien.
+
+El punto es este: tu producto no tiene video y eso te está costando ventas.
+
+¿Tienes 10 minutos esta semana? {{enlace_landing}}`}
+  },
+  d10:{type:'instruccion',
+    body:`INSTRUCCIÓN OPERATIVA — No se envía al prospecto.
+
+Acción: Identificar la publicación más reciente del prospecto en LinkedIn (últimos 7 días) y dejar un comentario genuino de 1–2 líneas sobre el tema de esa publicación.
+
+Regla absoluta: Cero mención a The Ad Factory, al email, a la auditoría o a cualquier elemento comercial.
+
+Objetivo: Que el prospecto vea el nombre del rep en su bandeja de notificaciones. Familiaridad sin fricción.`},
+  d12:{
+    B:{type:'email',desc:'WA D7 — leído (doble azul) + sin respuesta',subject:'Asunto: Lo que {{competidor}} hace mejor hoy',
+      body:`Hola {{nombre}},
+
+Vi que te llegó el audio que te mandé — quiero mostrarte algo más concreto.
+
+Revisé a {{competidor}} y llevan ventaja en {{categoría}}: {{dato_competidor}}.
+
+Más presencia en video = más confianza al momento de compra.
+
+Te dejo el caso de una marca que cerró esa brecha con nosotros:
+
+Ver caso de estudio: {{enlace_pdf}}
+
+Tu listing ({{url_listing}}) sigue sin video.
+La auditoría de {{marca}} sigue activa: {{enlace_landing}}
+
+Responde SI y te mando 3 ideas de video para {{marca}}.
+
+Saludos, Pepe`},
+    C:{type:'email',desc:'WA D7 — entregado + sin lectura confirmada',subject:'Asunto: Otras marcas ya tienen video, {{nombre}}',
+      body:`Hola {{nombre}},
+
+Te escribí hace unos días sobre {{marca}} en {{marketplace}}.
+
+Algo que estoy viendo: cada vez más marcas de {{categoría}} producen video a escala. Las que se mueven primero ganan la visibilidad que las demás ceden.
+
+Te dejo un caso real de una marca que lo hizo con nosotros:
+
+Ver caso de estudio: {{enlace_pdf}}
+
+Tu listing ({{url_listing}}) sigue sin video.
+La auditoría de {{marca}} sigue activa: {{enlace_landing}}
+
+Responde SI y te mando 3 ideas de video para {{marca}}.
+
+Saludos, Pepe`},
+    D:{type:'email',desc:'WA D7 — no entregado / canal inactivo',subject:'Asunto: {{competidor}} ya tiene video en {{marketplace}}',
+      body:`Hola {{nombre}},
+
+Soy Pepe de The Ad Factory — te he escrito antes sobre {{marca}}.
+
+Algo que no puedo ignorar: {{competidor}} lanzó video en sus listings hace 90 días y su ranking en {{categoría}} subió significativamente.
+
+{{marca}} todavía no tiene video.
+
+Te dejo el caso de una marca que estuvo en la misma situación:
+
+Ver caso de estudio: {{enlace_pdf}}
+
+La auditoría de {{marca}} sigue activa: {{enlace_landing}}
+
+¿Vale 10 minutos esta semana?
+
+Saludos, Pepe`}
+  },
+  d15:{
+    B:{type:'audio',desc:'D12 — abrió + hizo click + no agendó',
+      body:`{{nombre}}, qué tal. Pepe de The Ad Factory.
+[pausa]
+Vi que revisaste el caso de estudio que te mandé — creo que algo te resonó.
+Solo quiero hacerte una pregunta directa: ¿qué es lo que te frena para dar el siguiente paso con {{marca}}?
+Cuéntame aquí y lo resolvemos juntos.
+Un saludo, Pepe.`},
+    C:{type:'audio',desc:'D12 — abrió + no hizo click',
+      body:`{{nombre}}, qué tal. Pepe de The Ad Factory.
+[pausa]
+Te mandé un correo con un caso real de una marca que estaba exactamente donde está {{marca}}: sin video en {{marketplace}}, perdiendo terreno frente a la competencia.
+El punto es simple: sin video estás dejando ventas sobre la mesa hoy.
+Te grabé un análisis de tu listing. Está en el correo que te envié.
+Si te hace sentido, me escribes aquí.
+Un saludo, Pepe.`},
+    D:{type:'audio',desc:'D12 — no abrió',
+      body:`{{nombre}}, qué tal. Pepe de The Ad Factory.
+[pausa]
+Sé que te he escrito varias veces por correo — puede que no hayan llegado bien.
+Por eso te mando este audio directo.
+Tu producto en {{marketplace}} no tiene video y eso te está costando clics y ventas hoy.
+Preparé un análisis de 90 segundos que muestra exactamente dónde está la pérdida.
+Si quieres verlo, respóndeme aquí y te lo comparto.
+Un saludo, Pepe.`}
+  },
+  d18:{
+    hot:{desc:'2+ señales B — prospecto ha engajado varias veces',
+      body:`APERTURA CALIENTE:
+
+"Hola {{nombre}}, soy Pepe de The Ad Factory.
+Tengo abierto ahorita el listing de {{producto}} en {{marketplace}} — el mismo que te mandé en la auditoría, que vi que revisaste un par de veces.
+Quería resolver cualquier duda antes de que termine la semana.
+¿Tienes 20 minutos ahora o esta tarde?"
+
+[Si no puede ahora:]
+"Sin problema. ¿El jueves a las 4 o el viernes a las 10?"`},
+    mixed:{desc:'Señales B y C combinadas',
+      body:`APERTURA MIXTA:
+
+"Hola {{nombre}}, soy Pepe de The Ad Factory.
+Tengo abierto el listing de {{producto}} en {{marketplace}} — el mismo de la auditoría que te mandé.
+Encontré algo bastante específico para {{marca}} y quería explicártelo en persona.
+¿Tienes dos minutos ahora?"
+
+[Si pide referencia:]
+"Te mandé el análisis por correo y también por WhatsApp — por si uno no llegó bien."`},
+    cold:{desc:'Señales C/D predominantes — poco o ningún engagement',
+      body:`APERTURA FRÍA:
+
+"Hola {{nombre}}, soy Pepe de The Ad Factory.
+Te escribí varias veces por correo y por WhatsApp sobre {{marca}} en {{marketplace}} — puede que no hayan llegado bien.
+El punto es este: tu producto no tiene video y en tu categoría eso ya está marcando diferencia.
+¿Tienes 60 segundos para que te explique lo que encontré?"
+
+[Si no tiene tiempo:]
+"Entendido. ¿Me das tu correo preferido y te mando el análisis directo? Son 90 segundos de video."`}
+  },
+  d21:{type:'email',subject:'Asunto: ¿Cierro tu archivo, {{nombre}}?',
+    body:`Hola {{nombre}},
+
+Entiendo que producir video para {{marketplace}} puede no ser prioridad hoy para {{marca}}. Sin problema.
+
+Tu auditoría sigue activa por 30 días:
+{{enlace_auditoria}}
+
+Un dato: trabajamos con un máximo de {{X}} marcas nuevas por trimestre. Para el {{trimestre}} nos quedan {{Y}} espacios.
+
+No es urgente. Si en algún momento quieres retomar, responde este correo.
+
+Éxito, Pepe.`}
+};
+
+const STEPS=[
+  {id:'d1',day:'D 1–3',ch:'e',chN:'Email',title:'Email #1 — primer contacto',hasSig:true,canFT:true},
+  {id:'d4',day:'D 4',ch:'l',chN:'LinkedIn',title:'Solicitud de conexión',hasSig:false},
+  {id:'d5',day:'D 5',ch:'e',chN:'Email',title:'Email #2 — follow-up adaptado',hasSig:true,canFT:true},
+  {id:'d7',day:'D 7',ch:'w',chN:'WhatsApp',title:'WhatsApp — audio o texto',hasSig:true,canFT:true},
+  {id:'d10',day:'D 10',ch:'l',chN:'LinkedIn',title:'Interacción orgánica',hasSig:false},
+  {id:'d12',day:'D 12',ch:'e',chN:'Email',title:'Email #3 — FOMO competitivo',hasSig:true,canFT:true},
+  {id:'d15',day:'D 15',ch:'w',chN:'WhatsApp',title:'Nota de voz LatAm',hasSig:true,canFT:true},
+  {id:'d18',day:'D 18',ch:'p',chN:'Teléfono',title:'Llamada de conversión',hasSig:false},
+  {id:'d21',day:'D 21',ch:'e',chN:'Email',title:'Email de ruptura',hasSig:false},
+];
+
+const SIG=[
+  {k:'A',cls:'sA',label:'A — Respondió + agendó meet',note:'Fast Track activado'},
+  {k:'B',cls:'sB',label:'B — Abrió/Leyó + no agendó',note:'Siguiente: variante caliente'},
+  {k:'C',cls:'sC',label:'C — Abrió + sin click/respuesta',note:'Siguiente: variante media'},
+  {k:'D',cls:'sD',label:'D — No abrió / no llegó',note:'Siguiente: variante fría'},
+];
+const WA_SIG=[
+  {k:'A',cls:'sA',label:'A — Respondió positivo + agendó',note:'Fast Track activado'},
+  {k:'B',cls:'sB',label:'B — Doble azul + sin respuesta',note:'Siguiente: variante caliente'},
+  {k:'C',cls:'sC',label:'C — Entregado + sin lectura',note:'Siguiente: variante media'},
+  {k:'D',cls:'sD',label:'D — Un tick / no entregado',note:'Siguiente: variante fría'},
+];
+
+let S={step:0,sig:{},done:false,ft:false};
+
+function prevSig(id){const dep={d5:'d1',d7:'d5',d12:'d7',d15:'d12'};return dep[id]?S.sig[dep[id]]:'C';}
+function getMsg(id){
+  const m=M[id];if(!m)return null;
+  if(id==='d18'){const bs=[S.sig.d1,S.sig.d5,S.sig.d7,S.sig.d12,S.sig.d15].filter(Boolean);const bc=bs.filter(s=>s==='B').length;return bc>=2?m.hot:bc>=1?m.mixed:m.cold;}
+  if(m.B)return m[prevSig(id)]||m.C;
+  return m;
+}
+function chCls(ch){return 'ch-pill cp-'+ch;}
+
+function renderBar(){
+  const bar=document.getElementById('sbar');let h='';
+  STEPS.forEach((st,i)=>{
+    const sig=S.sig[st.id];let cls='pending';
+    if(i===S.step&&!S.done)cls='active';
+    else if(sig)cls='sig-'+sig;
+    else if(i<S.step&&!sig)cls='sig-ok';
+    if(i>0)h+=`<div class="sconn"></div>`;
+    h+=`<div class="sdot ${cls}" title="${st.day} — ${st.title}">${i+1}</div>`;
+  });
+  bar.innerHTML=h;
+}
+
+function renderSim(){
+  if(S.done||S.ft){renderDone();return;}
+  const st=STEPS[S.step];
+  const msg=getMsg(st.id);
+  const isWA=st.ch==='w';
+  const sigs=isWA?WA_SIG:SIG;
+  let varBadge='';
+  if(['d5','d7','d12','d15'].includes(st.id)){
+    const p=prevSig(st.id);const desc=msg&&msg.desc?msg.desc:'';
+    varBadge=`<span class="var-badge">Variante ${p} — ${desc}</span>`;
+  }
+  let msgHtml='';
+  if(msg){
+    if(msg.subject)msgHtml+=`<div class="msg-subj">${msg.subject}</div>`;
+    msgHtml+=`<div class="msg-body">${escHtml(msg.body)}</div>`;
+  }
+  let sigHtml='';
+  if(st.hasSig){
+    sigHtml=`<div class="sig-section"><div class="sig-label">¿Qué hizo el prospecto con este mensaje?</div><div class="sig-grid">`;
+    sigs.forEach(s=>{sigHtml+=`<button class="sig-btn ${s.cls}" onclick="pickSig('${s.k}')"><span class="sig-code">${s.k}</span>${s.label}<br><span style="font-size:10px;opacity:.75">${s.note}</span></button>`;});
+    sigHtml+=`</div></div>`;
+  } else {
+    sigHtml=`<div class="nav-row"><button class="next-btn" onclick="nextStep()">Continuar →</button><button class="reset-btn" onclick="resetSim()">Reiniciar</button></div>`;
+  }
+  document.getElementById('scontent').innerHTML=`
+    <div class="step-card">
+      <div class="step-hdr"><span class="step-day">${st.day}</span><span class="${chCls(st.ch)}">${st.chN}</span><span class="step-title">${st.title}</span>${varBadge}</div>
+      <div class="step-body">${msgHtml}${sigHtml}</div>
+    </div>
+    <div class="nav-row"><button class="reset-btn" onclick="resetSim()">Reiniciar desde D1</button></div>`;
+}
+
+function renderDone(){
+  const pathPills=Object.entries(S.sig).map(([k,v])=>`<span class="path-pill pp-${v}">${k.toUpperCase()}: ${v}</span>`).join('');
+  const title=S.ft?'⚡ Fast Track activado':'Secuencia completada';
+  const sub=S.ft?'El prospecto mostró interés real. Responder en menos de 2 horas y proponer fecha concreta. Sacar de todos los flujos automatizados.':'El prospecto completó los 21 días. Revisar el árbol de decisión para condiciones de re-entrada al CRM.';
+  document.getElementById('scontent').innerHTML=`
+    <div class="done-box">
+      <div class="done-title">${title}</div>
+      <div class="done-sub">${sub}</div>
+      <div class="path-summary">${pathPills}</div>
+      <button class="next-btn" onclick="resetSim()">Simular otro camino</button>
+    </div>`;
+}
+
+function pickSig(sig){
+  const st=STEPS[S.step];S.sig[st.id]=sig;
+  if(sig==='A'&&st.canFT){S.ft=true;S.done=true;renderBar();renderDone();return;}
+  nextStep();
+}
+function nextStep(){S.step++;if(S.step>=STEPS.length){S.done=true;renderBar();renderDone();return;}renderBar();renderSim();}
+function resetSim(){S={step:0,sig:{},done:false,ft:false};renderBar();renderSim();}
+function switchMain(id,btn){
+  document.querySelectorAll('.tc').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.t2btn').forEach(el=>el.classList.remove('on'));
+  document.getElementById(id).classList.add('on');btn.classList.add('on');
+}
+function libTog(id){document.getElementById('lb-'+id).classList.toggle('on');document.getElementById('le-'+id).classList.toggle('open');}
+function vtoggle(tp,v){
+  document.querySelectorAll('.vc-'+tp).forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.vt-'+tp).forEach(el=>el.classList.remove('on'));
+  document.getElementById('vc-'+tp+'-'+v).classList.add('on');
+  document.getElementById('vt-'+tp+'-'+v).classList.add('on');
+}
+function copyMsg(id,btn){
+  const el=document.getElementById(id);
+  if(!el)return;
+  navigator.clipboard.writeText(el.innerText).then(()=>{
+    btn.textContent='¡Copiado!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('copied');},2000);
+  });
+}
+function escHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function mkLibFixed(id,st,msg){
+  const isInstr=msg.type==='instruccion';
+  const subjHtml=msg.subject?`<div class="lib-subj">${escHtml(msg.subject)}</div>`:'';
+  return `<div class="lib-tp">
+    <div class="lib-hdr" onclick="libTog('${id}')">
+      <span class="step-day">${st.day}</span><span class="${chCls(st.ch)}">${st.chN}</span>
+      <span class="step-title" style="flex:1">${st.title}</span>
+      <span class="${isInstr?'adap-tag':'fijo-tag'}">${isInstr?'Instrucción':'Fijo'}</span>
+      <span class="lib-exp" id="le-${id}">▼</span>
+    </div>
+    <div class="lib-body" id="lb-${id}">
+      ${subjHtml}<div class="lib-msg" id="lm-${id}">${escHtml(msg.body)}</div>
+      <button class="copy-btn" onclick="copyMsg('lm-${id}',this)">Copiar</button>
+    </div>
+  </div>`;
+}
+
+function mkLibAdap(id,st,variants,vLabels){
+  const keys=Object.keys(variants);const fk=keys[0];
+  let vtabs=keys.map(k=>`<button class="vtab vt-${id}${k===fk?' on':''}" id="vt-${id}-${k}" onclick="vtoggle('${id}','${k}')">${k} — ${vLabels[k]}</button>`).join('');
+  let vcs=keys.map(k=>{
+    const v=variants[k];
+    const sj=v.subject?`<div class="lib-subj">${escHtml(v.subject)}</div>`:'';
+    const dd=v.desc?`<div class="var-desc">${v.desc}</div>`:'';
+    return `<div class="vc vc-${id}${k===fk?' on':''}" id="vc-${id}-${k}">
+      ${dd}${sj}<div class="lib-msg" id="lm-${id}-${k}">${escHtml(v.body)}</div>
+      <button class="copy-btn" onclick="copyMsg('lm-${id}-${k}',this)">Copiar</button>
+    </div>`;
+  }).join('');
+  return `<div class="lib-tp">
+    <div class="lib-hdr" onclick="libTog('${id}')">
+      <span class="step-day">${st.day}</span><span class="${chCls(st.ch)}">${st.chN}</span>
+      <span class="step-title" style="flex:1">${st.title}</span>
+      <span class="adap-tag">Adaptado · ${keys.length} variantes</span>
+      <span class="lib-exp" id="le-${id}">▼</span>
+    </div>
+    <div class="lib-body" id="lb-${id}">
+      <div class="vtabs">${vtabs}</div>${vcs}
+    </div>
+  </div>`;
+}
+
+function buildLibrary(){
+  const el=document.getElementById('library');
+  const sDesc={B:'Señal B — abrió/leyó, no agendó',C:'Señal C — abrió, sin click',D:'Señal D — no abrió'};
+  const d18Desc={hot:'Caliente — 2+ señales B',mixed:'Mixto — señales B y C',cold:'Frío — señales C/D'};
+  let h='';
+  STEPS.forEach(st=>{
+    const id=st.id;const m=M[id];if(!m)return;
+    if(m.B){h+=id==='d18'?mkLibAdap(id,st,m,d18Desc):mkLibAdap(id,st,m,sDesc);}
+    else{h+=mkLibFixed(id,st,m);}
+  });
+  el.innerHTML=h;
+}
+
+renderBar();renderSim();buildLibrary();
+</script>
+</body>
+</html>
