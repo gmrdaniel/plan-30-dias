@@ -285,7 +285,16 @@
 <section class="audit-section" id="audit">
     <h2>Tu auditoria</h2>
     <div class="video-container" id="dyn-video-container">
-        <div class="video-placeholder">Video personalizado aparecera aqui</div>
+        <iframe
+            id="dyn-iframe-video"
+            src="https://sendspark.com/embed/3sudrf4pxabctuhoev3p54x28haohr9j"
+            width="640"
+            height="360"
+            frameborder="0"
+            allow="autoplay; fullscreen"
+            allowfullscreen
+            style="border-radius:12px; width:100%; aspect-ratio:16/9; height:auto;">
+        </iframe>
     </div>
 </section>
 
@@ -464,23 +473,12 @@
             `linear-gradient(rgba(10,10,10,0.7), rgba(10,10,10,0.85)), url('${decodeURIComponent(heroImg)}')`;
     }
 
-    // Dynamic: Video link & thumbnail
-    const video = params.get('video');
-    const videoThumb = params.get('video_thumb');
-    if (video) {
-        const decodedVideo = decodeURIComponent(video);
-        document.getElementById('dyn-video-link').href = decodedVideo;
-
-        const container = document.getElementById('dyn-video-container');
-        if (videoThumb) {
-            container.innerHTML = `<a href="${decodedVideo}" target="_blank" rel="noopener">
-                <img src="${decodeURIComponent(videoThumb)}" alt="Video personalizado" style="width:100%;aspect-ratio:16/9;object-fit:cover;">
-            </a>`;
-        } else {
-            container.innerHTML = `<a href="${decodedVideo}" target="_blank" rel="noopener" class="video-placeholder" style="text-decoration:none;color:#a78bfa;font-weight:700;">
-                &#9654; Ver video personalizado
-            </a>`;
-        }
+    // Dynamic: SendSpark video embed by ID
+    const videoId = params.get('video_id');
+    if (videoId) {
+        const iframe = document.getElementById('dyn-iframe-video');
+        iframe.src = `https://sendspark.com/embed/${encodeURIComponent(videoId)}`;
+        document.getElementById('dyn-video-link').href = `https://sendspark.com/share/${encodeURIComponent(videoId)}`;
     }
 
     // Dynamic: CTA text
