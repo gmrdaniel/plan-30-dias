@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Orquestador de Prospeccion — Flujo y Arquitectura</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #F8F9FB;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --primary: #0F52BA;
+      --green: #16A34A;
+      --amber: #D97706;
+      --purple: #7C3AED;
+      --pink: #DB2777;
+      --red: #DC2626;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    h2 {
+      font-size: 1.4rem;
+      margin: 3rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--primary);
+    }
+    h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; color: var(--text); }
+    p, li { color: var(--text-muted); margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-blue { background: rgba(15,82,186,0.1); color: var(--primary); }
+    .badge-green { background: rgba(22,163,74,0.1); color: var(--green); }
+    .badge-amber { background: rgba(217,119,6,0.1); color: var(--amber); }
+    .badge-purple { background: rgba(124,58,237,0.1); color: var(--purple); }
+    .badge-pink { background: rgba(219,39,119,0.1); color: var(--pink); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .tool-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .tool-card { box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .tool-card:hover { border-color: var(--primary); }
+    .tool-card h4 { font-size: 1rem; margin-bottom: 0.25rem; color: var(--text); }
+    .tool-card p { font-size: 0.85rem; margin: 0; }
+    .tool-card .step { font-size: 0.7rem; color: var(--primary); margin-top: 0.5rem; }
+
+    .mermaid {
+      margin: 1.5rem 0;
+      display: flex;
+      justify-content: center;
+    }
+    .mermaid svg { max-width: 100%; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+    th {
+      background: var(--card);
+      color: var(--text);
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      font-weight: 600;
+    }
+    td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    table { box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 8px; overflow: hidden; }
+    tr:hover td { background: rgba(15,82,186,0.04); }
+
+    .dual-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 768px) { .dual-view { grid-template-columns: 1fr; } }
+    .view-card {
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 2px solid;
+    }
+    .view-ventas {
+      background: rgba(15,82,186,0.04);
+      border-color: rgba(15,82,186,0.25);
+    }
+    .view-infra {
+      background: rgba(124,58,237,0.04);
+      border-color: rgba(124,58,237,0.25);
+    }
+    .view-card h3 { margin-top: 0; }
+    .view-card ul { padding-left: 1.2rem; }
+    .view-card li { margin-bottom: 0.4rem; font-size: 0.9rem; }
+
+    .step-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .step-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      min-width: 120px;
+    }
+    .step-arrow { color: var(--text-muted); font-size: 1.2rem; }
+    .step-box.active { border-color: var(--primary); background: rgba(15,82,186,0.08); }
+
+    .footer {
+      margin-top: 4rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <h1>CRM Orquestador de Prospeccion</h1>
+    <p class="subtitle">
+      Flujo y arquitectura del modulo de prospeccion — CRM Laneta (Elevn)<br>
+      <span class="badge badge-blue">B2B</span>
+      <span class="badge badge-purple">Creadores</span>
+      <span class="badge badge-green">Implementado</span>
+      <span class="badge badge-amber">En progreso</span>
+    </p>
+
+    <!-- ============================================================ -->
+    <h2>1. Vision General — Flujo en 6 Pasos</h2>
+
+    <div class="step-flow">
+      <div class="step-box active">1. Cargar<br>datos</div>
+      <span class="step-arrow">→</span>
+      <div class="step-box active">2. Enriquecer<br>datos</div>
+      <span class="step-arrow">→</span>
+      <div class="step-box active">3. Revisar<br>y clasificar</div>
+      <span class="step-arrow">→</span>
+      <div class="step-box active">4. Generar listas<br>+ HubSpot</div>
+      <span class="step-arrow">→</span>
+      <div class="step-box">5. Push<br>Smartlead</div>
+      <span class="step-arrow">→</span>
+      <div class="step-box">6. Tracking<br>webhooks</div>
+    </div>
+
+    <p>El CRM Laneta funciona como orquestador central, coordinando multiples herramientas externas para automatizar la captacion de clientes B2B y creadores de contenido. Una sola URL (<code>/dashboard/admin/prospecting</code>) guia al usuario a traves de un wizard paso a paso.</p>
+
+    <!-- ============================================================ -->
+    <h2>2. Ecosistema de Herramientas</h2>
+
+    <div class="card-grid">
+      <div class="tool-card">
+        <h4>SmartScout / Apify / Social Blade</h4>
+        <p>Fuente de datos crudos — CSVs con empresas o creadores sin enriquecer</p>
+        <div class="step"><span class="badge badge-blue">Paso 1</span> Importacion</div>
+      </div>
+      <div class="tool-card">
+        <h4>Clay</h4>
+        <p>Enriquecimiento masivo — email cascade, LinkedIn, telefono, ICP score. Consolida 150+ proveedores de datos</p>
+        <div class="step"><span class="badge badge-amber">Paso 2</span> Enriquecimiento</div>
+      </div>
+      <div class="tool-card">
+        <h4>Hunter.io</h4>
+        <p>Validacion de emails — verifica si el email existe y es entregable</p>
+        <div class="step"><span class="badge badge-green">Paso 2</span> Enriquecimiento</div>
+      </div>
+      <div class="tool-card">
+        <h4>RapidAPI (IG/TT)</h4>
+        <p>Followers de Instagram y TikTok — datos actualizados de redes sociales</p>
+        <div class="step"><span class="badge badge-green">Paso 2</span> Solo creadores</div>
+      </div>
+      <div class="tool-card">
+        <h4>HubSpot</h4>
+        <p>CRM de ventas — companies, contacts, deals, listas estaticas. El equipo de ventas trabaja aqui</p>
+        <div class="step"><span class="badge badge-green">Paso 4</span> Sincronizacion</div>
+      </div>
+      <div class="tool-card">
+        <h4>Smartlead</h4>
+        <p>Outreach automatizado — secuencias de cold email multicanal (email + LinkedIn + telefono + WhatsApp)</p>
+        <div class="step"><span class="badge badge-amber">Paso 5</span> Outreach</div>
+      </div>
+      <div class="tool-card">
+        <h4>Railway (Python/FastAPI)</h4>
+        <p>Ejecuta workers de enriquecimiento en background — procesamiento asincrono en chunks de 50</p>
+        <div class="step"><span class="badge badge-green">Paso 2</span> Backend</div>
+      </div>
+      <div class="tool-card">
+        <h4>Supabase</h4>
+        <p>Base de datos, autenticacion, Edge Functions — la columna vertebral del sistema</p>
+        <div class="step"><span class="badge badge-green">Todo el flujo</span></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2>3. Flujo B2B — Marcas y Empresas</h2>
+
+    <div class="mermaid">
+flowchart TD
+    subgraph FUENTES["📥 Fuentes de Datos"]
+        SS[SmartScout]
+        AP[Apify]
+        MN[Manual CSV]
+    end
+
+    subgraph CRM["🏢 CRM Laneta — Orquestador"]
+        P1["<b>1. IMPORTAR</b><br/>client_inventory + client_contacts<br/>+ crear lista"]
+        P2["<b>2. ENRIQUECER</b><br/>Railway workers"]
+        P3["<b>3. CLASIFICAR</b><br/>Tier A: email+LI+tel<br/>Tier B: email+LI<br/>Tier C: email"]
+        P4["<b>4. GENERAR LISTAS</b><br/>3 listas por tier"]
+        P5["<b>5. PUSH SMARTLEAD</b><br/>1 lista → 1 campaña"]
+        P6["<b>6. TRACKING</b><br/>Recibe webhooks"]
+    end
+
+    subgraph ENRICH["🔬 APIs de Enriquecimiento"]
+        CL[Clay API<br/>email + LI + score]
+        HU[Hunter.io<br/>validar email]
+        PC[ProxyCurl<br/>LinkedIn lookup]
+    end
+
+    subgraph DESTINOS["📤 Destinos"]
+        HS["<b>HubSpot</b><br/>Company + Contact<br/>+ Static List<br/>Owner: CRM LA NETA"]
+        SL["<b>Smartlead</b><br/>3 campañas<br/>Sec. A: 21d multicanal<br/>Sec. B: 21d bicanal<br/>Sec. C: 14d email"]
+    end
+
+    SS --> P1
+    AP --> P1
+    MN --> P1
+    P1 --> P2
+    P2 <--> CL
+    P2 <--> HU
+    P2 <--> PC
+    P2 --> P3
+    P3 --> P4
+    P4 -->|sync automático| HS
+    P4 --> P5
+    P5 -->|API POST| SL
+    SL -->|webhook| P6
+    SL -->|actualiza directo| HS
+
+    style FUENTES fill:#EFF6FF,stroke:#0F52BA,color:#0F172A
+    style CRM fill:#F5F3FF,stroke:#7C3AED,color:#0F172A
+    style ENRICH fill:#FEF3C7,stroke:#D97706,color:#0F172A
+    style DESTINOS fill:#F0FDF4,stroke:#16A34A,color:#0F172A
+    </div>
+
+    <!-- ============================================================ -->
+    <h2>4. Flujo Creadores — Redes Sociales</h2>
+
+    <div class="mermaid">
+flowchart TD
+    subgraph FUENTES["📥 Fuentes de Datos"]
+        SB[Social Blade]
+        UF[Upfluence]
+        MN2[Manual CSV]
+    end
+
+    subgraph CRM2["🎬 CRM Laneta — Orquestador"]
+        C1["<b>1. IMPORTAR</b><br/>creator_inventory<br/>+ social_profiles + lista"]
+        C2["<b>2. ENRIQUECER</b><br/>Railway workers"]
+        C3["<b>3. CLASIFICAR</b><br/>Tier A: email+IG+TT<br/>Tier B: email+IG o TT<br/>Tier C: email"]
+        C4["<b>4. GENERAR LISTAS</b><br/>3 listas por tier"]
+        C5["<b>5. PUSH SMARTLEAD</b><br/>Secuencia mobile-first"]
+        C6["<b>6. TRACKING</b><br/>Recibe webhooks"]
+    end
+
+    subgraph ENRICH2["🔬 APIs de Enriquecimiento"]
+        RA[RapidAPI<br/>IG + TT followers]
+        HU2[Hunter.io<br/>validar email]
+        AX["Apify (opcional)<br/>engagement detallado"]
+    end
+
+    subgraph DEST2["📤 Destinos"]
+        HS2["<b>HubSpot</b><br/>Contact + Static List"]
+        SL2["<b>Smartlead</b><br/>Secuencia 7 días<br/>mobile-first"]
+    end
+
+    SB --> C1
+    UF --> C1
+    MN2 --> C1
+    C1 --> C2
+    C2 <--> RA
+    C2 <--> HU2
+    C2 <--> AX
+    C2 --> C3
+    C3 --> C4
+    C4 -->|sync automático| HS2
+    C4 --> C5
+    C5 -->|API POST| SL2
+    SL2 -->|webhook| C6
+    SL2 -->|actualiza directo| HS2
+
+    style FUENTES fill:#1e293b,stroke:#3b82f6,color:#f1f5f9
+    style CRM2 fill:#FDF2F8,stroke:#DB2777,color:#0F172A
+    style ENRICH2 fill:#FEF3C7,stroke:#D97706,color:#0F172A
+    style DEST2 fill:#F0FDF4,stroke:#16A34A,color:#0F172A
+    </div>
+
+    <!-- ============================================================ -->
+    <h2>5. Diagrama de Secuencia</h2>
+
+    <div class="mermaid">
+sequenceDiagram
+    participant U as 👤 Usuario
+    participant CRM as 🏢 CRM Laneta
+    participant RW as ⚙️ Railway
+    participant API as 🔬 Clay/Hunter
+    participant HS as 📊 HubSpot
+    participant SL as 📧 Smartlead
+
+    U->>CRM: Crear prospección + Upload CSV
+    CRM->>CRM: Insert inventory + contacts + lista
+
+    U->>CRM: Iniciar enriquecimiento
+    CRM->>RW: Start pipeline (Edge Function)
+    RW->>API: Clay enrich (email, LI, score)
+    API-->>RW: Resultados
+    RW->>API: Hunter verify email
+    API-->>RW: Valid/Invalid
+    RW-->>CRM: Actualiza progreso (polling 3s)
+
+    U->>CRM: Revisar tiers (A/B/C)
+    U->>CRM: Generar 3 listas
+
+    CRM->>HS: Crear Company + Contact + Lista
+    HS-->>CRM: HubSpot IDs guardados
+
+    U->>CRM: Push a Smartlead
+    CRM->>SL: POST leads (400/batch)
+    SL-->>CRM: OK
+
+    Note over SL: Smartlead ejecuta<br/>secuencia 21 días
+
+    SL-->>CRM: Webhook (sent/opened/replied)
+    CRM->>CRM: Actualiza status lead
+    SL-->>HS: Actualiza HubSpot directo
+
+    Note over HS: Equipo Ventas<br/>trabaja aquí
+    Note over CRM: Equipo Infra<br/>trabaja aquí
+    </div>
+
+    <!-- ============================================================ -->
+    <h2>6. Clasificacion por Tier</h2>
+
+    <h3>B2B — Tiers segun datos disponibles</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Datos requeridos</th>
+          <th>Secuencia en Smartlead</th>
+          <th>Canales</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-green">Tier A</span></td>
+          <td>Email valido + LinkedIn + Telefono</td>
+          <td>21 dias multicanal</td>
+          <td>Email, LinkedIn, Telefono, SMS, WhatsApp</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-amber">Tier B</span></td>
+          <td>Email valido + LinkedIn</td>
+          <td>21 dias bicanal</td>
+          <td>Email, LinkedIn</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pink">Tier C</span></td>
+          <td>Solo email valido</td>
+          <td>14 dias solo email</td>
+          <td>Email</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Creadores — Tiers segun redes sociales</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Datos requeridos</th>
+          <th>Secuencia en Smartlead</th>
+          <th>Canales</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-green">Tier A</span></td>
+          <td>Email + Instagram + TikTok</td>
+          <td>7 dias mobile-first</td>
+          <td>DM IG, WhatsApp AI, SMS, Nota de voz, Email</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-amber">Tier B</span></td>
+          <td>Email + Instagram o TikTok</td>
+          <td>7 dias parcial</td>
+          <td>DM IG o TT, WhatsApp, Email</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pink">Tier C</span></td>
+          <td>Solo email</td>
+          <td>7 dias basico</td>
+          <td>Email</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ============================================================ -->
+    <h2>7. Secuencias de Outreach</h2>
+
+    <h3>B2B — 21 dias</h3>
+    <table>
+      <thead>
+        <tr><th>Dia</th><th>Canal</th><th>Tier A</th><th>Tier B</th><th>Tier C</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Email</td><td>Auditoria de video</td><td>Auditoria de video</td><td>Auditoria de video</td></tr>
+        <tr><td>4</td><td>LinkedIn</td><td>Solicitud conexion</td><td>Solicitud conexion</td><td>—</td></tr>
+        <tr><td>5</td><td>Email</td><td>Follow-up</td><td>Follow-up</td><td>Follow-up</td></tr>
+        <tr><td>7</td><td>Telefono</td><td>Voicemail + SMS</td><td>—</td><td>—</td></tr>
+        <tr><td>10</td><td>LinkedIn</td><td>Engagement</td><td>Engagement</td><td>—</td></tr>
+        <tr><td>12</td><td>Email</td><td>Caso de estudio</td><td>Caso de estudio</td><td>Caso de estudio</td></tr>
+        <tr><td>15</td><td>WhatsApp</td><td>Nota de voz</td><td>—</td><td>—</td></tr>
+        <tr><td>18</td><td>Telefono</td><td>Llamada directa</td><td>—</td><td>—</td></tr>
+        <tr><td>21</td><td>Email</td><td>Breakup</td><td>Breakup</td><td>Breakup (dia 14)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Creadores — 7 dias (mobile-first)</h3>
+    <table>
+      <thead>
+        <tr><th>Dia</th><th>Canal</th><th>Tier A</th><th>Tier B</th><th>Tier C</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Instagram</td><td>DM video 15s</td><td>DM video 15s</td><td>—</td></tr>
+        <tr><td>2</td><td>WhatsApp</td><td>Bot AI calificacion</td><td>Bot AI calificacion</td><td>—</td></tr>
+        <tr><td>3</td><td>SMS</td><td>Testimonial 60s</td><td>—</td><td>—</td></tr>
+        <tr><td>5</td><td>WhatsApp</td><td>Nota de voz 30s</td><td>Nota de voz 30s</td><td>—</td></tr>
+        <tr><td>7</td><td>Email</td><td>Contrato + proyecciones</td><td>Contrato + proyecciones</td><td>Email completo</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Reglas de salida</h3>
+      <ul>
+        <li><strong>Respuesta positiva</strong> en cualquier canal → cancelar secuencia → status <span class="badge badge-green">interested</span></li>
+        <li><strong>Sin respuesta</strong> despues de 21/7 dias → status <span class="badge badge-amber">unresponsive</span> → lista nurturing</li>
+        <li><strong>Bounce</strong> → status <span class="badge badge-pink">disqualified</span></li>
+        <li><strong>Unsubscribe</strong> → status <span class="badge badge-pink">lost</span> → do_not_contact</li>
+      </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <h2>8. Dos Perspectivas del Sistema</h2>
+
+    <p>A partir del Paso 4, el sistema se usa de forma diferente segun el equipo:</p>
+
+    <div class="dual-view">
+      <div class="view-card view-ventas">
+        <h3 style="color: var(--primary);">📊 Equipo de Ventas</h3>
+        <p style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">Trabaja en HubSpot</p>
+        <ul>
+          <li>Ve contactos y empresas sincronizados automaticamente</li>
+          <li>Leads clasificados por tier (A/B/C) via custom properties</li>
+          <li>Owner "CRM LA NETA" identifica leads del sistema</li>
+          <li>Smartlead actualiza HubSpot directo (opens, replies)</li>
+          <li>Gestiona deals y pipeline de ventas</li>
+          <li>Hace seguimiento a leads "interested"</li>
+          <li><strong>No necesita entrar al CRM Laneta</strong></li>
+        </ul>
+      </div>
+      <div class="view-card view-infra">
+        <h3 style="color: var(--purple);">⚙️ Equipo de Infraestructura</h3>
+        <p style="color: var(--purple); font-weight: 600; font-size: 0.9rem;">Trabaja en CRM Laneta</p>
+        <ul>
+          <li>Importa datos crudos (SmartScout, Apify, Social Blade)</li>
+          <li>Configura y ejecuta workers de enriquecimiento</li>
+          <li>Monitorea pipelines y progreso en tiempo real</li>
+          <li>Clasifica leads y genera listas por tier</li>
+          <li>Alimenta HubSpot con datos limpios y enriquecidos</li>
+          <li>Recibe webhooks de Smartlead</li>
+          <li><strong>Orquesta todo el flujo de principio a fin</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mermaid">
+flowchart LR
+    subgraph INFRA["⚙️ Equipo Infraestructura"]
+        CRM3[CRM Laneta<br/>Orquestador]
+    end
+
+    subgraph VENTAS["📊 Equipo Ventas"]
+        HS3[HubSpot<br/>CRM de ventas]
+    end
+
+    CRM3 -->|"Sync datos<br/>limpios (Paso 4)"| HS3
+    SL3[Smartlead] -->|"Reporta eventos<br/>(automatico)"| HS3
+    SL3 -->|"Webhook"| CRM3
+    CRM3 -->|"Push leads<br/>(Paso 5)"| SL3
+
+    style INFRA fill:#F5F3FF,stroke:#7C3AED,color:#0F172A
+    style VENTAS fill:#EFF6FF,stroke:#0F52BA,color:#0F172A
+    </div>
+
+    <h3>Resumen por equipo</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Aspecto</th>
+          <th style="color: var(--primary);">Equipo Ventas</th>
+          <th style="color: var(--purple);">Equipo Infraestructura</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Herramienta principal</td><td>HubSpot</td><td>CRM Laneta</td></tr>
+        <tr><td>Ve los leads en</td><td>HubSpot Contacts</td><td>Prospecting wizard</td></tr>
+        <tr><td>Tracking de emails</td><td>HubSpot (via Smartlead)</td><td>CRM (via webhooks)</td></tr>
+        <tr><td>Gestiona deals</td><td>HubSpot Deals</td><td>No aplica</td></tr>
+        <tr><td>Configura servicios</td><td>No aplica</td><td>Railway + Supabase</td></tr>
+        <tr><td>Importa datos</td><td>No aplica</td><td>CRM wizard paso 1</td></tr>
+        <tr><td>Enriquece datos</td><td>No aplica</td><td>CRM wizard paso 2</td></tr>
+        <tr><td>Necesita CRM Laneta</td><td>No</td><td>Si</td></tr>
+        <tr><td>Necesita HubSpot</td><td>Si</td><td>Ocasionalmente</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ============================================================ -->
+    <h2>9. Stack Tecnologico</h2>
+
+    <table>
+      <thead>
+        <tr><th>Componente</th><th>Tecnologia</th><th>Proposito</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Frontend</td><td>React 18 + TypeScript + Tailwind + shadcn/ui</td><td>Wizard UI, dashboard</td></tr>
+        <tr><td>Base de datos</td><td>Supabase (PostgreSQL)</td><td>Almacenamiento, RLS, real-time</td></tr>
+        <tr><td>Backend async</td><td>Railway (Python/FastAPI)</td><td>Workers de enriquecimiento</td></tr>
+        <tr><td>Edge Functions</td><td>Supabase Deno</td><td>sync-to-hubspot, push-to-smartlead</td></tr>
+        <tr><td>CI/CD</td><td>GitHub Actions + Vercel</td><td>Deploy automatico</td></tr>
+        <tr><td>Enriquecimiento</td><td>Clay, Hunter.io, RapidAPI, Apify</td><td>APIs de datos</td></tr>
+        <tr><td>Outreach</td><td>Smartlead</td><td>Secuencias cold email multicanal</td></tr>
+        <tr><td>CRM ventas</td><td>HubSpot</td><td>Pipeline ventas, seguimiento</td></tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      CRM Laneta (Elevn) — Global Media Review / La Neta — Abril 2026
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      themeVariables: {
+        primaryColor: '#EFF6FF',
+        primaryTextColor: '#0F172A',
+        primaryBorderColor: '#0F52BA',
+        lineColor: '#94A3B8',
+        secondaryColor: '#F0FDF4',
+        tertiaryColor: '#FEF3C7',
+        noteBkgColor: '#EFF6FF',
+        noteTextColor: '#0F172A',
+        noteBorderColor: '#0F52BA',
+        actorBkg: '#FFFFFF',
+        actorBorder: '#0F52BA',
+        actorTextColor: '#0F172A',
+        actorLineColor: '#94A3B8',
+        signalColor: '#64748B',
+        signalTextColor: '#0F172A',
+      },
+      flowchart: { curve: 'basis', padding: 20 },
+      sequence: { actorMargin: 80, messageMargin: 40 },
+    });
+  </script>
+</body>
+</html>
