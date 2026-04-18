@@ -14,6 +14,8 @@ import Blockers from './pages/Blockers'
 import Pipeline from './pages/Pipeline'
 import DocsIndex from './pages/DocsIndex'
 import DocView from './pages/DocView'
+import ConfiguradorPage from './prototipos/configurador-flujo/ConfiguradorPage'
+import MarketingAnalysisPage from './prototipos/marketing-analysis/MarketingAnalysisPage'
 
 function ValidateTeam({ children }: { children: ReactNode }) {
   const { team } = useParams<{ team: string }>()
@@ -80,6 +82,8 @@ export default function App() {
         <Routes>
           <Route path="/docs" element={<DocsIndex />} />
           <Route path="/docs/:slug" element={<DocView />} />
+          <Route path="/configurador" element={<ConfiguradorPage />} />
+          <Route path="/marketing-analysis" element={<MarketingAnalysisPage />} />
           <Route path="/" element={<TeamSelector />} />
           <Route path="/:team/*" element={<ValidateTeam><AppRoutes /></ValidateTeam>} />
         </Routes>
