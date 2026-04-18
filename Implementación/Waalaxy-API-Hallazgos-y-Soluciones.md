@@ -1,6 +1,7 @@
 # Waalaxy API — Hallazgos, Limitaciones y Soluciones
 
-**Fecha:** 2026-04-16
+**Fecha inicial:** 2026-04-16
+**Última actualización:** 2026-04-17 — pruebas extensivas cuenta Daniel, 7 prospectos. Hallazgo crítico §1.8: delay de auto-assign y rechazo silencioso por entry conditions.
 **Contexto:** Integración de Waalaxy con el CRM La Neta (Supabase + Railway) para automatizar invitaciones y mensajes de LinkedIn en los flujos de prospección B2B y Creadores.
 
 ---
@@ -38,16 +39,93 @@ La documentación oficial de Waalaxy **no publica endpoints REST**. La API fue d
 | Recurso | Estado |
 |---|---|
 | API Key | ✅ Válida (configurada en .env.local) |
-| Listas | 2 listas: "Mi Primera Lista" (1 prospecto), "Waalaxy (lista de prueba)" (98 prospectos) |
-| Campañas | 0 campañas creadas |
+| Listas | 2 listas: "Mi Primera Lista" (3 prospectos), "Waalaxy (lista de prueba)" (98 prospectos) |
+| Campañas | 1 campaña: "Test-Invitation" (secuencia de invitación) |
 | Perfil LinkedIn | Conectado y activo |
 
-### 1.5 Prueba de Importación Exitosa
+### 1.5 Pruebas de Importación Realizadas
 
-Se importó exitosamente a Bill Gates (`linkedin.com/in/williamhgates/`) a "Mi Primera Lista". Waalaxy automáticamente:
+#### Prueba 1: Import solo a lista (2026-04-16)
+
+Se importó a Bill Gates (`linkedin.com/in/williamhgates/`) a "Mi Primera Lista" **sin campaña**. Waalaxy automáticamente:
 - Resolvió el perfil completo (nombre, ocupación, empresa, región, cumpleaños)
 - Asignó un `_id` interno
 - Registró el evento en el historial del prospecto
+- **No se envió invitación** (sin `campaignId`)
+
+#### Prueba 2: Import a lista + campaña — Invitación automática (2026-04-17)
+
+Se creó la campaña "Test-Invitation" en la UI de Waalaxy con secuencia de invitación. Se importaron 2 prospectos reales vía API con `campaignId`:
+
+**Prospecto 1: Daniel Ramírez**
+```
+POST /prospects/addProspectFromIntegration
+body: {
+  prospects: [{url: "https://www.linkedin.com/in/gmr-daniel-ramirez/"}],
+  prospectListId: "69dd64391c088f4bd3fc360d",
+  campaignId: "69e22761564cb8cb66c5558a",
+  origin: {name: "n8n"}
+}
+→ Import: success
+→ Waalaxy ID: 69e228cc32e1b696ef7d6ebc
+→ App Waalaxy: "Invitación — En curso" ✅
+```
+
+**Prospecto 2: Eugenia García Gutierrez**
+```
+POST /prospects/addProspectFromIntegration
+body: {
+  prospects: [{url: "https://www.linkedin.com/in/eugenia-garc%C3%ADa-gutierrez/"}],
+  prospectListId: "69dd64391c088f4bd3fc360d",
+  campaignId: "69e22761564cb8cb66c5558a",
+  origin: {name: "n8n"}
+}
+→ Import: success
+→ Nombre resuelto: Eugenia García Gutierrez
+→ Waalaxy ID: 69e232dcba38b719f892e5df
+→ App Waalaxy: "Invitación — En curso" ✅
+```
+
+### 1.6 Flujo Confirmado y Repetible
+
+```
+API POST con campaignId
+    → Prospecto aparece en lista
+    → Prospecto se asigna a campaña
+    → Waalaxy ejecuta invitación automáticamente (Chrome debe estar abierto)
+    → Estado visible en app: "Invitación — En curso"
+```
+
+**Hallazgos clave de las pruebas:**
+- El import con `campaignId` **sí activa la secuencia** automáticamente
+- `isActiveInCampaign` puede mostrar `false` en la respuesta del API pero la app lo muestra como activo
+- Waalaxy resuelve el perfil (nombre, empresa, headline) automáticamente al scrapearlo
+- La URL de LinkedIn con caracteres especiales (acentos como `%C3%AD`) funciona correctamente
+- La invitación se ejecuta cuando la extensión Chrome está activa
+
+### 1.7 Limitación Descubierta: Duplicados y Campañas
+
+**Problema:** Si un prospecto ya existe en Waalaxy (en cualquier lista), el re-import devuelve `duplicated_prospect` y **NO lo asigna a la campaña**, incluso con `addDuplicateProspectsToCampaign: true`.
+
+**Caso real:** Eugenia García fue importada a la lista + campaña. Apareció en la lista pero **no en la campaña**. Al reimportarla:
+```
+→ Import: duplicated_prospect
+→ isActiveInCampaign: (vacío)
+→ No se asignó a la campaña
+```
+
+**Causa probable:** Eugenia ya existía en la cuenta de Waalaxy (posiblemente en "Waalaxy lista de prueba" con 98 prospectos). El flag `addDuplicateProspectsToCampaign` no funciona cuando el prospecto ya está en la misma cuenta.
+
+**Implicación para el flujo automatizado:**
+- El import a campaña **solo funciona si el prospecto es nuevo** en Waalaxy
+- Si el prospecto ya existía (de imports anteriores, listas previas, etc.), hay que asignarlo a la campaña **manualmente desde la UI**
+- No hay endpoint API para mover un prospecto existente a una campaña
+
+**Mitigación:**
+1. Antes de importar, verificar que el prospecto no exista en Waalaxy (no hay endpoint de búsqueda — limitación)
+2. Usar listas dedicadas por campaña para evitar colisiones
+3. Para prospectos que ya existen, el equipo los asigna manualmente desde la UI de Waalaxy
+4. En el cron, si el import devuelve `duplicated_prospect`, marcar la task como `skipped` con razón `waalaxy_duplicate` y crear una tarea manual en el dashboard
 
 **Body del request:**
 ```json
@@ -64,7 +142,108 @@ Se importó exitosamente a Bill Gates (`linkedin.com/in/williamhgates/`) a "Mi P
 
 **Nota importante:** El campo `origin.name` solo acepta valores predefinidos (`n8n`, `zapier`, `make`). Valores custom devuelven error `V000400-001`.
 
-### 1.6 Códigos de Error Documentados
+### 1.8 Delay de Auto-Assign y Rechazo Silencioso por Entry Conditions
+
+**Fecha de hallazgo:** 2026-04-17 (cuenta Daniel, 7 prospectos probados)
+
+**Problema descubierto:** `addToCampaignCode: success` **no confirma** la asignación real — representa solo la **intención**. La asignación definitiva ocurre en un job de background de Waalaxy que demora **15–30 min** y puede rechazar silenciosamente al prospecto.
+
+#### Secuencia real
+
+```
+1. POST /prospects/addProspectFromIntegration
+   → respuesta inmediata (optimista):
+     - importCode: success
+     - addToCampaignCode: success   ← intención, no confirmación final
+
+2. Background job Waalaxy (15-30 min después)
+   → Enriquece perfil LinkedIn (scrape) si es nuevo
+   → Evalúa entry conditions de la campaña:
+     - "No estar conectado contigo" (default en connect/connectMessage)
+     - otras condiciones según template
+   → Si cumple → aparece en columna Campaign, programa acción
+   → Si falla → lo regresa a "Add to campaign", sin notificar al sistema que importó
+```
+
+#### Resultados de las pruebas
+
+Pruebas con lista `Mi Primera Lista` (`69e2871ee107093f02f6a605`) y dos campañas:
+- `Test-Invite-Only` (tipo `connect`): `69e2b0b21378b8cf40ad6a48`
+- `Test-Invite-Plus-Message` (tipo `connectMessage`): `69e2b2a38fe84b95983bc47a`
+
+| Prospect | Perfil Waalaxy | Conectado con Daniel | Campaña | Resultado a los 30 min |
+|---|---|---|---|---|
+| Dayana Vizcaya | cacheado (2021) | No | `connect` | ✅ Invite enviada |
+| Arturo Villamayor | fresco | No | `connect` | ✅ Invite enviada |
+| Robert Ferrer | fresco | No | `connectMessage` | ✅ **Con delay 15–20 min**, invite enviada |
+| Oriana Cedeño | fresco | Sí (probable) | `connect` manual | ❌ Removida silenciosamente |
+| Laura Andrea Escalante | cacheado (2023) | Sí | `connectMessage` | ❌ Removida silenciosamente |
+| Maria Fernanda Parra | cacheado (2021) | Sí (colega Laneta) | `connectMessage` | ❌ Removida silenciosamente |
+| Maria Varela | cacheado (2023) | Sí | `connectMessage` | ❌ Removida silenciosamente |
+
+Todas las respuestas API fueron idénticas: `importCode: success` + `addToCampaignCode: success`. Verificación vía cuota diaria (`3/95` ejecutadas) consistente con las 3 que realmente entraron.
+
+**Detección del rechazo solo desde UI:** al intentar agregar manualmente desde "Add to campaign", Waalaxy muestra:
+> Error: 1 prospects no cumplen con una o más condiciones de entrada de la secuencia
+> - No estar conectado contigo
+
+#### Implicaciones para el flujo automatizado
+
+1. **No confiar en la respuesta API como éxito final.** Es optimista.
+2. **Implementar polling**: tras 30–60 min verificar que el prospecto realmente quedó asignado. Si no, marcar task como `entry_condition_failed` / `skipped_already_connected`.
+3. **No validar imports en <5 min** — el auto-assign de `connectMessage` tarda. Tests prematuros producen falsos negativos.
+4. **Diseñar para el caso "ya conectado":**
+   - Prospects que ya son conexiones LinkedIn → usar campaña tipo `message` (solo DMs)
+   - Prospects frescos (cold outreach B2B) → usar `connect` o `connectMessage` normal
+   - No hay API para saber de antemano si es conexión — asumir que no y manejar el rechazo silencioso si ocurre
+5. **Perfiles frescos tardan más** — el enriquecimiento LinkedIn suma latencia. Los cacheados pasan más rápido.
+
+### 1.9 Matriz de Validación por Tipo de Campaña (pruebas 2026-04-17)
+
+Validación end-to-end de los 3 tipos de campaña soportados, con prospects reales:
+
+| Tipo | Campaña | Vía | Prospect | Estado conexión previa | Resultado |
+|---|---|---|---|---|---|
+| `connect` | Test-Invite-Only | API | Dayana Vizcaya | No conectada (2º) | ✅ Invite enviada (rápido) |
+| `connect` | Test-Invite-Only | API | Arturo Villamayor | No conectada (2º) | ✅ Invite enviada (rápido) |
+| `connectMessage` | Test-Invite-Plus-Message | API | Robert Ferrer | No conectada (2º) | ✅ Invite enviada (**delay 15–20 min**) |
+| `message` | Envió Dos Mensajes Invitación aceptada | API | Daniel Ramirez | ✅ Conexión 1º (~4h) | ✅ DMs programados (rápido) |
+| `message` | Envió Dos Mensajes Invitación aceptada | **UI manual** | Laura Andrea Escalante | ✅ Conexión 1º (~1h, recién aceptó) | ✅ DMs programados (API rechazó por duplicate, UI funcionó) |
+| `message` | Envió Dos Mensajes Invitación aceptada | API | Pepe Híjar | ✅ Conexión 1º (6 meses) | ✅ DMs programados (rápido) |
+| `message` | Envió Dos Mensajes Invitación aceptada | API | Eugenia García Gutierrez | ✅ Conexión 1º (7 meses) | ✅ DMs programados (rápido) |
+| `connect` | Test-Invite-Only | UI manual | Oriana Cedeño | Sí conectada (1º, probable) | ❌ Removida silenciosamente |
+| `connectMessage` | Test-Invite-Plus-Message | API | Laura, Maria F, Maria V | Sí conectadas (1º) | ❌ Rechazadas silenciosamente |
+
+**Conclusiones:**
+
+- **Los 3 tipos de campaña son usables vía API** para prospects frescos que cumplen entry conditions
+- `message` funciona para prospects ya conectados (cumple "Estar conectado contigo") — probado con conexiones de 4h, 6 meses y 7 meses → **sin diferencia** por antigüedad de la conexión
+- `connect` / `connectMessage` funcionan para prospects NO conectados (cumple "No estar conectado contigo")
+- **Hipótesis descartada:** "latencia de reconocimiento de aceptación reciente" — probado con conexiones antiguas (6–7 meses) y tuvo el mismo resultado que con recientes
+- El **caso duplicate** (prospect ya en la cuenta que acaba de cambiar de estado, p.ej. aceptó invite y ahora queremos mandarle DM en otra campaña) **solo se resuelve por UI manual** — la API no permite reasignar existentes
+
+### 1.10 Endpoint Discovery — Endpoints que NO Existen
+
+Durante las pruebas del 2026-04-17 se probaron 8 endpoints alternativos buscando forma de consultar prospects vía API. Todos devolvieron **HTTP 404**:
+
+| Endpoint probado | Status |
+|---|---|
+| `GET /campaigns/:id` | 404 |
+| `GET /campaigns/:id/prospects` | 404 |
+| `GET /campaigns/:id/getProspects` | 404 |
+| `GET /prospectLists/:id` | 404 |
+| `GET /prospects/getAll` | 404 |
+| `GET /prospects` | 404 |
+| `GET /prospectLists/getProspects` | 404 |
+| `GET /prospects/getProspects` | 404 |
+
+**Conclusión:** confirma §1.3 — no hay forma de consultar prospectos vía API.
+
+**Único indicador API disponible:** `GET /campaigns/getAll` devuelve `hasTravelingTravelers: true/false` por campaña. Es **booleano** — solo dice si la campaña tiene al menos un prospect moviéndose. No dice cuántos ni quiénes.
+
+**Implicación:** la fuente de verdad para "qué prospect está en qué paso" debe ser **HubSpot vía CRM Sync de Waalaxy** (§9.2), NO la API de Waalaxy. Diseñar el flujo de polling/reconciliación contra HubSpot, no contra Waalaxy.
+
+### 1.11 Códigos de Error Documentados
 
 | Código | Significado |
 |---|---|
@@ -621,11 +800,38 @@ Webhook URL: https://tu-proyecto.supabase.co/functions/v1/waalaxy-response-webho
 
 Waalaxy enviará un POST con los datos del prospecto cuando llegue al paso de sync.
 
-### 8.2 Recomendación: Opción A (HubSpot) + Opción C (webhook directo)
+### 8.2 Recomendación: Opción C (Webhook Directo) como primaria + Opción A (HubSpot) como complemento
 
-**¿Por qué ambos?**
-- HubSpot te da los **triggers específicos** (aceptó invitación vs respondió DM vs interesado)
-- El webhook directo te da confirmación **inmediata** en Supabase sin depender del workflow de HubSpot
+**Prioridad actualizada post-pruebas 2026-04-17 (§1.8–1.10):**
+
+Dado que la API de Waalaxy:
+- No tiene endpoints para consultar prospects (§1.10)
+- Rechaza silenciosamente por entry conditions sin notificar (§1.8)
+- Solo expone `hasTravelingTravelers: boolean` por campaña
+
+**El webhook directo desde Waalaxy (Opción C) es ahora la vía primaria** de retroalimentación al CRM:
+
+| Necesidad | Vía | Por qué |
+|---|---|---|
+| Detectar aceptación de invite | **Webhook directo** (§8.1.C) | Event-driven, sin delay de workflow |
+| Detectar respuesta a DM | **Webhook directo** (§8.1.C) | Event-driven, inmediato en Supabase |
+| Enriquecer contacto en CRM externo | HubSpot CRM Sync (§8.1.A) | Waalaxy hace el mapping automático de properties |
+| Triggers específicos (interesado vs no interesado) | HubSpot CRM Sync (§8.1.A) | La IA de Waalaxy analiza sentimiento y lo expone como property |
+
+**Combinación recomendada:**
+
+1. **Webhook directo** como fuente de verdad para el estado del `sequence_run` en Supabase (won, cancelled, replied)
+2. **HubSpot CRM Sync** como repositorio del historial del contacto y disparador de tareas comerciales (email a ventas, asignación de owner)
+
+**Ventajas del webhook directo:**
+- Latencia mínima (Waalaxy envía POST al momento del evento)
+- Sin dependencia de configuración HubSpot Workflow
+- No requiere license/seat adicional de HubSpot para automation
+- Payload completo con datos del prospecto
+
+**Limitación del webhook directo:**
+- Se configura como **step "CRM Sync" dentro de la secuencia Waalaxy** — hay que agregarlo como paso explícito después de "Esperando respuesta" o después del último DM
+- Solo se dispara cuando el prospect llega a ese paso específico, no en cualquier cambio de estado
 
 ### 8.3 Edge Function para recibir la notificación
 
@@ -1208,23 +1414,46 @@ SLACK_SALES_WEBHOOK=https://hooks.slack.com/services/T.../B.../xxx
 
 ## 11. Próximos Pasos
 
-### Configuración Manual (tú)
+### Estado post-pruebas 2026-04-17
+
+- [x] API validada para los 3 tipos de campaña (`connect`, `connectMessage`, `message`) — §1.9
+- [x] Delay de auto-assign documentado (15–30 min para `connectMessage`) — §1.8
+- [x] Rechazo silencioso por entry conditions documentado — §1.8
+- [x] Endpoint discovery completo — 8/8 endpoints de consulta devuelven 404, API sin visibilidad — §1.10
+- [x] Recomendación webhook-first actualizada — §8.2
+
+### Configuración Manual (Daniel)
+
+**Waalaxy:**
+- [ ] Crear campañas de producción por programa:
+  - `B2B-Invite` (tipo `connect` o `connectMessage` para cold outreach)
+  - `B2B-Nurture-Connected` (tipo `message` para conexiones ya establecidas)
+  - `Creator-Invite`, `Creator-Nurture-Connected` (equivalentes para flujo creadores)
+- [ ] En cada campaña, agregar step **"CRM Sync"** al final de cada rama relevante para disparar webhook directo
+- [ ] Configurar el webhook URL del step CRM Sync apuntando a `https://nvbanvwibmghxroybjxp.supabase.co/functions/v1/waalaxy-response-webhook`
+
+**HubSpot (complemento):**
 - [ ] Crear custom properties de La Neta en HubSpot (sección 9.1)
 - [ ] Activar CRM Sync de Waalaxy con HubSpot (sección 9.2)
-- [ ] Crear campaña en Waalaxy con secuencia "Invitation + Message"
-- [ ] Crear Workflow #1 "Reply → Supabase" en HubSpot (sección 9.6)
-- [ ] Crear Workflow #2 "Invite Accepted → Supabase" en HubSpot (sección 9.6)
+- [ ] Crear Workflow #1 "Reply → Supabase" — solo si el webhook directo no cubre todos los casos (sección 9.6)
+
+**Otros:**
 - [ ] Crear webhook de Slack para el canal de ventas
 
-### Implementación Técnica (nosotros)
-- [ ] Desplegar Edge Function `waalaxy-import`
-- [ ] Desplegar Edge Function `waalaxy-response-webhook`
+### Implementación Técnica
+
+- [ ] Desplegar Edge Function `waalaxy-import` (§3.3)
+  - Incluir **polling post-import** tras 30 min para detectar rechazo silencioso (§1.8)
+  - Marcar tasks como `entry_condition_failed` si tras 1 hora `hasTravelingTravelers` sigue en estado previo
+- [ ] Desplegar Edge Function `waalaxy-response-webhook` (§8.3 + §9.5)
 - [ ] Configurar secrets en Supabase (WAALAXY_API_KEY, SLACK_SALES_WEBHOOK)
 - [ ] Integrar `linkedin_invite` en el cron de `execute-due-tasks`
-- [ ] Test end-to-end con un prospecto real
+- [ ] Lógica de routing: `message` vs `connect`/`connectMessage` según estado de conexión conocido (si disponible) o fallback a secuencia `connect` con retry a `message` si rechaza
 
 ### Validación
-- [ ] Importar prospecto de prueba → verificar que aparece en lista y campaña
-- [ ] Verificar que Waalaxy envía la invitación (requiere Chrome abierto)
-- [ ] Simular aceptación → verificar que HubSpot se actualiza
-- [ ] Simular respuesta → verificar que Supabase cancela tasks + Slack notifica
+
+- [x] Import vía API funciona para los 3 tipos (validado 2026-04-17)
+- [x] Waalaxy envía invitaciones con Chrome abierto + extensión activa (cuota 3/95 consumida en test)
+- [ ] Test E2E con prospect real del pipeline B2B (cold 2º) → `connect` → aceptación → webhook → cancel sequence
+- [ ] Test E2E con conexión 1º establecida → `message` → respuesta → webhook → cancel sequence
+- [ ] Verificar que HubSpot CRM Sync espejea el estado correctamente como complemento
