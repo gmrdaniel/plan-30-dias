@@ -39,8 +39,8 @@ export default function ExecutionPlan() {
       {/* Cohortes timeline */}
       <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-200 bg-slate-50">
-          <h3 className="text-lg font-bold text-slate-900">📅 Plan Semana 1 (21-27 abr)</h3>
-          <p className="text-sm text-slate-500">Volumen conservador post-crisis dominio · priorizando slot ganador Lunes 17h</p>
+          <h3 className="text-lg font-bold text-slate-900">📅 Plan Semana 1 (20-26 abr 2026)</h3>
+          <p className="text-sm text-slate-500">Volumen conservador post-crisis dominio · priorizando slot ganador Lunes 15:00 CDMX / 17:00 ET</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -62,7 +62,10 @@ export default function ExecutionPlan() {
                   <td className="px-4 py-3 font-bold text-slate-900">{c.id}</td>
                   <td className="px-4 py-3">
                     <div className="font-medium text-slate-900">{c.dayOfWeek} {c.date.slice(8)} abr</div>
-                    <div className="text-xs text-slate-500">{c.hour} {c.timezone}</div>
+                    <div className="text-xs text-slate-500">
+                      <span className="font-semibold">{c.hour} CDMX</span>
+                      <span className="text-slate-400"> · {c.hourEt}</span>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-slate-700 text-xs">{c.audience}</td>
                   <td className="px-4 py-3 text-right font-bold text-slate-900 tabular-nums">{c.volume}</td>

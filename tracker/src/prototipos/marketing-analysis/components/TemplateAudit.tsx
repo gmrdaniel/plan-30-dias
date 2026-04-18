@@ -94,28 +94,46 @@ export default function TemplateAudit() {
       <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-200 bg-slate-50">
           <h3 className="text-lg font-bold text-slate-900">12 Issues detectados y corregidos</h3>
-          <p className="text-sm text-slate-500">Cada fila muestra antes → después del cleanup</p>
+          <p className="text-sm text-slate-500">Columna "Qué significa" explica en lenguaje simple cada problema</p>
         </div>
-        <div className="divide-y divide-slate-100">
-          {TEMPLATE_ISSUES.map((issue) => (
-            <div key={issue.id} className="px-5 py-4 hover:bg-slate-50 flex items-center gap-4">
-              <div className="flex-shrink-0">
-                <span className={`inline-block px-2 py-0.5 text-xs rounded-full border ${SEVERITY_STYLES[issue.severity]}`}>
-                  {issue.severity}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-900 text-sm">{issue.title}</p>
-                <p className="text-xs text-slate-500 truncate">{issue.description}</p>
-              </div>
-              <div className="flex items-center gap-3 text-sm tabular-nums">
-                <span className="text-rose-600 font-semibold">{issue.before}</span>
-                <span className="text-slate-400">→</span>
-                <span className="text-emerald-600 font-bold">{issue.after}</span>
-                <span className="text-lg">{issue.fixed ? '✅' : '❌'}</span>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wide text-slate-600">
+              <tr>
+                <th className="px-4 py-2 text-left font-semibold w-24">Severidad</th>
+                <th className="px-4 py-2 text-left font-semibold">Issue técnico</th>
+                <th className="px-4 py-2 text-left font-semibold">Qué significa (marketing)</th>
+                <th className="px-4 py-2 text-center font-semibold w-32">Antes → Después</th>
+                <th className="px-4 py-2 text-center font-semibold w-12">Fix</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-sm">
+              {TEMPLATE_ISSUES.map((issue) => (
+                <tr key={issue.id} className="hover:bg-slate-50">
+                  <td className="px-4 py-3 align-top">
+                    <span className={`inline-block px-2 py-0.5 text-xs rounded-full border ${SEVERITY_STYLES[issue.severity]}`}>
+                      {issue.severity}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <p className="font-semibold text-slate-900 text-sm">{issue.title}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{issue.description}</p>
+                  </td>
+                  <td className="px-4 py-3 align-top text-slate-700 text-sm italic">
+                    {issue.marketing}
+                  </td>
+                  <td className="px-4 py-3 align-top text-center tabular-nums">
+                    <span className="text-rose-600 font-semibold">{issue.before}</span>
+                    <span className="text-slate-400 mx-2">→</span>
+                    <span className="text-emerald-600 font-bold">{issue.after}</span>
+                  </td>
+                  <td className="px-4 py-3 align-top text-center text-lg">
+                    {issue.fixed ? '✅' : '❌'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

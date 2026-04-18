@@ -156,19 +156,19 @@ export const TEMPLATE_AUDIT = {
   replyToAfter: 'apply@creators.elevnpro.me',
 }
 
-export const TEMPLATE_ISSUES: TemplateIssue[] = [
-  { id: 'fr-original', title: 'fr-original-* attrs (Froala editor garbage)', before: 161, after: 0, severity: 'critical', description: 'Atributos duplicados del editor que añaden ~8 KB de peso muerto', fixed: true },
-  { id: 'data-gr', title: 'data-gr-* attrs (Grammarly injection)', before: 0, after: 0, severity: 'critical', description: 'Ya limpios en 559 (flag directo de spam filter)', fixed: true },
-  { id: 'ispasted', title: 'isPasted attrs (duplicate IDs)', before: 8, after: 0, severity: 'medium', description: 'IDs duplicados de paste Word/Docs — HTML inválido', fixed: true },
-  { id: 'aria-disabled', title: 'aria-disabled en body', before: 1, after: 0, severity: 'medium', description: 'Residuo de editor browser — flag spam', fixed: true },
-  { id: 'google-fonts', title: 'Google Fonts <link> externo', before: 1, after: 0, severity: 'medium', description: 'No funciona en email clients, añade peso', fixed: true },
-  { id: 'empty-spans', title: 'Empty <span></span> tags', before: 51, after: 0, severity: 'low', description: 'Basura de WYSIWYG', fixed: true },
-  { id: 'empty-strongs', title: 'Empty <strong></strong> tags', before: 3, after: 0, severity: 'low', description: 'Tags inútiles', fixed: true },
-  { id: 'display-none', title: 'display:none elements (keyword stuffing)', before: 7, after: 1, severity: 'critical', description: 'Solo preheader debe tenerlo (1). Más = flag spam', fixed: true },
-  { id: '100-percent', title: '"100%" en copy visible', before: 7, after: 0, severity: 'critical', description: 'Super spam trigger — reemplazado por "fully"', fixed: true },
-  { id: 'meta-partner', title: '"Meta Official Partner"', before: 2, after: 0, severity: 'critical', description: 'Claim legal + spam trigger — cambiado a "Creator programs by La Neta"', fixed: true },
-  { id: 'in-canada', title: '"in Canada" en copy', before: 3, after: 0, severity: 'medium', description: 'Geo mismatch — audiencia era US pero copy decía Canada', fixed: true },
-  { id: 'preheader', title: 'Preheader literal [DEFAULT_HEADER]', before: 1, after: 0, severity: 'critical', description: 'Placeholder sin reemplazar que se enviaba a inbox', fixed: true },
+export const TEMPLATE_ISSUES: (TemplateIssue & { marketing: string })[] = [
+  { id: 'fr-original', title: 'fr-original-* attrs (Froala editor garbage)', before: 161, after: 0, severity: 'critical', description: 'Atributos duplicados del editor que añaden ~8 KB de peso muerto', marketing: 'El correo traía código basura del editor. Como mandar un PDF con 8 hojas en blanco: pesa más y se ve mal profesional.', fixed: true },
+  { id: 'data-gr', title: 'data-gr-* attrs (Grammarly injection)', before: 0, after: 0, severity: 'critical', description: 'Ya limpios en 559 (flag directo de spam filter)', marketing: 'Ya estaba limpio. Si tuviéramos estas marcas, Gmail las detecta y manda el correo a spam automáticamente.', fixed: true },
+  { id: 'ispasted', title: 'isPasted attrs (duplicate IDs)', before: 8, after: 0, severity: 'medium', description: 'IDs duplicados de paste Word/Docs — HTML inválido', marketing: 'Rastros de cuando alguien copió y pegó texto desde Word. No se ven pero ensucian el código.', fixed: true },
+  { id: 'aria-disabled', title: 'aria-disabled en body', before: 1, after: 0, severity: 'medium', description: 'Residuo de editor browser — flag spam', marketing: 'Residuo técnico del editor web. Pequeña señal para Gmail de que el correo fue tocado por herramientas raras.', fixed: true },
+  { id: 'google-fonts', title: 'Google Fonts <link> externo', before: 1, after: 0, severity: 'medium', description: 'No funciona en email clients, añade peso', marketing: 'Tipografía que se intentaba cargar desde internet pero Gmail/Outlook bloquean eso. Era código muerto.', fixed: true },
+  { id: 'empty-spans', title: 'Empty <span></span> tags', before: 51, after: 0, severity: 'low', description: 'Basura de WYSIWYG', marketing: '51 "cajitas vacías" quedaron en el código cada vez que alguien editó el correo. No dañan visualmente pero ensucian.', fixed: true },
+  { id: 'empty-strongs', title: 'Empty <strong></strong> tags', before: 3, after: 0, severity: 'low', description: 'Tags inútiles', marketing: 'Instrucciones de "poner en negritas" que no tenían texto. Código sin función.', fixed: true },
+  { id: 'display-none', title: 'display:none elements (keyword stuffing)', before: 7, after: 1, severity: 'critical', description: 'Solo preheader debe tenerlo (1). Más = flag spam', marketing: 'Texto oculto dentro del correo. Es una técnica que usan los spammers, así que Gmail lo penaliza cuando la ve.', fixed: true },
+  { id: '100-percent', title: '"100%" en copy visible', before: 7, after: 0, severity: 'critical', description: 'Super spam trigger — reemplazado por "fully"', marketing: 'Decía "100%" siete veces ("100% guaranteed", "100% free"). Es una palabra clásica de spam — Gmail la detecta al instante.', fixed: true },
+  { id: 'meta-partner', title: '"Meta Official Partner"', before: 2, after: 0, severity: 'critical', description: 'Claim legal + spam trigger — cambiado a "Creator programs by La Neta"', marketing: 'Decíamos "Meta Official Partner" sin tener un acuerdo formal. Riesgo legal + bandera roja para los filtros de spam.', fixed: true },
+  { id: 'in-canada', title: '"in Canada" en copy', before: 3, after: 0, severity: 'medium', description: 'Geo mismatch — audiencia era US pero copy decía Canada', marketing: 'El correo decía "in Canada" pero lo mandábamos a creadores de Estados Unidos. Lectores confundidos = cierran y no responden.', fixed: true },
+  { id: 'preheader', title: 'Preheader literal [DEFAULT_HEADER]', before: 1, after: 0, severity: 'critical', description: 'Placeholder sin reemplazar que se enviaba a inbox', marketing: 'El preview que se ve en la bandeja decía literalmente "[DEFAULT_HEADER]" en vez de un texto real. Imagen horrible antes de abrir.', fixed: true },
 ]
 
 // Costos
@@ -195,10 +195,10 @@ export const ENRICHMENT_RESULTS = {
   igVerified: 100,
   igVerifiedPct: 20.0,
   tiers: [
-    { tier: 'A', count: 6, pct: 1.2, description: 'Perfil ideal Meta (todas las reglas ✅)' },
-    { tier: 'B', count: 184, pct: 36.9, description: 'Fuerte candidato, falta alguna pieza' },
-    { tier: 'C', count: 122, pct: 24.4, description: 'Envío secundario con follow-up' },
-    { tier: 'D', count: 187, pct: 37.5, description: 'Descartable — sin IG o con FB Page' },
+    { tier: 'A', count: 6, pct: 1.2, description: 'Perfil ideal Meta: ambas redes activas, handles coinciden, sweet spot de seguidores, sin página de FB comercial' },
+    { tier: 'B', count: 184, pct: 36.9, description: 'Muy buen candidato: cumple la mayoría de reglas, solo falta 1-2 criterios menores' },
+    { tier: 'C', count: 122, pct: 24.4, description: 'Candidato viable para segunda ronda: cumple lo básico pero no es perfil premium' },
+    { tier: 'D', count: 187, pct: 37.5, description: 'No califica: le falta info clave (sin Instagram, o tiene página de Facebook comercial que descalifica para Meta)' },
   ],
   fbStatus: [
     { status: 'fb_profile (califica)', count: 400, pct: 80.2, good: true },
@@ -228,14 +228,15 @@ export const ENRICHMENT_RESULTS = {
   },
 }
 
-// Plan de cohortes
+// Plan de cohortes (horario CDMX — Mexico Central Time UTC-6)
 export const COHORT_PLAN = [
   {
     id: 'C1-A',
-    date: '2026-04-21',
+    date: '2026-04-20',
     dayOfWeek: 'Lunes',
-    hour: '17:00',
-    timezone: 'ET',
+    hour: '15:00',
+    hourEt: '17:00 ET',
+    timezone: 'CDMX',
     audience: 'TT_500k-1M_fresh (sample)',
     volume: 500,
     sender: 'apply@creators.elevn.me',
@@ -246,10 +247,11 @@ export const COHORT_PLAN = [
   },
   {
     id: 'C1-B',
-    date: '2026-04-21',
+    date: '2026-04-20',
     dayOfWeek: 'Lunes',
-    hour: '17:05',
-    timezone: 'ET',
+    hour: '15:05',
+    hourEt: '17:05 ET',
+    timezone: 'CDMX',
     audience: 'WARM_REOPENERS_500k-1M',
     volume: 500,
     sender: 'apply@creators.elevn.me',
@@ -260,10 +262,11 @@ export const COHORT_PLAN = [
   },
   {
     id: 'C2',
-    date: '2026-04-22',
+    date: '2026-04-21',
     dayOfWeek: 'Martes',
-    hour: '22:00',
-    timezone: 'ET',
+    hour: '20:00',
+    hourEt: '22:00 ET',
+    timezone: 'CDMX',
     audience: 'TT_1M-5M_fresh (sample)',
     volume: 500,
     sender: 'apply@creators.elevnhub.me',
@@ -274,10 +277,11 @@ export const COHORT_PLAN = [
   },
   {
     id: 'C3',
-    date: '2026-04-27',
+    date: '2026-04-26',
     dayOfWeek: 'Domingo',
-    hour: '19:00',
-    timezone: 'ET',
+    hour: '17:00',
+    hourEt: '19:00 ET',
+    timezone: 'CDMX',
     audience: 'TT_500k-1M_fresh batch 2',
     volume: 500,
     sender: 'apply@creators.elevn.me',
@@ -327,6 +331,28 @@ export const BRANCH_INTEGRATION = {
     clicksAfterMobileScan: 5,
     note: 'Confirmado: scans móviles de QR estático SÍ se registran en Branch (cualquier hit al short link = click)',
   },
+}
+
+// Timeline mensual de campañas (fuente: brevo_campaigns + brevo_creator_stats)
+export const MONTHLY_TIMELINE = [
+  { month: '2025-11', label: 'Nov 2025', camps: 1, delivered: 0, opens: 0 },
+  { month: '2025-12', label: 'Dic 2025', camps: 45, delivered: 0, opens: 12 },
+  { month: '2026-01', label: 'Ene 2026', camps: 35, delivered: 9828, opens: 448 },
+  { month: '2026-02', label: 'Feb 2026', camps: 17, delivered: 5513, opens: 188 },
+  { month: '2026-03', label: 'Mar 2026', camps: 215, delivered: 10455, opens: 498 },
+  { month: '2026-04', label: 'Abr 2026 (parcial)', camps: 20, delivered: 2484, opens: 174 },
+]
+
+// Universo TikTok — contexto global
+export const UNIVERSE_CONTEXT = {
+  totalRecords: 3948092,
+  usCreators: 2515232,
+  caCreators: 74639,
+  usWithEmail: 305026,
+  caWithEmail: 12832,
+  usPlus100k: 100556,
+  caPlus100k: null,
+  description: 'Base de datos global de TikTok con casi 4 millones de registros. De ahí filtramos solo Estados Unidos y Canadá (~2.6M), luego solo los que tienen email público, luego los de 100k+ seguidores. Es el pipeline que nos llevó a los 27 mil candidatos reales.',
 }
 
 // Audience search — TikTok universe

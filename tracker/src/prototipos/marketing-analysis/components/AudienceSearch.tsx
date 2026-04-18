@@ -1,4 +1,4 @@
-import { AUDIENCE_SEARCH, LISTS_AVAILABLE } from '../data/analysis'
+import { AUDIENCE_SEARCH, LISTS_AVAILABLE, UNIVERSE_CONTEXT } from '../data/analysis'
 
 export default function AudienceSearch() {
   const freshLists = LISTS_AVAILABLE.filter((l) => l.tipo === 'Fresh')
@@ -7,10 +7,43 @@ export default function AudienceSearch() {
 
   return (
     <div className="space-y-6">
-      {/* Source */}
+      {/* Universe context */}
+      <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5">
+        <p className="text-xs uppercase text-indigo-600 font-semibold">El universo completo</p>
+        <h3 className="text-lg font-bold text-slate-900 mt-1">De 3.9 millones → 27 mil candidatos reales</h3>
+        <p className="text-slate-700 mt-3 leading-relaxed text-sm">{UNIVERSE_CONTEXT.description}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+            <p className="text-xs uppercase text-slate-500">Total global TikTok</p>
+            <p className="text-xl font-bold text-slate-900 mt-1">{(UNIVERSE_CONTEXT.totalRecords / 1000000).toFixed(1)}M</p>
+            <p className="text-xs text-slate-500">registros de creadores</p>
+          </div>
+          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+            <p className="text-xs uppercase text-slate-500">US + Canadá</p>
+            <p className="text-xl font-bold text-indigo-700 mt-1">{((UNIVERSE_CONTEXT.usCreators + UNIVERSE_CONTEXT.caCreators) / 1000000).toFixed(2)}M</p>
+            <p className="text-xs text-slate-500">mercados objetivo</p>
+          </div>
+          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+            <p className="text-xs uppercase text-slate-500">Con email público</p>
+            <p className="text-xl font-bold text-amber-600 mt-1">~318K</p>
+            <p className="text-xs text-slate-500">los mega-creadores publican email</p>
+          </div>
+          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+            <p className="text-xs uppercase text-slate-500">US con 100k+ seguidores</p>
+            <p className="text-xl font-bold text-emerald-700 mt-1">{UNIVERSE_CONTEXT.usPlus100k.toLocaleString()}</p>
+            <p className="text-xs text-slate-500">segmento A premium</p>
+          </div>
+        </div>
+        <p className="text-xs text-slate-500 mt-4">
+          Fuente: tabla <code className="px-1 py-0.5 bg-slate-100 rounded">tiktok_users</code> en Supabase · <code className="px-1 py-0.5 bg-slate-100 rounded">D:\CRM\brevo\reportes\universo_tiktok_completo.md</code>
+        </p>
+      </div>
+
+      {/* Source file */}
       <div className="rounded-xl border border-slate-200 bg-white p-5">
-        <p className="text-xs uppercase text-slate-500 font-semibold">Fuente</p>
+        <p className="text-xs uppercase text-slate-500 font-semibold">Archivo fuente procesado</p>
         <p className="text-lg font-semibold text-slate-900 mt-1">{AUDIENCE_SEARCH.universeSource}</p>
+        <p className="text-xs text-slate-500 mt-1">Ya venía limpio (emails validados, US-only, con followers cuantificados)</p>
       </div>
 
       {/* Funnel de filtros */}

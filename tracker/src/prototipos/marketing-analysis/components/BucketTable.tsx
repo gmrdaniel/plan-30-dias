@@ -32,11 +32,11 @@ export default function BucketTable({ data }: { data: BucketRow[] }) {
           <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
               <th className="px-4 py-3 text-left text-xs uppercase tracking-wide text-slate-600"><SortButton k="bucket">Bucket</SortButton></th>
-              <th className="px-4 py-3 text-right text-xs uppercase tracking-wide text-slate-600"><SortButton k="camps"># Camps</SortButton></th>
-              <th className="px-4 py-3 text-right text-xs uppercase tracking-wide text-slate-600"><SortButton k="delivered">Delivered</SortButton></th>
-              <th className="px-4 py-3 text-right text-xs uppercase tracking-wide text-slate-600"><SortButton k="opens">Opens</SortButton></th>
-              <th className="px-4 py-3 text-right text-xs uppercase tracking-wide text-slate-600"><SortButton k="orPct">OR %</SortButton></th>
-              <th className="px-4 py-3 text-right text-xs uppercase tracking-wide text-slate-600"><SortButton k="ctrPct">CTR %</SortButton></th>
+              <th className="px-4 py-3 text-center text-xs uppercase tracking-wide text-slate-600"><SortButton k="camps"># Camps</SortButton></th>
+              <th className="px-4 py-3 text-center text-xs uppercase tracking-wide text-slate-600"><SortButton k="delivered">Delivered</SortButton></th>
+              <th className="px-4 py-3 text-center text-xs uppercase tracking-wide text-slate-600"><SortButton k="opens">Opens</SortButton></th>
+              <th className="px-4 py-3 text-center text-xs uppercase tracking-wide text-slate-600"><SortButton k="orPct">OR %</SortButton></th>
+              <th className="px-4 py-3 text-center text-xs uppercase tracking-wide text-slate-600"><SortButton k="ctrPct">CTR %</SortButton></th>
             </tr>
           </thead>
           <tbody>
@@ -48,11 +48,11 @@ export default function BucketTable({ data }: { data: BucketRow[] }) {
                 <td className="px-4 py-3 font-semibold text-slate-900">
                   {row.bucket} {row.isWinner && <span className="ml-1">🏆</span>}
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums">{row.camps}</td>
-                <td className="px-4 py-3 text-right tabular-nums">{row.delivered.toLocaleString()}</td>
-                <td className="px-4 py-3 text-right tabular-nums">{row.opens.toLocaleString()}</td>
-                <td className={`px-4 py-3 text-right tabular-nums font-semibold ${row.isWinner ? 'text-amber-700' : 'text-indigo-600'}`}>{row.orPct}%</td>
-                <td className="px-4 py-3 text-right tabular-nums text-emerald-600">{row.ctrPct}%</td>
+                <td className="px-4 py-3 text-center tabular-nums">{row.camps}</td>
+                <td className="px-4 py-3 text-center tabular-nums">{row.delivered.toLocaleString()}</td>
+                <td className="px-4 py-3 text-center tabular-nums">{row.opens.toLocaleString()}</td>
+                <td className={`px-4 py-3 text-center tabular-nums font-semibold ${row.isWinner ? 'text-amber-700' : 'text-indigo-600'}`}>{row.orPct}%</td>
+                <td className="px-4 py-3 text-center tabular-nums text-emerald-600">{row.ctrPct}%</td>
               </tr>
             ))}
           </tbody>

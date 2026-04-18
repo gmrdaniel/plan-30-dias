@@ -12,6 +12,7 @@ import DayHourChart from './components/DayHourChart'
 import EnrichmentResults from './components/EnrichmentResults'
 import ExecutionPlan from './components/ExecutionPlan'
 import CostCalculator from './components/CostCalculator'
+import TimelineChart from './components/TimelineChart'
 import { BUCKETS_MAX_FOLLOWERS, BUCKETS_TIKTOK } from './data/analysis'
 
 export default function MarketingAnalysisPage() {
@@ -89,9 +90,28 @@ export default function MarketingAnalysisPage() {
         <BranchIntegration />
       </Chapter>
 
-      {/* Capítulo 4 — Audience search */}
+      {/* Capítulo 4 — Histórico 325 campañas */}
       <Chapter
         number="04"
+        title="El histórico habla"
+        subtitle={`Lo que dicen ${OVERVIEW.campaignsAnalyzed} campañas y ${OVERVIEW.statsRows.toLocaleString()} registros de stats`}
+        accentColor="emerald"
+        intro={<>Antes de decidir qué bucket y qué horario usar para los envíos nuevos, analizamos todo el histórico
+          de Brevo. <strong>{OVERVIEW.winnerBucket}</strong> sale como ganador consistente con <strong>{OVERVIEW.winnerOrPct}% OR</strong>,
+          y el slot óptimo es <strong>Lunes 17h ET</strong> con 46.2%.</>}
+      >
+        <div className="space-y-6">
+          <TimelineChart />
+          <BucketChart data={BUCKETS_MAX_FOLLOWERS} title="Open Rate por bucket (max_followers)" subtitle={`${OVERVIEW.campaignsAnalyzed} campañas · agregado histórico · click en las barras para métricas`} />
+          <BucketTable data={BUCKETS_MAX_FOLLOWERS} />
+          <BucketChart data={BUCKETS_TIKTOK} title="TikTok puro — por bucket de tiktok_followers" subtitle="Solo creadores con TikTok activo" />
+          <DayHourChart />
+        </div>
+      </Chapter>
+
+      {/* Capítulo 5 — Audience search */}
+      <Chapter
+        number="05"
         title="Búsqueda de audiencia fresca"
         subtitle="27 mil creadores TikTok US listos para enriquecer"
         accentColor="indigo"
@@ -100,24 +120,6 @@ export default function MarketingAnalysisPage() {
           con la blocklist. Los organizamos en 6 listas por bucket.</>}
       >
         <AudienceSearch />
-      </Chapter>
-
-      {/* Capítulo 5 — Histórico 325 campañas */}
-      <Chapter
-        number="05"
-        title="El histórico habla"
-        subtitle={`Lo que dicen ${OVERVIEW.campaignsAnalyzed} campañas y ${OVERVIEW.statsRows.toLocaleString()} registros de stats`}
-        accentColor="emerald"
-        intro={<>Antes de decidir qué bucket y qué horario usar para los envíos nuevos, analizamos todo el histórico
-          de Brevo. <strong>{OVERVIEW.winnerBucket}</strong> sale como ganador consistente con <strong>{OVERVIEW.winnerOrPct}% OR</strong>,
-          y el slot óptimo es <strong>Lunes 17h</strong> con 46.2%.</>}
-      >
-        <div className="space-y-6">
-          <BucketChart data={BUCKETS_MAX_FOLLOWERS} title="Open Rate por bucket (max_followers)" subtitle={`${OVERVIEW.campaignsAnalyzed} campañas · agregado histórico · click en las barras para métricas`} />
-          <BucketTable data={BUCKETS_MAX_FOLLOWERS} />
-          <BucketChart data={BUCKETS_TIKTOK} title="TikTok puro — por bucket de tiktok_followers" subtitle="Solo creadores con TikTok activo" />
-          <DayHourChart />
-        </div>
       </Chapter>
 
       {/* Capítulo 6 — Enrichment pipeline */}

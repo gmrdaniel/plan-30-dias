@@ -44,10 +44,17 @@ export default function BucketChart({ data, title, subtitle }: Props) {
       </div>
       <div style={{ width: '100%', height: 320 }}>
         <ResponsiveContainer>
-          <BarChart data={data} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
+          <BarChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis dataKey="bucket" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
+            <XAxis
+              dataKey="bucket"
+              tick={{ fontSize: 12 }}
+              label={{ value: 'Rango de seguidores', position: 'insideBottom', offset: -5, style: { fontSize: 12, fill: '#64748b' } }}
+            />
+            <YAxis
+              tick={{ fontSize: 12 }}
+              label={{ value: cfg.label, angle: -90, position: 'insideLeft', style: { fontSize: 12, fill: '#64748b' } }}
+            />
             <Tooltip
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null
