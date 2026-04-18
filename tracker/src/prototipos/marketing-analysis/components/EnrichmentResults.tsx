@@ -17,9 +17,9 @@ export default function EnrichmentResults() {
       {/* Context intro */}
       <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5">
         <p className="text-xs uppercase text-indigo-600 font-semibold">Qué hicimos</p>
-        <h3 className="text-lg font-bold text-slate-900 mt-1">Muestra de 499 contactos de TikTok enriquecidos con datos completos</h3>
+        <h3 className="text-lg font-bold text-slate-900 mt-1">Muestra de 999 contactos de TikTok enriquecidos con datos completos</h3>
         <p className="text-slate-700 mt-3 leading-relaxed text-sm">
-          De la base TikTok (27k candidatos US con 100k+ seguidores), tomamos una <strong>muestra de 499 contactos</strong> del bucket 100k-500k
+          De la base TikTok (27k candidatos US con 100k+ seguidores), tomamos una <strong>muestra de 999 contactos</strong> del bucket 100k-500k
           y los procesamos con Clay (para obtener nombre completo + handles de Instagram/YouTube) y Apify (para validar seguidores reales de IG,
           bio, categoría, verificación y si tienen página de Facebook). Con esa data enriquecida aplicamos
           {' '}
