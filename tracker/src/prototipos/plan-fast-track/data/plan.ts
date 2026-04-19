@@ -672,3 +672,414 @@ export const HYBRID_SYNC = [
 ]
 
 export const HYBRID_TRADEOFF = 'Agrega complejidad de integración. Vale la pena solo si Plan A tiene tiempo (3 semanas). En Plan B no se justifica.'
+
+// ===== EMAIL TEMPLATES (contenido real de los archivos) =====
+// Fuente: D:\CRM\brevo\plan-implementacion-abril-2026\templates\
+
+export type EmailTemplate = {
+  id: string
+  name: string
+  channel: 'Smartlead' | 'Brevo'
+  step: string
+  subject: string
+  subjectAlt?: string
+  body: string
+  bodyType: 'plain' | 'html'
+  variables: Array<{ var: string; meaning: string }>
+  branchLink: string
+  config: string[]
+  notes: string[]
+}
+
+export const TEMPLATES: EmailTemplate[] = [
+  {
+    id: 'smartlead_T_intro',
+    name: 'Step 1 — Intro Fast Track',
+    channel: 'Smartlead',
+    step: 'Sequence step 1 · Day 0 · Primer contacto',
+    subject: "Get paid by Meta for content you've already made",
+    body: `Hi {{first_name|there}},
+
+I'm reaching out from Laneta, a Meta-partnered agency running the Creator Fast Track program in the US.
+
+Based on your TikTok work, you qualify for a paid content program through Meta — they're paying creators $3K-$9K/month to repost existing content on Facebook.
+
+Interested? Apply here (takes 60 seconds):
+{{branch_link_v1}}
+
+Happy to answer questions,
+Dan @ Laneta`,
+    bodyType: 'plain',
+    variables: [
+      { var: '{{first_name}}', meaning: 'Nombre del contacto (fallback "there")' },
+      { var: '{{branch_link_v1}}', meaning: 'Link de Branch para este step (intro_ft_v1)' },
+    ],
+    branchLink: 'intro_ft_v1_smartlead_T (actual: https://3c7t6.app.link/gMMTLRC6p2b)',
+    config: [
+      'Body type: Plain text (IMPORTANTE: no HTML)',
+      'Tracking: DESACTIVAR open tracking · MANTENER click tracking',
+      'Send interval: respetando cap del inbox',
+      'Subject ganador histórico: 16.2% OR',
+    ],
+    notes: [
+      'El sign-off "Dan @ Laneta" se puede personalizar por inbox (ej: "Apply @ La Neta")',
+      'NO agregar imágenes, CSS, unsubscribe link (Smartlead lo agrega automático)',
+      'NO agregar "Sent from my iPhone" ni footers de empresa — tono persona-a-persona',
+      'Si {{first_name}} no existe, el fallback "there" se activa',
+      'Volumen inicial: 30-40/día Semana 1, subir a 150/día en Semana 2 si HB <1%',
+    ],
+  },
+  {
+    id: 'smartlead_T_intro_v2',
+    name: 'Step 2a — Intro v2 (non-openers)',
+    channel: 'Smartlead',
+    step: 'Sequence step 2a · Day 3 · Condicional: NO abrió step 1',
+    subject: "{{first_name|}} — quick bump about Meta's creator program",
+    subjectAlt: 'Quick bump: Meta is paying creators for content they already have',
+    body: `Hi {{first_name|there}},
+
+Quick bump on my last email about Meta's Creator Fast Track.
+
+Short version: Meta is paying creators to repost TikTok/Instagram content on Facebook — $3K-$9K/month for content you've already made.
+
+Takes 60 seconds to apply:
+{{branch_link_v2}}
+
+Let me know if I can answer anything,
+Dan @ Laneta`,
+    bodyType: 'plain',
+    variables: [
+      { var: '{{first_name}}', meaning: 'Nombre (fallback "there")' },
+      { var: '{{branch_link_v2}}', meaning: 'Link Branch específico intro_ft_v2' },
+    ],
+    branchLink: 'intro_ft_v2 (debe diferenciarse de v1 para medir conversion por step)',
+    config: [
+      'Body type: Plain text',
+      'Tracking: DESACTIVAR open tracking · MANTENER click tracking',
+      'Recommended: enviar desde inbox DIFERENTE al step 1 (rotación ayuda a deliverability)',
+    ],
+    notes: [
+      'Mensaje MÁS CORTO intencionalmente — follow-up eficiente',
+      '"Quick bump on my last email" asume que recibieron algo; subject distinto + contexto renovado = segunda oportunidad de atención',
+      'Cambio de subject es CRÍTICO: mismo subject al step 1 → Gmail colapsa en thread y marca como repetido',
+      'Usar inbox diferente: step 1 apply@creators.elevngo.me → step 2a apply@go.elevnpro.me',
+      'Volumen: ~70% del volumen de step 1 (60-70% de audiencia no abre primer touch)',
+    ],
+  },
+  {
+    id: 'smartlead_T_friction',
+    name: 'Step 2b — Friction Removal (openers)',
+    channel: 'Smartlead',
+    step: 'Sequence step 2b · Day 3 · Condicional: SÍ abrió step 1 pero NO clickeó',
+    subject: "{{first_name|}}, one more detail about Meta's creator program",
+    subjectAlt: 'Removing friction: the 3 most common questions about Meta Fast Track',
+    body: `Hi {{first_name|there}},
+
+Saw you opened my last email — wanted to remove any hesitation before you decide.
+
+The 3 most common questions I get:
+
+1. "Do I need to create new content?"
+No. You just repost TikTok/Instagram videos you already have.
+
+2. "How much time per week?"
+About 2 hours. Posting existing content to Facebook.
+
+3. "Is it really paid?"
+Yes. $3K-$9K/mo direct from Meta, based on performance.
+
+Apply here in 60 seconds:
+{{branch_link_friction}}
+
+Happy to answer anything else,
+Dan @ Laneta`,
+    bodyType: 'plain',
+    variables: [
+      { var: '{{first_name}}', meaning: 'Nombre (fallback "there")' },
+      { var: '{{branch_link_friction}}', meaning: 'Link Branch específico friction_removal' },
+    ],
+    branchLink: 'friction_removal (tags incluyen "hot_lead" para priorizar en dashboard)',
+    config: [
+      'Body type: Plain text',
+      'Tracking: DESACTIVAR open tracking · MANTENER click tracking',
+      'Recommended: MISMO inbox del step 1 (continuidad de conversación)',
+    ],
+    notes: [
+      '"Saw you opened my last email" es honesto pero NO alarmante — no decir "I noticed you didn\'t click" (suena stalker)',
+      'Los 3 puntos son las objeciones reales de los creadores en testing previo',
+      'NO REPETIR el monto $3K-$9K en el body — ya se dio en step 1. Aquí se resuelven dudas, no re-vender',
+      'CTR más alto históricamente (openers son self-selected warm) — estimado 4-6% CTR vs 2-3% del step 1',
+      'Workflow debe marcarlos como "hot lead" si clickean aquí',
+    ],
+  },
+  {
+    id: 'brevo_warm_html',
+    name: 'Brevo warm opener follow-up (HTML)',
+    channel: 'Brevo',
+    step: 'Opcional · openers históricos sin click en 90 días',
+    subject: 'Quick follow-up, {{ contact.FNAME }} — did you see this from Meta?',
+    subjectAlt: '{{ contact.FNAME }}, checking back on that creator program | Still interested? Meta Fast Track has new slots',
+    body: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Creator Fast Track — follow-up</title>
+</head>
+<body style="margin:0; padding:0; background:#f5f5f5; font-family: Arial, Helvetica, sans-serif; color:#222;">
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f5f5;">
+    <tr>
+      <td align="center" style="padding: 32px 16px;">
+
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px; background:#ffffff; border-radius:8px;">
+          <tr>
+            <td style="padding: 32px;">
+
+              <p style="font-size:16px; line-height:24px; margin:0 0 16px 0; color:#222;">
+                Hi {{ contact.FNAME | default:"there" }},
+              </p>
+
+              <p style="font-size:16px; line-height:24px; margin:0 0 16px 0; color:#222;">
+                Checking back on the Meta Creator Fast Track email I sent you a while ago — I noticed you opened it, but wasn't sure if the timing was off or something else.
+              </p>
+
+              <p style="font-size:16px; line-height:24px; margin:0 0 16px 0; color:#222;">
+                Since then, <strong>Meta has opened new slots</strong> for creators at your follower range. If the program still interests you, the short version is:
+              </p>
+
+              <ul style="font-size:16px; line-height:24px; margin:0 0 16px 20px; padding:0; color:#222;">
+                <li>Repost content you already made (TikTok/IG → Facebook).</li>
+                <li>Meta pays $3K-$9K/mo based on performance.</li>
+                <li>Takes about 2 hours a week of posting time.</li>
+              </ul>
+
+              <p style="text-align:center; margin: 24px 0;">
+                <a href="https://3c7t6.app.link/friction_removal?contact_id={{ contact.ID | default:'' }}"
+                   style="display:inline-block; background:#0F52BA; color:#ffffff; padding:14px 28px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:16px;">
+                  Apply in 60 seconds
+                </a>
+              </p>
+
+              <p style="font-size:14px; line-height:20px; margin:16px 0 0 0; color:#555;">
+                Happy to answer anything — just reply here.
+              </p>
+
+              <p style="font-size:14px; line-height:20px; margin:8px 0 0 0; color:#555;">
+                Dan @ Laneta<br>
+                <span style="color:#888; font-size:12px;">Meta-partnered agency running the Creator Fast Track program</span>
+              </p>
+
+            </td>
+          </tr>
+        </table>
+
+        <p style="font-size:12px; line-height:18px; color:#888; margin:16px 0 0 0; max-width:560px;">
+          If this isn't relevant, <a href="{{ unsubscribe }}" style="color:#888;">unsubscribe here</a>. Meta is a partner of Laneta Agency — we help creators apply to their programs.
+        </p>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>`,
+    bodyType: 'html',
+    variables: [
+      { var: '{{ contact.FNAME }}', meaning: 'Nombre del contacto (fallback "there")' },
+      { var: '{{ contact.ID }}', meaning: 'ID Brevo para atribución Branch (?contact_id=)' },
+      { var: '{{ unsubscribe }}', meaning: 'URL unsubscribe manejada por Brevo' },
+    ],
+    branchLink: 'friction_removal con ?contact_id={{ contact.ID }}',
+    config: [
+      'Template type: transactional (marketing campaign)',
+      'Plain text version: usar el body TEXT (tab siguiente)',
+      'Open tracking: ON (Brevo lo maneja bien)',
+      'Click tracking: ON (Brevo + Branch double-tracking)',
+      'Sender sugerido: apply@creators.elevn.me',
+    ],
+    notes: [
+      'Elegibilidad: abrieron campaña FT anterior + 0 clicks históricos + último open en 90 días',
+      'Excluir: blocklist_hard_bounces.csv, _exclusion_master.txt, unsubscribed en Brevo',
+      'Preheader sugerido: "Meta opened new slots for creators at your follower range."',
+    ],
+  },
+  {
+    id: 'brevo_warm_text',
+    name: 'Brevo warm follow-up (plain text version)',
+    channel: 'Brevo',
+    step: 'Plain text fallback del template HTML anterior',
+    subject: '(mismo subject que la versión HTML)',
+    body: `Hi {{ contact.FNAME | default:"there" }},
+
+Checking back on the Meta Creator Fast Track email I sent you a while ago — I noticed you opened it, but wasn't sure if the timing was off or something else.
+
+Since then, Meta has opened new slots for creators at your follower range. If the program still interests you, the short version is:
+
+- Repost content you already made (TikTok/IG to Facebook).
+- Meta pays $3K-$9K/mo based on performance.
+- Takes about 2 hours a week of posting time.
+
+Apply in 60 seconds:
+https://3c7t6.app.link/friction_removal?contact_id={{ contact.ID | default:'' }}
+
+Happy to answer anything — just reply here.
+
+Dan @ Laneta
+Meta-partnered agency running the Creator Fast Track program
+
+----------------------------------------------------------------
+
+If this isn't relevant, you can unsubscribe: {{ unsubscribe }}`,
+    bodyType: 'plain',
+    variables: [
+      { var: '{{ contact.FNAME }}', meaning: 'Nombre (fallback "there")' },
+      { var: '{{ contact.ID }}', meaning: 'ID Brevo para atribución' },
+      { var: '{{ unsubscribe }}', meaning: 'URL unsubscribe Brevo' },
+    ],
+    branchLink: 'friction_removal con ?contact_id={{ contact.ID }}',
+    config: [
+      'Este es el fallback para clientes que no renderizan HTML',
+      'Brevo lo pide al crear templates — copiar tal cual en "Plain text version"',
+    ],
+    notes: ['Misma regla de elegibilidad que la versión HTML'],
+  },
+]
+
+// ===== BRANCH.IO LINKS SPECS =====
+// Fuente: D:\CRM\brevo\plan-implementacion-abril-2026\branch-io\links_specs.md
+
+export const BRANCH_CONTEXT = {
+  plan: 'Activation Basics ($17/mes · 10k links / 150k clicks)',
+  appId: '1570143202843840673',
+  currentLink: 'https://3c7t6.app.link/gMMTLRC6p2b (campaign=intro_ft_v1, channel=brevo)',
+  why: 'Actualmente existe 1 solo link funcional. Para medir qué step del workflow convierte, necesitamos links separados por step + campaign + canal.',
+}
+
+export type BranchField = { field: string; value: string; mono?: boolean }
+export type BranchLinkSpec = {
+  id: string
+  name: string
+  step: string
+  optional?: boolean
+  fields: BranchField[]
+  utms: string[]
+}
+
+export const BRANCH_LINKS: BranchLinkSpec[] = [
+  {
+    id: 'intro_ft_v1_smartlead_T',
+    name: 'intro_ft_v1_smartlead_T',
+    step: 'Step 1 del workflow Smartlead',
+    fields: [
+      { field: '$og_title', value: 'Creator Fast Track' },
+      { field: '$og_description', value: 'Apply to Meta Creator Fast Track' },
+      { field: '$desktop_url', value: 'https://www.facebook.com/creator_programs/signup?referral_code=laneta&utm_source=smartlead&utm_medium=email&utm_campaign=intro_ft_v1', mono: true },
+      { field: '$fallback_url', value: '(mismo que desktop_url)' },
+      { field: '~campaign', value: 'intro_ft_v1', mono: true },
+      { field: '~channel', value: 'smartlead', mono: true },
+      { field: '~feature', value: 'email_text_link', mono: true },
+      { field: '~tags', value: '["smartlead","variant_T","step_1"]', mono: true },
+    ],
+    utms: ['utm_source=smartlead', 'utm_medium=email', 'utm_campaign=intro_ft_v1'],
+  },
+  {
+    id: 'intro_ft_v2',
+    name: 'intro_ft_v2',
+    step: 'Step 2a del workflow — follow-up non-openers',
+    fields: [
+      { field: '$og_title', value: 'Creator Fast Track' },
+      { field: '$og_description', value: 'Meta is paying creators — 60 sec to apply' },
+      { field: '$desktop_url', value: 'https://www.facebook.com/creator_programs/signup?referral_code=laneta&utm_source=smartlead&utm_medium=email&utm_campaign=intro_ft_v2', mono: true },
+      { field: '$fallback_url', value: '(mismo que desktop_url)' },
+      { field: '~campaign', value: 'intro_ft_v2', mono: true },
+      { field: '~channel', value: 'smartlead', mono: true },
+      { field: '~feature', value: 'email_text_link', mono: true },
+      { field: '~tags', value: '["smartlead","variant_T","step_2a","follow_up_non_openers"]', mono: true },
+    ],
+    utms: ['utm_source=smartlead', 'utm_medium=email', 'utm_campaign=intro_ft_v2'],
+  },
+  {
+    id: 'friction_removal',
+    name: 'friction_removal',
+    step: 'Step 2b del workflow — openers sin click',
+    fields: [
+      { field: '$og_title', value: 'Creator Fast Track — Your Questions Answered' },
+      { field: '$og_description', value: '3 most common questions about Meta Fast Track' },
+      { field: '$desktop_url', value: 'https://www.facebook.com/creator_programs/signup?referral_code=laneta&utm_source=smartlead&utm_medium=email&utm_campaign=friction_removal', mono: true },
+      { field: '$fallback_url', value: '(mismo que desktop_url)' },
+      { field: '~campaign', value: 'friction_removal', mono: true },
+      { field: '~channel', value: 'smartlead', mono: true },
+      { field: '~feature', value: 'email_text_link', mono: true },
+      { field: '~tags', value: '["smartlead","variant_T","step_2b","friction_removal","hot_lead"]', mono: true },
+    ],
+    utms: ['utm_source=smartlead', 'utm_medium=email', 'utm_campaign=friction_removal'],
+  },
+  {
+    id: 'friction_removal_brevo',
+    name: 'friction_removal_brevo',
+    step: 'Opcional — Step Brevo para openers históricos sin click',
+    optional: true,
+    fields: [
+      { field: '$og_title', value: 'Creator Fast Track — Your Questions Answered' },
+      { field: '$og_description', value: 'Meta opened new slots — apply in 60 sec' },
+      { field: '$desktop_url', value: 'https://www.facebook.com/creator_programs/signup?referral_code=laneta&utm_source=brevo&utm_medium=email&utm_campaign=friction_removal_warm', mono: true },
+      { field: '$fallback_url', value: '(mismo)' },
+      { field: '~campaign', value: 'friction_removal_warm', mono: true },
+      { field: '~channel', value: 'brevo', mono: true },
+      { field: '~feature', value: 'email_warm_openers', mono: true },
+      { field: '~tags', value: '["brevo","warm_openers","opener_no_click","step_retarget"]', mono: true },
+    ],
+    utms: ['utm_source=brevo', 'utm_medium=email', 'utm_campaign=friction_removal_warm'],
+  },
+]
+
+export const BRANCH_UI_STEPS = [
+  'Entrar a app.branch.io',
+  'Click en "Quick Links" → "+ Quick Link"',
+  'Tab "Analytics": Campaign/Channel/Feature/Tags según tabla',
+  'Tab "Configure Options": Desktop URL + Fallback URL',
+  'Tab "Social Media": OG Title + OG Description',
+  'Save → obtener short link (ej: https://3c7t6.app.link/XXXXXXX)',
+]
+
+export const BRANCH_API_SNIPPET = `curl -X POST https://api.branch.io/v1/url \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "branch_key": "key_live_hqBt6hMPyeuj2O7eNl9oamlautmkTJhy",
+    "channel": "smartlead",
+    "feature": "email_text_link",
+    "campaign": "intro_ft_v1",
+    "tags": ["smartlead","variant_T","step_1"],
+    "data": {
+      "$og_title": "Creator Fast Track",
+      "$og_description": "Apply to Meta Creator Fast Track",
+      "$desktop_url": "https://www.facebook.com/creator_programs/signup?referral_code=laneta&utm_source=smartlead&utm_medium=email&utm_campaign=intro_ft_v1",
+      "$fallback_url": "https://www.facebook.com/creator_programs/signup?referral_code=laneta&utm_source=smartlead&utm_medium=email&utm_campaign=intro_ft_v1"
+    }
+  }'
+
+# Respuesta: {"url": "https://3c7t6.app.link/XXXXXXX"}`
+
+export const BRANCH_VERIFY_SNIPPET = `import requests
+r = requests.get(
+    'https://api2.branch.io/v1/url',
+    params={'branch_key': 'key_live_hqBt6hMPyeuj2O7eNl9oamlautmkTJhy',
+            'url': 'https://3c7t6.app.link/XXXXXXX'},
+    timeout=10)
+print(r.json())
+# Debe devolver ~campaign, ~channel, $desktop_url configurados`
+
+export const BRANCH_TEMPLATE_UPDATES = [
+  { template: 'smartlead_T_intro.txt', placeholder: '{{branch_link_v1}}', link: 'https://3c7t6.app.link/XXX1' },
+  { template: 'smartlead_T_intro_v2.txt', placeholder: '{{branch_link_v2}}', link: 'https://3c7t6.app.link/XXX2' },
+  { template: 'smartlead_T_friction.txt', placeholder: '{{branch_link_friction}}', link: 'https://3c7t6.app.link/XXX3' },
+  { template: 'brevo_warm_opener_followup.html', placeholder: 'friction_removal', link: 'https://3c7t6.app.link/XXX4' },
+]
+
+export const BRANCH_DASHBOARD_VIEWS = [
+  { view: 'Por campaign', action: 'agrupar por ~campaign — ver qué step convierte más (v1 vs v2 vs friction)' },
+  { view: 'Por channel', action: 'agrupar por ~channel — ver smartlead vs brevo' },
+  { view: 'Por tags', action: 'filtrar variant_T vs otros, hot_lead para priorizar leads' },
+  { view: 'Geography', action: 'confirmar mayoría US (filtra bots fuera de US)' },
+]

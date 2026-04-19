@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { PLANS } from '../data/plan'
 import Collapse from './Collapse'
+import TemplatesModal from './TemplatesModal'
+import BranchLinksModal from './BranchLinksModal'
 
 type Plan = (typeof PLANS)[number]
 
@@ -47,6 +49,12 @@ export default function PlanTabs() {
 }
 
 function PlanCard({ plan }: { plan: Plan }) {
+  const [templatesOpen, setTemplatesOpen] = useState(false)
+  const [branchOpen, setBranchOpen] = useState(false)
+  // Plan A tiene Smartlead + Brevo. Plan B solo Smartlead. Plan C no muestra los botones.
+  const showModalButtons = plan.id === 'A' || plan.id === 'B'
+  const channelFilter = plan.id === 'B' ? 'Smartlead' : undefined
+
   return (
     <div className="space-y-5">
       {/* Recommendation + objective */}
@@ -163,7 +171,27 @@ function PlanCard({ plan }: { plan: Plan }) {
 
       {/* Templates */}
       <div className="rounded-lg border border-slate-200 bg-white p-5">
-        <h4 className="text-sm font-bold text-slate-900 mb-3">Plantillas · Branch.io · Subjects · Workflow</h4>
+        <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
+          <h4 className="text-sm font-bold text-slate-900">Plantillas · Branch.io · Subjects · Workflow</h4>
+          {showModalButtons && (
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => setTemplatesOpen(true)}
+                className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-[#0F52BA] text-[#0F52BA] hover:bg-[#0F52BA] hover:text-white transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                Ver plantillas
+              </button>
+              <button
+                onClick={() => setBranchOpen(true)}
+                className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md border border-[#0F52BA] text-[#0F52BA] hover:bg-[#0F52BA] hover:text-white transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Ver Branch links
+              </button>
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <TemplateRow label="Plantilla Smartlead" value={plan.templates.smartlead} />
           <TemplateRow label="Plantilla Brevo" value={plan.templates.brevo} />
@@ -295,6 +323,14 @@ function PlanCard({ plan }: { plan: Plan }) {
           </ul>
         </div>
       </div>
+
+      {/* Modales */}
+      {showModalButtons && (
+        <>
+          <TemplatesModal open={templatesOpen} onClose={() => setTemplatesOpen(false)} channelFilter={channelFilter} />
+          <BranchLinksModal open={branchOpen} onClose={() => setBranchOpen(false)} />
+        </>
+      )}
     </div>
   )
 }
