@@ -24,15 +24,15 @@ export default function ScoringModal({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-br from-indigo-600 to-purple-700 text-white px-6 py-5 rounded-t-2xl flex items-start justify-between">
+        <div className="sticky top-0 bg-[#0B1120] text-white px-6 py-5 rounded-t-lg flex items-start justify-between border-b-2 border-[#0F52BA]">
           <div>
-            <p className="text-xs uppercase tracking-wide opacity-80">Cómo se califica cada contacto</p>
+            <p className="text-xs uppercase tracking-wide text-slate-400">Cómo se califica cada contacto</p>
             <h2 className="text-2xl font-bold mt-1">Sistema de scoring 0-17 pts</h2>
-            <p className="text-indigo-100 text-sm mt-1">Por qué un tier A (13 pts) es "perfil ideal Meta"</p>
+            <p className="text-slate-300 text-sm mt-1">Por qué un tier A (13 pts) es "perfil ideal Meta"</p>
           </div>
           <button
             onClick={onClose}
@@ -53,12 +53,12 @@ export default function ScoringModal({ open, onClose }: Props) {
 
           {/* Criterios */}
           <div>
-            <h3 className="font-bold text-slate-900 mb-3">📊 Los 9 criterios</h3>
+            <h3 className="font-bold text-slate-900 mb-3">Los 9 criterios</h3>
             <div className="space-y-2">
               {scoringRule.criteria!.map((c, i) => (
                 <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
                   <span className="text-sm text-slate-800">{c.criterion}</span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 font-bold text-xs">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#0F52BA]/10 text-[#0F52BA] font-bold text-xs">
                     +{c.pts} {c.pts === 1 ? 'pt' : 'pts'}
                   </span>
                 </div>
@@ -68,17 +68,17 @@ export default function ScoringModal({ open, onClose }: Props) {
 
           {/* Tiers */}
           <div>
-            <h3 className="font-bold text-slate-900 mb-3">🏆 Clasificación por tier</h3>
+            <h3 className="font-bold text-slate-900 mb-3">Clasificación por tier</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {scoringRule.tiers!.map((t) => {
                 const colors = {
-                  A: 'bg-emerald-50 border-emerald-300 text-emerald-700',
-                  B: 'bg-indigo-50 border-indigo-300 text-indigo-700',
-                  C: 'bg-amber-50 border-amber-300 text-amber-700',
-                  D: 'bg-slate-50 border-slate-300 text-slate-600',
+                  A: 'bg-white border-slate-200 text-emerald-700 border-l-4 border-l-emerald-500',
+                  B: 'bg-white border-slate-200 text-[#0F52BA] border-l-4 border-l-[#0F52BA]',
+                  C: 'bg-white border-slate-200 text-[#F59E0B] border-l-4 border-l-[#F59E0B]',
+                  D: 'bg-white border-slate-200 text-slate-600 border-l-4 border-l-slate-400',
                 }
                 return (
-                  <div key={t.tier} className={`rounded-lg border-2 p-4 text-center ${colors[t.tier as keyof typeof colors]}`}>
+                  <div key={t.tier} className={`rounded-lg border p-4 text-center ${colors[t.tier as keyof typeof colors]}`}>
                     <p className="text-3xl font-bold">{t.tier}</p>
                     <p className="text-xs font-semibold mt-1">{t.range}</p>
                   </div>
@@ -89,14 +89,14 @@ export default function ScoringModal({ open, onClose }: Props) {
 
           {/* Handle match detail */}
           <div>
-            <h3 className="font-bold text-slate-900 mb-2">🔗 Regla: Handle Match (IG = TikTok)</h3>
+            <h3 className="font-bold text-slate-900 mb-2">Regla: Handle Match (IG = TikTok)</h3>
             <p className="text-sm text-slate-600 mb-3">{handleRule.description}</p>
             <div className="grid grid-cols-2 gap-2">
               {handleRule.classes!.map((c) => (
                 <div key={c.label} className="p-3 bg-slate-50 rounded border border-slate-200">
                   <p className="font-mono text-sm font-semibold text-slate-800">{c.label}</p>
                   <p className="text-xs text-slate-500 mt-0.5">{c.description}</p>
-                  <p className="text-xs text-indigo-600 font-semibold mt-1">+{c.pts} pts</p>
+                  <p className="text-xs text-[#0F52BA] font-semibold mt-1">+{c.pts} pts</p>
                 </div>
               ))}
             </div>
@@ -104,7 +104,7 @@ export default function ScoringModal({ open, onClose }: Props) {
 
           {/* FB check detail */}
           <div>
-            <h3 className="font-bold text-slate-900 mb-2">📘 Regla: Facebook Page Status</h3>
+            <h3 className="font-bold text-slate-900 mb-2">Regla: Facebook Page Status</h3>
             <p className="text-sm text-slate-600 mb-3">{fbRule.description}</p>
             <div className="space-y-2">
               {fbRule.classes!.map((c) => (
@@ -125,8 +125,8 @@ export default function ScoringModal({ open, onClose }: Props) {
           </div>
 
           {/* Por qué es relevante el 13 */}
-          <div className="rounded-lg bg-gradient-to-br from-emerald-50 to-white border-2 border-emerald-300 p-4">
-            <h3 className="font-bold text-emerald-900">💡 ¿Por qué los Tier A tienen score 13?</h3>
+          <div className="rounded-lg bg-slate-50 border border-slate-200 border-l-4 border-l-emerald-500 p-4">
+            <h3 className="font-bold text-slate-900">¿Por qué los Tier A tienen score 13?</h3>
             <p className="text-sm text-slate-700 mt-2 leading-relaxed">
               Un score de 13 significa que el creador cumple con:
             </p>
@@ -144,10 +144,10 @@ export default function ScoringModal({ open, onClose }: Props) {
           </div>
         </div>
 
-        <div className="sticky bottom-0 bg-slate-50 px-6 py-4 rounded-b-2xl border-t border-slate-200 flex justify-end">
+        <div className="sticky bottom-0 bg-slate-50 px-6 py-4 rounded-b-lg border-t border-slate-200 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800"
+            className="px-5 py-2 bg-[#0F52BA] text-white text-sm font-medium rounded-lg hover:bg-[#0A3D8F]"
           >
             Cerrar
           </button>

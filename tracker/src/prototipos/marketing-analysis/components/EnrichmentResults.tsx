@@ -15,8 +15,8 @@ export default function EnrichmentResults() {
       <ScoringModal open={scoringOpen} onClose={() => setScoringOpen(false)} />
 
       {/* Context intro */}
-      <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5">
-        <p className="text-xs uppercase text-indigo-600 font-semibold">Qué hicimos</p>
+      <div className="rounded-lg border border-slate-200 bg-white p-5 border-l-4 border-l-[#0F52BA]">
+        <p className="text-xs uppercase text-[#0F52BA] font-semibold">Qué hicimos</p>
         <h3 className="text-lg font-bold text-slate-900 mt-1">Muestra de 999 contactos de TikTok enriquecidos con datos completos</h3>
         <p className="text-slate-700 mt-3 leading-relaxed text-sm">
           De la base TikTok (27k candidatos US con 100k+ seguidores), tomamos una <strong>muestra de 999 contactos</strong> del bucket 100k-500k
@@ -25,9 +25,9 @@ export default function EnrichmentResults() {
           {' '}
           <button
             onClick={() => setScoringOpen(true)}
-            className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-600 text-white text-xs font-semibold rounded hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#0F52BA] text-white text-xs font-semibold rounded hover:bg-[#0A3D8F] transition-colors"
           >
-            📊 sistema de scoring 0-17 pts
+            sistema de scoring 0-17 pts
           </button>
           {' '}
           y los clasificamos en tiers A/B/C/D para priorizar los envíos.
@@ -36,30 +36,30 @@ export default function EnrichmentResults() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs uppercase text-slate-500 font-semibold">Records procesados</p>
           <p className="text-3xl font-bold text-slate-900 mt-1">{ENRICHMENT_RESULTS.totalRecords}</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs uppercase text-slate-500 font-semibold">IG enriquecidos</p>
-          <p className="text-3xl font-bold text-indigo-600 mt-1">{ENRICHMENT_RESULTS.igEnriched}</p>
+          <p className="text-3xl font-bold text-[#0F52BA] mt-1">{ENRICHMENT_RESULTS.igEnriched}</p>
           <p className="text-xs text-slate-500">{ENRICHMENT_RESULTS.igEnrichedPct}%</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs uppercase text-slate-500 font-semibold">IG verificados ✓</p>
           <p className="text-3xl font-bold text-emerald-600 mt-1">{ENRICHMENT_RESULTS.igVerified}</p>
           <p className="text-xs text-slate-500">{ENRICHMENT_RESULTS.igVerifiedPct}%</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
           <p className="text-xs uppercase text-slate-500 font-semibold">Handle match exact</p>
-          <p className="text-3xl font-bold text-amber-600 mt-1">{handleMatch[0].count}</p>
+          <p className="text-3xl font-bold text-[#F59E0B] mt-1">{handleMatch[0].count}</p>
           <p className="text-xs text-slate-500">{handleMatch[0].pct}%</p>
         </div>
       </div>
 
       {/* Tier pie + FB status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="rounded-xl border border-slate-200 bg-white p-5">
+        <div className="rounded-lg border border-slate-200 bg-white p-5">
           <h3 className="text-lg font-bold text-slate-900 mb-3">Distribución por Tier</h3>
           <div style={{ width: '100%', height: 280 }}>
             <ResponsiveContainer>
@@ -88,7 +88,7 @@ export default function EnrichmentResults() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5">
+        <div className="rounded-lg border border-slate-200 bg-white p-5">
           <h3 className="text-lg font-bold text-slate-900 mb-3">FB Status (regla filtro Meta)</h3>
           <div className="space-y-3">
             {fbStatus.map((f) => (
@@ -117,10 +117,10 @@ export default function EnrichmentResults() {
       </div>
 
       {/* Top ranked */}
-      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-200 bg-gradient-to-r from-emerald-50 to-white">
-          <h3 className="text-lg font-bold text-slate-900">🏆 Top contactos tier A (score 13)</h3>
-          <p className="text-sm text-slate-500">Perfil ideal Meta — todas las reglas ✅</p>
+      <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 border-l-4 border-l-emerald-500">
+          <h3 className="text-lg font-bold text-slate-900">Top contactos tier A (score 13)</h3>
+          <p className="text-sm text-slate-500">Perfil ideal Meta — todas las reglas cumplidas</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -146,7 +146,7 @@ export default function EnrichmentResults() {
                   <td className="px-4 py-2 text-right tabular-nums">{r.igFollowers.toLocaleString()}</td>
                   <td className="px-4 py-2 text-center">{r.verified ? '✅' : '—'}</td>
                   <td className="px-4 py-2 text-slate-600">{r.fb}</td>
-                  <td className="px-4 py-2"><span className="text-xs font-mono text-amber-700">{r.match}</span></td>
+                  <td className="px-4 py-2"><span className="text-xs font-mono text-[#F59E0B]">{r.match}</span></td>
                 </tr>
               ))}
             </tbody>
@@ -155,26 +155,26 @@ export default function EnrichmentResults() {
       </div>
 
       {/* Projection */}
-      <div className="rounded-xl border-2 border-amber-300 bg-amber-50 p-5">
-        <h3 className="text-lg font-bold text-slate-900 mb-2">📈 Proyección al bucket 100k-500k completo</h3>
+      <div className="rounded-lg border border-slate-200 bg-white p-5 border-l-4 border-l-[#F59E0B]">
+        <h3 className="text-lg font-bold text-slate-900 mb-2">Proyección al bucket 100k-500k completo</h3>
         <p className="text-sm text-slate-600 mb-4">Aplicando las proporciones observadas a los {projection.fullBucketRecords.toLocaleString()} contactos del bucket</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-white rounded-lg p-4 border border-amber-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
             <p className="text-xs text-slate-500 uppercase font-semibold">Tier A esperado</p>
-            <p className="text-2xl font-bold text-emerald-600 mt-1">~{projection.projectedTierA}</p>
+            <p className="text-2xl font-bold text-emerald-700 mt-1">~{projection.projectedTierA}</p>
             <p className="text-xs text-slate-600 mt-2">Perfil ideal Meta — <strong>enviar primeros</strong>, probabilidad más alta de respuesta.</p>
           </div>
-          <div className="bg-white rounded-lg p-4 border border-amber-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
             <p className="text-xs text-slate-500 uppercase font-semibold">Tier A + B</p>
-            <p className="text-2xl font-bold text-indigo-600 mt-1">~{projection.projectedTierAB.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-[#0F52BA] mt-1">~{projection.projectedTierAB.toLocaleString()}</p>
             <p className="text-xs text-slate-600 mt-2">Candidatos fuertes — <strong>grupo principal</strong> para las primeras cohortes del envío.</p>
           </div>
-          <div className="bg-white rounded-lg p-4 border border-amber-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
             <p className="text-xs text-slate-500 uppercase font-semibold">A + B + C</p>
-            <p className="text-2xl font-bold text-amber-600 mt-1">~{projection.projectedTierABC.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-[#F59E0B] mt-1">~{projection.projectedTierABC.toLocaleString()}</p>
             <p className="text-xs text-slate-600 mt-2">Universo contactable total — incluye también candidatos viables para <strong>segunda ronda</strong> con follow-up.</p>
           </div>
-          <div className="bg-white rounded-lg p-4 border border-amber-200">
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
             <p className="text-xs text-slate-500 uppercase font-semibold">Tier D descartar</p>
             <p className="text-2xl font-bold text-rose-600 mt-1">~{projection.projectedDiscarded.toLocaleString()}</p>
             <p className="text-xs text-slate-600 mt-2"><strong>No enviar</strong> — sin IG, o con FB Page que los descalifica para Meta. Ahorra volumen y protege reputación del dominio.</p>
@@ -183,8 +183,8 @@ export default function EnrichmentResults() {
       </div>
 
       {/* Próximos pasos */}
-      <div className="rounded-xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-50 to-white p-5">
-        <h3 className="text-lg font-bold text-emerald-900 mb-3">🚀 Próximos pasos</h3>
+      <div className="rounded-lg border border-slate-200 bg-white p-5 border-l-4 border-l-emerald-500">
+        <h3 className="text-lg font-bold text-slate-900 mb-3">Próximos pasos</h3>
         <ol className="space-y-3 text-sm text-slate-800">
           <li className="flex gap-3">
             <span className="flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500 text-white font-bold text-xs">1</span>

@@ -22,7 +22,7 @@ export default function BucketChart({ data, title, subtitle }: Props) {
   const cfg = METRIC_CONFIG[metric]
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
+    <div className="rounded-lg border border-slate-200 bg-white p-5">
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-lg font-bold text-slate-900">{title}</h3>

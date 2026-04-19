@@ -12,7 +12,7 @@ export default function DayHourChart() {
   return (
     <div className="space-y-6">
       {/* Día de la semana */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
         <div className="mb-4">
           <h3 className="text-lg font-bold text-slate-900">Open Rate por día de la semana</h3>
           <p className="text-sm text-slate-500">Últimos 60 días · 100 campañas analizadas · Color por rango: verde ≥30%, azul ≥20%, amarillo ≥10%, rojo &lt;10%</p>
@@ -33,7 +33,7 @@ export default function DayHourChart() {
                       <p>Campañas: <span className="font-semibold text-slate-900">{row.camps}</span></p>
                       <p>Delivered: <span className="font-semibold text-slate-900">{row.delivered.toLocaleString()}</span></p>
                       <p>Opens: <span className="font-semibold text-slate-900">{row.opens}</span></p>
-                      <p>OR: <span className="font-semibold text-indigo-600">{row.orPct}%</span></p>
+                      <p>OR: <span className="font-semibold text-[#0F52BA]">{row.orPct}%</span></p>
                     </div>
                   )
                 }}
@@ -50,7 +50,7 @@ export default function DayHourChart() {
       </div>
 
       {/* Hora del día */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
         <div className="mb-4">
           <h3 className="text-lg font-bold text-slate-900">Open Rate por hora del día (ET)</h3>
           <p className="text-sm text-slate-500">Las horas con muestra ≥5 campañas son las más confiables</p>
@@ -70,7 +70,7 @@ export default function DayHourChart() {
                       <p className="font-bold text-slate-900 mb-2">{row.hour}:00 ET</p>
                       <p>Campañas: <span className="font-semibold text-slate-900">{row.camps}</span></p>
                       <p>Delivered: <span className="font-semibold text-slate-900">{row.delivered.toLocaleString()}</span></p>
-                      <p>OR: <span className="font-semibold text-indigo-600">{row.orPct}%</span></p>
+                      <p>OR: <span className="font-semibold text-[#0F52BA]">{row.orPct}%</span></p>
                     </div>
                   )
                 }}
@@ -86,7 +86,7 @@ export default function DayHourChart() {
       </div>
 
       {/* Top slots */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
         <h3 className="text-lg font-bold text-slate-900 mb-4">Top slots (día × hora)</h3>
         <div className="space-y-2">
           {TOP_SLOTS.map((s) => (

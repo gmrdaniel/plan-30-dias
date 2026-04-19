@@ -4,3 +4,98 @@
 body {
   margin: 0;
 }
+
+/* ==============================================================
+   Marketing Analysis — B2B Dark Mode
+   Overrides scoped to .ma-root[data-theme="dark"] wrapper.
+   Light mode uses original classes; dark mode overrides colors
+   without requiring dark: variants on every element.
+   ============================================================== */
+
+.ma-root[data-theme="dark"] {
+  background-color: #0B1120;
+  color: #F1F5F9;
+  color-scheme: dark;
+}
+
+/* Page + card surfaces */
+.ma-root[data-theme="dark"] .bg-\[\#F8F9FB\] { background-color: #0B1120; }
+.ma-root[data-theme="dark"] .bg-white { background-color: #111827; }
+.ma-root[data-theme="dark"] .bg-slate-50 { background-color: #1E293B; }
+.ma-root[data-theme="dark"] .bg-slate-100 { background-color: #1E293B; }
+.ma-root[data-theme="dark"] .hover\:bg-slate-50:hover { background-color: #1E293B; }
+.ma-root[data-theme="dark"] .hover\:bg-slate-100:hover { background-color: #334155; }
+
+/* Foreground text */
+.ma-root[data-theme="dark"] .text-slate-900 { color: #F1F5F9; }
+.ma-root[data-theme="dark"] .text-slate-800 { color: #E2E8F0; }
+.ma-root[data-theme="dark"] .text-slate-700 { color: #CBD5E1; }
+.ma-root[data-theme="dark"] .text-slate-600 { color: #94A3B8; }
+.ma-root[data-theme="dark"] .text-slate-500 { color: #94A3B8; }
+
+/* Borders and dividers */
+.ma-root[data-theme="dark"] .border-slate-100 { border-color: #1E293B; }
+.ma-root[data-theme="dark"] .border-slate-200 { border-color: #1E293B; }
+.ma-root[data-theme="dark"] .border-slate-300 { border-color: #334155; }
+.ma-root[data-theme="dark"] .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #1E293B; }
+
+/* Primary blue — brighter in dark mode per B2B guide */
+.ma-root[data-theme="dark"] .bg-\[\#0F52BA\] { background-color: #3B82F6; }
+.ma-root[data-theme="dark"] .text-\[\#0F52BA\] { color: #3B82F6; }
+.ma-root[data-theme="dark"] .border-l-\[\#0F52BA\] { border-left-color: #3B82F6; }
+.ma-root[data-theme="dark"] .hover\:text-\[\#0F52BA\]:hover { color: #3B82F6; }
+.ma-root[data-theme="dark"] .hover\:bg-\[\#0A3D8F\]:hover { background-color: #2563EB; }
+.ma-root[data-theme="dark"] .border-\[\#0F52BA\]\/30 { border-color: rgba(59, 130, 246, 0.4); }
+.ma-root[data-theme="dark"] .bg-\[\#0F52BA\]\/10 { background-color: rgba(59, 130, 246, 0.15); }
+.ma-root[data-theme="dark"] .border-\[\#0F52BA\] { border-color: #3B82F6; }
+
+/* Light-tint backgrounds (amber/emerald/rose tints) → darker in dark mode */
+.ma-root[data-theme="dark"] .bg-amber-50 { background-color: rgba(245, 158, 11, 0.1); }
+.ma-root[data-theme="dark"] .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.1); }
+.ma-root[data-theme="dark"] .bg-rose-50 { background-color: rgba(239, 68, 68, 0.1); }
+.ma-root[data-theme="dark"] .bg-amber-100 { background-color: rgba(245, 158, 11, 0.2); }
+.ma-root[data-theme="dark"] .bg-emerald-100 { background-color: rgba(16, 185, 129, 0.2); }
+.ma-root[data-theme="dark"] .bg-rose-100 { background-color: rgba(239, 68, 68, 0.2); }
+.ma-root[data-theme="dark"] .hover\:bg-emerald-50:hover { background-color: rgba(16, 185, 129, 0.15); }
+.ma-root[data-theme="dark"] .hover\:bg-amber-100:hover { background-color: rgba(245, 158, 11, 0.2); }
+
+/* Accent text colors — lighten for readability on dark bg */
+.ma-root[data-theme="dark"] .text-amber-900 { color: #FBBF24; }
+.ma-root[data-theme="dark"] .text-amber-800 { color: #FBBF24; }
+.ma-root[data-theme="dark"] .text-amber-700 { color: #F59E0B; }
+.ma-root[data-theme="dark"] .text-emerald-900 { color: #34D399; }
+.ma-root[data-theme="dark"] .text-emerald-800 { color: #34D399; }
+.ma-root[data-theme="dark"] .text-emerald-700 { color: #10B981; }
+.ma-root[data-theme="dark"] .text-emerald-600 { color: #10B981; }
+.ma-root[data-theme="dark"] .text-rose-900 { color: #FB7185; }
+.ma-root[data-theme="dark"] .text-rose-800 { color: #FB7185; }
+.ma-root[data-theme="dark"] .text-rose-700 { color: #F87171; }
+
+/* Amber/emerald/rose borders lose saturation in dark mode */
+.ma-root[data-theme="dark"] .border-amber-200 { border-color: rgba(245, 158, 11, 0.3); }
+.ma-root[data-theme="dark"] .border-amber-300 { border-color: rgba(245, 158, 11, 0.4); }
+.ma-root[data-theme="dark"] .border-emerald-200 { border-color: rgba(16, 185, 129, 0.3); }
+.ma-root[data-theme="dark"] .border-emerald-300 { border-color: rgba(16, 185, 129, 0.4); }
+.ma-root[data-theme="dark"] .border-rose-200 { border-color: rgba(239, 68, 68, 0.3); }
+.ma-root[data-theme="dark"] .border-rose-300 { border-color: rgba(239, 68, 68, 0.4); }
+
+/* Recharts grid + axis labels adapted for dark */
+.ma-root[data-theme="dark"] .recharts-cartesian-grid-horizontal line,
+.ma-root[data-theme="dark"] .recharts-cartesian-grid-vertical line {
+  stroke: #1E293B;
+}
+.ma-root[data-theme="dark"] .recharts-cartesian-axis-tick text,
+.ma-root[data-theme="dark"] .recharts-label text {
+  fill: #94A3B8;
+}
+.ma-root[data-theme="dark"] .recharts-legend-item-text { color: #CBD5E1 !important; }
+
+/* Form inputs in dark mode */
+.ma-root[data-theme="dark"] .bg-slate-200 { background-color: #1E293B; }
+.ma-root[data-theme="dark"] input[type="range"] { accent-color: #3B82F6; }
+
+/* Code/pre tint */
+.ma-root[data-theme="dark"] code.bg-slate-100,
+.ma-root[data-theme="dark"] .bg-slate-100 code { background-color: #1E293B; color: #CBD5E1; }
+
+/* Scoring modal backdrop — already slate-900/70, leave as-is */

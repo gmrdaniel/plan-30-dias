@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { OVERVIEW } from './data/analysis'
 import Chapter from './components/Chapter'
@@ -16,37 +17,61 @@ import TimelineChart from './components/TimelineChart'
 import { BUCKETS_MAX_FOLLOWERS, BUCKETS_TIKTOK } from './data/analysis'
 
 export default function MarketingAnalysisPage() {
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('ma-theme') === 'dark'
+  })
+
+  useEffect(() => {
+    localStorage.setItem('ma-theme', isDark ? 'dark' : 'light')
+  }, [isDark])
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="ma-root min-h-screen bg-[#F8F9FB] text-slate-900" data-theme={isDark ? 'dark' : 'light'}>
       {/* Top bar */}
       <nav className="sticky top-0 z-20 bg-white border-b border-slate-200 px-4 md:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="inline-block w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600" />
+          <span className="inline-block w-8 h-8 rounded-lg bg-[#0F52BA]" />
           <div>
             <p className="font-bold text-slate-900 text-sm leading-tight">Análisis Fast Track — Abril 2026</p>
             <p className="text-xs text-slate-500 leading-tight">De la crisis a la estrategia validada con data</p>
           </div>
         </div>
-        <Link to="/" className="text-xs text-slate-500 hover:text-indigo-600">← Tracker</Link>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsDark((v) => !v)}
+            aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            title={isDark ? 'Modo claro' : 'Modo oscuro'}
+            className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200 text-slate-600 hover:text-[#0F52BA] hover:border-[#0F52BA] transition-colors"
+          >
+            {isDark ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            )}
+          </button>
+          <Link to="/" className="text-xs text-slate-500 hover:text-[#0F52BA]">← Tracker</Link>
+        </div>
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-900 text-white">
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+      <section className="relative overflow-hidden bg-[#0B1120] text-white">
+        <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B1120] via-[#0B1120] to-[#0F52BA]/30" />
         <div className="relative max-w-5xl mx-auto px-4 md:px-8 py-16 md:py-24">
-          <p className="text-indigo-200 uppercase tracking-widest text-xs font-bold">Reporte ejecutivo · 2026-04-18</p>
+          <p className="text-slate-300 uppercase tracking-widest text-xs font-bold">Reporte ejecutivo · 2026-04-18</p>
           <h1 className="text-4xl md:text-6xl font-bold mt-4 leading-tight">
-            De la <span className="text-amber-300">caída del open rate</span> a una estrategia de envíos validada con data
+            De la <span className="text-[#F59E0B]">caída del open rate</span> a una estrategia de envíos validada con data
           </h1>
-          <p className="text-indigo-100 mt-6 text-lg md:text-xl max-w-3xl leading-relaxed">
+          <p className="text-slate-200 mt-6 text-lg md:text-xl max-w-3xl leading-relaxed">
             En 4 días detectamos una caída de 46% → 2.6% en open rate. Este documento reconstruye todo el trabajo hecho:
             diagnóstico de la plantilla, integración de tracking Branch.io, búsqueda de nueva audiencia en TikTok, y análisis
             histórico de {OVERVIEW.campaignsAnalyzed} campañas para decidir el plan de ejecución.
           </p>
           <div className="mt-8 flex flex-wrap gap-3 text-sm">
-            <span className="bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">📊 {OVERVIEW.statsRows.toLocaleString()} registros de stats</span>
-            <span className="bg-white/10 backdrop-blur px-4 py-2 rounded-full border border-white/20">👥 {OVERVIEW.uniqueCreators.toLocaleString()} creadores únicos</span>
-            <span className="bg-amber-500/20 backdrop-blur px-4 py-2 rounded-full border border-amber-300/30">🏆 Bucket ganador: {OVERVIEW.winnerBucket} · {OVERVIEW.winnerOrPct}% OR</span>
+            <span className="bg-white/5 backdrop-blur px-4 py-2 rounded-lg border border-white/10">{OVERVIEW.statsRows.toLocaleString()} registros de stats</span>
+            <span className="bg-white/5 backdrop-blur px-4 py-2 rounded-lg border border-white/10">{OVERVIEW.uniqueCreators.toLocaleString()} creadores únicos</span>
+            <span className="bg-[#F59E0B]/15 backdrop-blur px-4 py-2 rounded-lg border border-[#F59E0B]/40 text-[#F59E0B]">Bucket ganador: {OVERVIEW.winnerBucket} · {OVERVIEW.winnerOrPct}% OR</span>
           </div>
         </div>
       </section>
@@ -161,23 +186,24 @@ export default function MarketingAnalysisPage() {
       </Chapter>
 
       {/* Conclusión */}
-      <section className="py-16 bg-gradient-to-br from-indigo-900 to-purple-900 text-white">
-        <div className="max-w-5xl mx-auto px-4 md:px-8">
+      <section className="py-16 bg-[#0B1120] text-white relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B1120] via-[#0B1120] to-[#0F52BA]/20" />
+        <div className="relative max-w-5xl mx-auto px-4 md:px-8">
           <h2 className="text-3xl md:text-4xl font-bold">Conclusiones</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
             <KpiCard label="Plantilla corregida" value="12 / 12" sublabel="Issues fixed" color="slate" />
             <KpiCard label="Tracking QR montado" value="E2E" sublabel="Branch + Supabase" color="slate" />
             <KpiCard label="Listas listas" value="6" sublabel="29,880 contactos disponibles" color="slate" />
           </div>
-          <div className="mt-8 bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
-            <p className="text-lg leading-relaxed text-indigo-100">
-              <strong className="text-white">Decisión tomada:</strong> priorizar bucket <strong className="text-amber-300">500k-1M</strong>{' '}
-              en slot <strong className="text-amber-300">Lunes 17h ET</strong>, con plantilla limpia 559 + Branch QR integrado.
+          <div className="mt-8 bg-white/5 backdrop-blur rounded-lg p-6 border-l-4 border-[#F59E0B] border-t border-r border-b border-white/10">
+            <p className="text-lg leading-relaxed text-slate-200">
+              <strong className="text-white">Decisión tomada:</strong> priorizar bucket <strong className="text-[#F59E0B]">500k-1M</strong>{' '}
+              en slot <strong className="text-[#F59E0B]">Lunes 17h ET</strong>, con plantilla limpia 559 + Branch QR integrado.
               La primera cohorte sale <strong className="text-white">Lunes 21 de abril</strong> con 500 contactos enriquecidos.
               Si OR ≥ 7%, escalamos a 2,000/semana.
             </p>
           </div>
-          <p className="text-sm text-indigo-200 mt-8">
+          <p className="text-sm text-slate-400 mt-8">
             Fuentes: Brevo API · Supabase CRM (brevo_creator_stats + creator_inventory + brevo_campaigns) · UNIVERSO_meta_100k.csv · MASTER_gabriel_SIN_DUPLICADOS.csv · Clay sample + Apify pipeline
           </p>
         </div>

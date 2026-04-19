@@ -19,14 +19,14 @@ export default function BucketTable({ data }: { data: BucketRow[] }) {
   }
 
   const SortButton = ({ k, children }: { k: SortKey, children: string }) => (
-    <button onClick={() => toggleSort(k)} className="flex items-center gap-1 text-left w-full font-semibold hover:text-indigo-600">
+    <button onClick={() => toggleSort(k)} className="flex items-center gap-1 text-left w-full font-semibold hover:text-[#0F52BA]">
       {children}
       {sortKey === k && <span className="text-xs">{sortDesc ? '↓' : '↑'}</span>}
     </button>
   )
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+    <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 border-b border-slate-200">
@@ -51,7 +51,7 @@ export default function BucketTable({ data }: { data: BucketRow[] }) {
                 <td className="px-4 py-3 text-center tabular-nums">{row.camps}</td>
                 <td className="px-4 py-3 text-center tabular-nums">{row.delivered.toLocaleString()}</td>
                 <td className="px-4 py-3 text-center tabular-nums">{row.opens.toLocaleString()}</td>
-                <td className={`px-4 py-3 text-center tabular-nums font-semibold ${row.isWinner ? 'text-amber-700' : 'text-indigo-600'}`}>{row.orPct}%</td>
+                <td className={`px-4 py-3 text-center tabular-nums font-semibold ${row.isWinner ? 'text-[#F59E0B]' : 'text-[#0F52BA]'}`}>{row.orPct}%</td>
                 <td className="px-4 py-3 text-center tabular-nums text-emerald-600">{row.ctrPct}%</td>
               </tr>
             ))}

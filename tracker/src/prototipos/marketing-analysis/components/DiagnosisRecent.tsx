@@ -5,9 +5,9 @@ export default function DiagnosisRecent() {
   return (
     <div className="space-y-6">
       {/* Chart — dramatic drop */}
-      <div className="rounded-xl border border-rose-200 bg-gradient-to-br from-white to-rose-50 p-5">
+      <div className="rounded-lg border border-slate-200 bg-white p-5 border-l-4 border-l-rose-500">
         <h3 className="text-lg font-bold text-slate-900">Open Rate del 13 al 17 de abril</h3>
-        <p className="text-sm text-rose-700 font-medium mt-1">🔻 Caída de 46.6% → 2.6% en 5 días</p>
+        <p className="text-sm text-rose-700 font-medium mt-1">Caída de 46.6% → 2.6% en 5 días</p>
         <div style={{ width: '100%', height: 300 }} className="mt-5">
           <ResponsiveContainer>
             <LineChart data={DAILY_DROP} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
@@ -60,30 +60,30 @@ export default function DiagnosisRecent() {
       </div>
 
       {/* Diagnóstico */}
-      <div className="rounded-xl border border-rose-300 bg-rose-50 p-5">
-        <h3 className="font-bold text-rose-900 mb-3">🔎 Causas del problema identificadas</h3>
+      <div className="rounded-lg border border-slate-200 bg-white p-5 border-l-4 border-l-rose-500">
+        <h3 className="font-bold text-slate-900 mb-3">Causas del problema identificadas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          <div className="bg-white rounded-lg p-3 border border-rose-200">
+          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
             <p className="font-semibold text-slate-900">1. Subject line idéntico en 11 campañas</p>
             <p className="text-xs text-slate-600 mt-1">Gmail detecta patrón repetido = sneaky evasion flag</p>
           </div>
-          <div className="bg-white rounded-lg p-3 border border-rose-200">
+          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
             <p className="font-semibold text-slate-900">2. Preheader literal [DEFAULT_HEADER]</p>
             <p className="text-xs text-slate-600 mt-1">Placeholder sin reemplazar enviado a 2,484 contactos</p>
           </div>
-          <div className="bg-white rounded-lg p-3 border border-rose-200">
+          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
             <p className="font-semibold text-slate-900">3. Rotación multi-dominio con mismo mensaje</p>
             <p className="text-xs text-slate-600 mt-1">Penaliza los 3 dominios juntos (elevn.me, elevnhub, elevnpro)</p>
           </div>
-          <div className="bg-white rounded-lg p-3 border border-rose-200">
+          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
             <p className="font-semibold text-slate-900">4. Grammarly tags en body HTML</p>
             <p className="text-xs text-slate-600 mt-1">data-gr-* = flag directo de spam filter</p>
           </div>
-          <div className="bg-white rounded-lg p-3 border border-rose-200">
+          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
             <p className="font-semibold text-slate-900">5. Hard bounce 2.5% (umbral crítico 2%)</p>
             <p className="text-xs text-slate-600 mt-1">Listas sucias penalizadas por ISPs</p>
           </div>
-          <div className="bg-white rounded-lg p-3 border border-rose-200">
+          <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
             <p className="font-semibold text-slate-900">6. Horario sub-óptimo (14h-18h)</p>
             <p className="text-xs text-slate-600 mt-1">Mejor slot histórico: Lunes 17h (46.2%) — no usado</p>
           </div>

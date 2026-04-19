@@ -9,24 +9,32 @@ type Props = {
 }
 
 const COLOR_CLASSES = {
-  indigo: 'bg-indigo-50 border-indigo-200 text-indigo-900',
-  emerald: 'bg-emerald-50 border-emerald-200 text-emerald-900',
-  amber: 'bg-amber-50 border-amber-200 text-amber-900',
-  rose: 'bg-rose-50 border-rose-200 text-rose-900',
-  slate: 'bg-slate-50 border-slate-200 text-slate-900',
+  indigo: 'bg-white border-slate-200 text-slate-900',
+  emerald: 'bg-white border-slate-200 text-slate-900',
+  amber: 'bg-white border-slate-200 text-slate-900',
+  rose: 'bg-white border-slate-200 text-slate-900',
+  slate: 'bg-white border-slate-200 text-slate-900',
+}
+
+const ACCENT_BAR = {
+  indigo: 'before:bg-[#0F52BA]',
+  emerald: 'before:bg-emerald-600',
+  amber: 'before:bg-[#F59E0B]',
+  rose: 'before:bg-rose-600',
+  slate: 'before:bg-slate-400',
 }
 
 const ICON_COLOR_CLASSES = {
-  indigo: 'text-indigo-600',
+  indigo: 'text-[#0F52BA]',
   emerald: 'text-emerald-600',
-  amber: 'text-amber-600',
+  amber: 'text-[#F59E0B]',
   rose: 'text-rose-600',
   slate: 'text-slate-600',
 }
 
 export default function KpiCard({ label, value, sublabel, icon, color = 'slate' }: Props) {
   return (
-    <div className={`rounded-xl border p-5 ${COLOR_CLASSES[color]} transition-transform hover:scale-[1.02]`}>
+    <div className={`relative rounded-lg border p-5 ${COLOR_CLASSES[color]} ${ACCENT_BAR[color]} overflow-hidden before:absolute before:left-0 before:top-0 before:h-full before:w-1 transition-shadow hover:shadow-md`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-xs font-medium uppercase tracking-wide opacity-70">{label}</p>

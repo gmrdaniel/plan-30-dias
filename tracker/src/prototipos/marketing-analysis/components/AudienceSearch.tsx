@@ -8,27 +8,27 @@ export default function AudienceSearch() {
   return (
     <div className="space-y-6">
       {/* Universe context */}
-      <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5">
-        <p className="text-xs uppercase text-indigo-600 font-semibold">El universo completo</p>
+      <div className="rounded-lg border border-slate-200 bg-white p-5 border-l-4 border-l-[#0F52BA]">
+        <p className="text-xs uppercase text-[#0F52BA] font-semibold">El universo completo</p>
         <h3 className="text-lg font-bold text-slate-900 mt-1">De 3.9 millones → 27 mil candidatos reales</h3>
         <p className="text-slate-700 mt-3 leading-relaxed text-sm">{UNIVERSE_CONTEXT.description}</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
-          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+          <div className="bg-slate-50 rounded-lg border border-slate-200 p-3">
             <p className="text-xs uppercase text-slate-500">Total global TikTok</p>
             <p className="text-xl font-bold text-slate-900 mt-1">{(UNIVERSE_CONTEXT.totalRecords / 1000000).toFixed(1)}M</p>
             <p className="text-xs text-slate-500">registros de creadores</p>
           </div>
-          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+          <div className="bg-slate-50 rounded-lg border border-slate-200 p-3">
             <p className="text-xs uppercase text-slate-500">US + Canadá</p>
-            <p className="text-xl font-bold text-indigo-700 mt-1">{((UNIVERSE_CONTEXT.usCreators + UNIVERSE_CONTEXT.caCreators) / 1000000).toFixed(2)}M</p>
+            <p className="text-xl font-bold text-[#0F52BA] mt-1">{((UNIVERSE_CONTEXT.usCreators + UNIVERSE_CONTEXT.caCreators) / 1000000).toFixed(2)}M</p>
             <p className="text-xs text-slate-500">mercados objetivo</p>
           </div>
-          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+          <div className="bg-slate-50 rounded-lg border border-slate-200 p-3">
             <p className="text-xs uppercase text-slate-500">Con email público</p>
-            <p className="text-xl font-bold text-amber-600 mt-1">~318K</p>
+            <p className="text-xl font-bold text-[#F59E0B] mt-1">~318K</p>
             <p className="text-xs text-slate-500">los mega-creadores publican email</p>
           </div>
-          <div className="bg-white rounded-lg border border-indigo-200 p-3">
+          <div className="bg-slate-50 rounded-lg border border-slate-200 p-3">
             <p className="text-xs uppercase text-slate-500">US con 100k+ seguidores</p>
             <p className="text-xl font-bold text-emerald-700 mt-1">{UNIVERSE_CONTEXT.usPlus100k.toLocaleString()}</p>
             <p className="text-xs text-slate-500">segmento A premium</p>
@@ -40,15 +40,15 @@ export default function AudienceSearch() {
       </div>
 
       {/* Source file */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
         <p className="text-xs uppercase text-slate-500 font-semibold">Archivo fuente procesado</p>
         <p className="text-lg font-semibold text-slate-900 mt-1">{AUDIENCE_SEARCH.universeSource}</p>
         <p className="text-xs text-slate-500 mt-1">Ya venía limpio (emails validados, US-only, con followers cuantificados)</p>
       </div>
 
       {/* Funnel de filtros */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5">
-        <h3 className="text-lg font-bold text-slate-900 mb-4">🔻 Funnel de filtrado</h3>
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
+        <h3 className="text-lg font-bold text-slate-900 mb-4">Funnel de filtrado</h3>
         <div className="space-y-2">
           {AUDIENCE_SEARCH.filters.map((f, i) => {
             const widthPct = (f.kept / 35723) * 100
@@ -65,9 +65,9 @@ export default function AudienceSearch() {
                         {f.eliminated > 0 && <span className="text-rose-500 text-xs"> (−{f.eliminated.toLocaleString()})</span>}
                       </span>
                     </div>
-                    <div className="bg-slate-100 rounded-full h-6 overflow-hidden relative">
+                    <div className="bg-slate-100 rounded-md h-6 overflow-hidden relative">
                       <div
-                        className={`h-full ${isLast ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' : 'bg-gradient-to-r from-indigo-500 to-indigo-600'} transition-all duration-700`}
+                        className={`h-full ${isLast ? 'bg-emerald-600' : 'bg-[#0F52BA]'} transition-all duration-700`}
                         style={{ width: `${widthPct}%` }}
                       />
                     </div>
@@ -77,8 +77,8 @@ export default function AudienceSearch() {
             )
           })}
         </div>
-        <div className="mt-5 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <p className="text-sm text-emerald-900">
+        <div className="mt-5 p-4 bg-slate-50 border border-slate-200 rounded-lg border-l-4 border-l-emerald-500">
+          <p className="text-sm text-slate-800">
             <span className="font-semibold">Resultado:</span>{' '}
             <span className="font-bold text-2xl text-emerald-700">{AUDIENCE_SEARCH.totalAvailable.toLocaleString()}</span>
             {' '}creadores TikTok US post-filtros — listos para enriquecer y enviar.
@@ -87,9 +87,9 @@ export default function AudienceSearch() {
       </div>
 
       {/* Totals table */}
-      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-white">
-          <h3 className="text-lg font-bold text-slate-900">📊 Tabla de totales — 6 listas generadas</h3>
+      <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-200 bg-slate-50">
+          <h3 className="text-lg font-bold text-slate-900">Tabla de totales — 6 listas generadas</h3>
           <p className="text-sm text-slate-500">Organizadas por prioridad (basado en OR histórico del bucket)</p>
         </div>
         <div className="overflow-x-auto">
@@ -109,7 +109,7 @@ export default function AudienceSearch() {
                     <div className="font-mono text-xs text-slate-700">{l.name}</div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-block px-2 py-0.5 text-xs rounded-full ${l.tipo === 'Fresh' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                    <span className={`inline-block px-2 py-0.5 text-xs rounded-md ${l.tipo === 'Fresh' ? 'bg-[#0F52BA]/10 text-[#0F52BA]' : 'bg-emerald-100 text-emerald-800'}`}>
                       {l.tipo}
                     </span>
                   </td>
@@ -133,14 +133,14 @@ export default function AudienceSearch() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-          <p className="text-xs uppercase text-indigo-600 font-semibold">Fresh (TikTok nunca contactados)</p>
-          <p className="text-3xl font-bold text-indigo-900 mt-1">{freshLists.reduce((s, l) => s + l.contactos, 0).toLocaleString()}</p>
+        <div className="rounded-lg border border-slate-200 bg-white p-4 border-l-4 border-l-[#0F52BA]">
+          <p className="text-xs uppercase text-[#0F52BA] font-semibold">Fresh (TikTok nunca contactados)</p>
+          <p className="text-3xl font-bold text-slate-900 mt-1">{freshLists.reduce((s, l) => s + l.contactos, 0).toLocaleString()}</p>
           <p className="text-xs text-slate-600 mt-1">{freshLists.length} listas por bucket</p>
         </div>
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <p className="text-xs uppercase text-emerald-600 font-semibold">Warm (ya abrieron antes)</p>
-          <p className="text-3xl font-bold text-emerald-900 mt-1">{warmLists.reduce((s, l) => s + l.contactos, 0).toLocaleString()}</p>
+        <div className="rounded-lg border border-slate-200 bg-white p-4 border-l-4 border-l-emerald-500">
+          <p className="text-xs uppercase text-emerald-700 font-semibold">Warm (ya abrieron antes)</p>
+          <p className="text-3xl font-bold text-slate-900 mt-1">{warmLists.reduce((s, l) => s + l.contactos, 0).toLocaleString()}</p>
           <p className="text-xs text-slate-600 mt-1">{warmLists.length} listas re-engage</p>
         </div>
       </div>

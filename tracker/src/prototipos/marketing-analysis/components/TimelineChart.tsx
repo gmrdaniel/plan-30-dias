@@ -4,9 +4,9 @@ import { MONTHLY_TIMELINE } from '../data/analysis'
 export default function TimelineChart() {
   const maxCamps = Math.max(...MONTHLY_TIMELINE.map((m) => m.camps))
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
+    <div className="rounded-lg border border-slate-200 bg-white p-5">
       <div className="mb-4">
-        <h3 className="text-lg font-bold text-slate-900">📅 Campañas enviadas por mes</h3>
+        <h3 className="text-lg font-bold text-slate-900">Campañas enviadas por mes</h3>
         <p className="text-sm text-slate-500">
           Evolución del volumen de envíos · el pico fue <strong>Marzo 2026</strong> con el lanzamiento del programa Meta Fast Track
         </p>
