@@ -16,6 +16,7 @@ import DocsIndex from './pages/DocsIndex'
 import DocView from './pages/DocView'
 import ConfiguradorPage from './prototipos/configurador-flujo/ConfiguradorPage'
 import MarketingAnalysisPage from './prototipos/marketing-analysis/MarketingAnalysisPage'
+import PlanFastTrackPage from './prototipos/plan-fast-track/PlanFastTrackPage'
 
 function ValidateTeam({ children }: { children: ReactNode }) {
   const { team } = useParams<{ team: string }>()
@@ -84,6 +85,7 @@ export default function App() {
           <Route path="/docs/:slug" element={<DocView />} />
           <Route path="/configurador" element={<ConfiguradorPage />} />
           <Route path="/marketing-analysis" element={<MarketingAnalysisPage />} />
+          <Route path="/plan-fast-track-abril" element={<PlanFastTrackPage />} />
           <Route path="/" element={<TeamSelector />} />
           <Route path="/:team/*" element={<ValidateTeam><AppRoutes /></ValidateTeam>} />
         </Routes>
