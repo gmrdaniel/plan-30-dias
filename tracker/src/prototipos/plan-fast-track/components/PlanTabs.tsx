@@ -148,7 +148,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         <div className="rounded-lg border border-slate-200 bg-white p-4 border-l-4 border-l-[#0F52BA]">
           <p className="text-xs uppercase text-[#0F52BA] font-semibold">Ventajas</p>
           <ul className="mt-2 space-y-1.5 text-sm text-slate-700">
-            {plan.pros.map((p, i) => (
+            {(plan.pros as readonly string[]).map((p, i) => (
               <li key={i} className="flex gap-2">
                 <span className="text-[#0F52BA] shrink-0">+</span>
                 <span>{p}</span>
@@ -159,7 +159,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         <div className="rounded-lg border border-slate-200 bg-white p-4 border-l-4 border-l-rose-500">
           <p className="text-xs uppercase text-rose-700 font-semibold">Trade-offs</p>
           <ul className="mt-2 space-y-1.5 text-sm text-slate-700">
-            {plan.cons.map((c, i) => (
+            {(plan.cons as readonly string[]).map((c, i) => (
               <li key={i} className="flex gap-2">
                 <span className="text-rose-600 shrink-0">−</span>
                 <span>{c}</span>
@@ -278,11 +278,11 @@ function PlanCard({ plan }: { plan: Plan }) {
       </Collapse>
 
       {/* Decision matrix (solo Plan C) */}
-      {'decisionMatrix' in plan && plan.decisionMatrix && (
+      {'decisionMatrix' in plan && plan.decisionMatrix ? (
         <div className="rounded-lg border border-slate-200 bg-white p-5 border-l-4 border-l-[#F59E0B]">
           <h4 className="text-sm font-bold text-slate-900 mb-3">Matriz de decisión Día 4</h4>
           <div className="space-y-2">
-            {plan.decisionMatrix.map((d, i) => (
+            {(plan.decisionMatrix as ReadonlyArray<{ observed: string; decision: string }>).map((d, i) => (
               <div key={i} className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-2 p-3 bg-slate-50 rounded-md">
                 <p className="text-sm text-slate-700">{d.observed}</p>
                 <p className="text-sm font-semibold text-[#0F52BA]">{d.decision}</p>
@@ -290,7 +290,7 @@ function PlanCard({ plan }: { plan: Plan }) {
             ))}
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Advantages + sources */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
