@@ -1,179 +1,205 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import type { Template, TemplateVersion } from './types'
-
-// Shell de Fase 1 — solo verifica que las migraciones cargaron y lista las
-// plantillas seed. El editor real (split pane + validador + preview) llega en
-// Fase 2.
+import type { Template, TemplateVersion, PreviewPersona } from './types'
+import EditorPanel from './components/EditorPanel'
+import PreviewPanel from './components/PreviewPanel'
+import SplitPane from './components/SplitPane'
+import { useDebounced } from './lib/useDebounce'
 
 export default function PlantillasPage() {
   const [templates, setTemplates] = useState<Template[]>([])
   const [versions, setVersions] = useState<Record<string, TemplateVersion[]>>({})
+  const [personas, setPersonas] = useState<PreviewPersona[]>([])
+  const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null)
+  const [activePersonaId, setActivePersonaId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selected, setSelected] = useState<string | null>(null)
+
+  // Estado editable (draft en memoria hasta que el save real llegue en Fase 4)
+  const [subject, setSubject] = useState('')
+  const [bodyPlain, setBodyPlain] = useState('')
+  const debouncedSubject = useDebounced(subject, 300)
+  const debouncedBody = useDebounced(bodyPlain, 300)
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
-      const { data: tpls, error: tErr } = await supabase
-        .from('templates')
-        .select('*')
-        .eq('archived', false)
-        .order('step_number', { ascending: true, nullsFirst: false })
-      if (cancelled) return
-      if (tErr) {
-        setError(tErr.message)
-        setLoading(false)
-        return
-      }
-      setTemplates(tpls ?? [])
+      setLoading(true)
+      try {
+        const [tplRes, personaRes] = await Promise.all([
+          supabase.from('templates').select('*').eq('archived', false).order('step_number', { ascending: true, nullsFirst: false }),
+          supabase.from('preview_personas').select('*').order('is_default', { ascending: false }),
+        ])
+        if (cancelled) return
+        if (tplRes.error) throw tplRes.error
+        if (personaRes.error) throw personaRes.error
 
-      if (tpls && tpls.length > 0) {
-        const ids = tpls.map((t) => t.id)
-        const { data: vers } = await supabase
-          .from('template_versions')
-          .select('*')
-          .in('template_id', ids)
-          .order('version', { ascending: false })
-        if (!cancelled && vers) {
+        const tpls = tplRes.data ?? []
+        const ppl = personaRes.data ?? []
+        setTemplates(tpls)
+        setPersonas(ppl)
+        setActivePersonaId(ppl.find((p) => p.is_default)?.id ?? ppl[0]?.id ?? null)
+
+        if (tpls.length > 0) {
+          const ids = tpls.map((t) => t.id)
+          const { data: vers, error: vErr } = await supabase
+            .from('template_versions')
+            .select('*')
+            .in('template_id', ids)
+            .order('version', { ascending: false })
+          if (cancelled) return
+          if (vErr) throw vErr
           const byTemplate: Record<string, TemplateVersion[]> = {}
-          for (const v of vers) {
-            ;(byTemplate[v.template_id] ??= []).push(v)
-          }
+          for (const v of vers ?? []) (byTemplate[v.template_id] ??= []).push(v)
           setVersions(byTemplate)
+          setActiveTemplateId(tpls[0].id)
         }
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : String(e))
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-      setLoading(false)
     })()
     return () => {
       cancelled = true
     }
   }, [])
 
-  const activeTemplate = templates.find((t) => t.id === selected) ?? templates[0]
+  const activeTemplate = useMemo(
+    () => templates.find((t) => t.id === activeTemplateId) ?? null,
+    [templates, activeTemplateId],
+  )
   const activeVersions = activeTemplate ? versions[activeTemplate.id] ?? [] : []
-  const latestVersion = activeVersions[0]
+  const latestVersion = activeVersions[0] ?? null
+  const activePersona = useMemo(
+    () => personas.find((p) => p.id === activePersonaId) ?? null,
+    [personas, activePersonaId],
+  )
+
+  // Cuando cambia el template activo, carga su subject/body para edición
+  useEffect(() => {
+    if (latestVersion) {
+      setSubject(latestVersion.subject)
+      setBodyPlain(latestVersion.body_plain)
+    } else {
+      setSubject('')
+      setBodyPlain('')
+    }
+  }, [latestVersion?.id])
+
+  if (loading) return <div className="p-10 text-slate-400">Cargando plantillas…</div>
+  if (error)
+    return (
+      <div className="p-6">
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <strong>Error al consultar Supabase:</strong> {error}
+          <p className="mt-2 text-red-600">
+            Verifica que la migración <code>030_plantillas_editor.sql</code> haya corrido.
+          </p>
+        </div>
+      </div>
+    )
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b bg-white px-6 py-3 flex items-center justify-between">
+    <div className="flex flex-col h-screen bg-slate-50 text-slate-900">
+      <header className="border-b bg-white px-6 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
           <Link to="/" className="text-slate-400 hover:text-slate-600 text-sm">← Tracker</Link>
           <h1 className="text-lg font-semibold">Plantillas Smartlead</h1>
-          <span className="rounded bg-amber-100 text-amber-800 text-xs px-2 py-0.5">Fase 1 · shell</span>
+          <span className="rounded bg-amber-100 text-amber-800 text-xs px-2 py-0.5">
+            Fase 2 · editor live · sin save aún
+          </span>
         </div>
-        <div className="text-xs text-slate-500">Plan B · campaign 3212141</div>
+        <div className="text-xs text-slate-500">
+          {activeTemplate?.display_name} · v{latestVersion?.version ?? '—'} · status {latestVersion?.status ?? '—'}
+        </div>
       </header>
 
-      {loading && <div className="p-10 text-slate-400">Cargando plantillas…</div>}
-      {error && (
-        <div className="p-6">
-          <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            <strong>Error al consultar Supabase:</strong> {error}
-            <p className="mt-2 text-red-600">
-              Verifica que la migración <code>030_plantillas_editor.sql</code> haya corrido en el proyecto Supabase conectado.
-            </p>
-          </div>
-        </div>
-      )}
+      <div className="flex-1 min-h-0 grid grid-cols-[240px_1fr]">
+        <aside className="border-r bg-white overflow-y-auto">
+          <div className="px-3 pt-4 pb-2 text-xs uppercase tracking-wide text-slate-500">Plantillas</div>
+          <ul className="px-2 space-y-0.5">
+            {templates.map((t) => (
+              <li key={t.id}>
+                <button
+                  onClick={() => setActiveTemplateId(t.id)}
+                  className={`w-full text-left px-3 py-2 rounded text-sm ${
+                    activeTemplateId === t.id
+                      ? 'bg-indigo-50 text-indigo-700 font-medium'
+                      : 'hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>{t.display_name}</span>
+                    {t.step_number && <span className="text-xs text-slate-400">#{t.step_number}</span>}
+                  </div>
+                  <div className="text-[11px] text-slate-400 truncate">{t.name}</div>
+                </button>
+              </li>
+            ))}
+          </ul>
 
-      {!loading && !error && (
-        <div className="grid grid-cols-[260px_1fr] min-h-[calc(100vh-53px)]">
-          <aside className="border-r bg-white px-2 py-4">
-            <div className="px-3 pb-2 text-xs uppercase tracking-wide text-slate-500">Plantillas</div>
-            <ul className="space-y-0.5">
-              {templates.map((t) => (
-                <li key={t.id}>
-                  <button
-                    onClick={() => setSelected(t.id)}
-                    className={`w-full text-left px-3 py-2 rounded text-sm ${
-                      (selected ?? templates[0]?.id) === t.id
-                        ? 'bg-indigo-50 text-indigo-700 font-medium'
-                        : 'hover:bg-slate-50'
+          {activeTemplate && activeVersions.length > 0 && (
+            <>
+              <div className="mt-6 px-3 pb-2 text-xs uppercase tracking-wide text-slate-500">Versiones</div>
+              <ul className="px-2 space-y-0.5">
+                {activeVersions.map((v) => (
+                  <li
+                    key={v.id}
+                    className={`px-3 py-1.5 rounded text-xs flex items-center justify-between ${
+                      latestVersion?.id === v.id ? 'bg-slate-100' : ''
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span>{t.display_name}</span>
-                      {t.step_number && <span className="text-xs text-slate-400">#{t.step_number}</span>}
-                    </div>
-                    <div className="text-[11px] text-slate-400 truncate">{t.name}</div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </aside>
+                    <span>v{v.version}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded ${
+                        v.status === 'in_production'
+                          ? 'bg-green-100 text-green-700'
+                          : v.status === 'approved'
+                          ? 'bg-blue-100 text-blue-700'
+                          : v.status === 'draft'
+                          ? 'bg-slate-200 text-slate-700'
+                          : 'bg-slate-100 text-slate-500'
+                      }`}
+                    >
+                      {v.status}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </aside>
 
-          <main className="p-6">
-            {!activeTemplate ? (
-              <div className="text-slate-500">No hay plantillas seed cargadas.</div>
-            ) : (
-              <div className="max-w-3xl space-y-6">
-                <div>
-                  <h2 className="text-xl font-semibold">{activeTemplate.display_name}</h2>
-                  <p className="text-sm text-slate-500 mt-1">
-                    {activeTemplate.name} · {activeVersions.length} versión{activeVersions.length === 1 ? '' : 'es'}
-                  </p>
-                </div>
-
-                <section className="rounded border bg-white p-4">
-                  <h3 className="text-sm font-semibold mb-2 text-slate-700">Configuración</h3>
-                  <dl className="grid grid-cols-[140px_1fr] gap-y-1 text-sm">
-                    <dt className="text-slate-500">Step</dt>
-                    <dd>{activeTemplate.step_number ?? '—'}</dd>
-                    <dt className="text-slate-500">Branch link</dt>
-                    <dd className="truncate">{activeTemplate.branch_link_url ?? <em className="text-slate-400">sin link</em>}</dd>
-                    <dt className="text-slate-500">QR image</dt>
-                    <dd className="truncate">{activeTemplate.qr_image_url ?? <em className="text-slate-400">sin QR</em>}</dd>
-                    <dt className="text-slate-500">CTA label</dt>
-                    <dd>{activeTemplate.cta_label}</dd>
-                    <dt className="text-slate-500">Campaign ID</dt>
-                    <dd>{activeTemplate.smartlead_campaign_id}</dd>
-                  </dl>
-                </section>
-
-                {latestVersion && (
-                  <section className="rounded border bg-white p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-sm font-semibold text-slate-700">
-                        Última versión (v{latestVersion.version})
-                      </h3>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded ${
-                          latestVersion.status === 'in_production'
-                            ? 'bg-green-100 text-green-700'
-                            : latestVersion.status === 'approved'
-                            ? 'bg-blue-100 text-blue-700'
-                            : latestVersion.status === 'draft'
-                            ? 'bg-slate-200 text-slate-700'
-                            : 'bg-slate-100 text-slate-500'
-                        }`}
-                      >
-                        {latestVersion.status}
-                      </span>
-                    </div>
-                    <div className="text-sm">
-                      <div className="mb-2">
-                        <span className="text-slate-500">Subject: </span>
-                        {latestVersion.subject || <em className="text-slate-400">(vacío)</em>}
-                      </div>
-                      <pre className="whitespace-pre-wrap text-[13px] leading-relaxed bg-slate-50 border rounded p-3 font-mono">
-{latestVersion.body_plain}
-                      </pre>
-                    </div>
-                  </section>
-                )}
-
-                <section className="rounded border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-                  <strong>Próxima fase (2):</strong> editor split-pane con preview live + validador de variables
-                  + placeholders <code>{'{{link}}'}</code> / <code>{'{{qr}}'}</code>.
-                </section>
-              </div>
-            )}
-          </main>
-        </div>
-      )}
+        <main className="min-h-0">
+          {activeTemplate ? (
+            <SplitPane
+              left={
+                <EditorPanel
+                  subject={subject}
+                  bodyPlain={bodyPlain}
+                  onSubjectChange={setSubject}
+                  onBodyChange={setBodyPlain}
+                  personas={personas}
+                  activePersonaId={activePersonaId}
+                  onPersonaChange={setActivePersonaId}
+                />
+              }
+              right={
+                <PreviewPanel
+                  subject={debouncedSubject}
+                  bodyPlain={debouncedBody}
+                  template={activeTemplate}
+                  persona={activePersona}
+                />
+              }
+            />
+          ) : (
+            <div className="p-10 text-slate-500">No hay plantillas seed cargadas.</div>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
