@@ -128,59 +128,70 @@ export default function PlantillasPage() {
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 grid grid-cols-[240px_1fr]">
-        <aside className="border-r bg-white overflow-y-auto">
-          <button
-            onClick={() => setTemplatesCollapsed((v) => !v)}
-            className="w-full flex items-center justify-between px-3 pt-4 pb-2 text-xs uppercase tracking-wide text-slate-500 hover:text-slate-700 transition-colors"
-            aria-expanded={!templatesCollapsed}
-          >
-            <span>Plantillas ({templates.length})</span>
-            <span
-              className={`transition-transform text-slate-400 ${templatesCollapsed ? '-rotate-90' : ''}`}
-              aria-hidden="true"
+      <div
+        className="flex-1 min-h-0 grid transition-[grid-template-columns] duration-200"
+        style={{
+          gridTemplateColumns: templatesCollapsed ? '40px 1fr' : '240px 1fr',
+        }}
+      >
+        <aside className="border-r bg-white overflow-y-auto relative">
+          {templatesCollapsed ? (
+            <button
+              onClick={() => setTemplatesCollapsed(false)}
+              className="w-full h-full flex flex-col items-center py-3 gap-3 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors"
+              aria-label="Expandir sidebar"
+              title="Expandir"
             >
-              ▼
-            </span>
-          </button>
-          {!templatesCollapsed && (
-            <ul className="px-2 space-y-0.5">
-              {templates.map((t) => (
-                <li key={t.id}>
-                  <button
-                    onClick={() => setActiveTemplateId(t.id)}
-                    className={`w-full text-left px-3 py-2 rounded text-sm ${
-                      activeTemplateId === t.id
-                        ? 'bg-indigo-50 text-indigo-700 font-medium'
-                        : 'hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>{t.display_name}</span>
-                      {t.step_number && <span className="text-xs text-slate-400">#{t.step_number}</span>}
-                    </div>
-                    <div className="text-[11px] text-slate-400 truncate">{t.name}</div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          {templatesCollapsed && activeTemplate && (
-            <div className="px-3 py-2 text-sm text-slate-700 border-b">
-              <span className="text-xs text-slate-400">Activa:</span> {activeTemplate.display_name}
-            </div>
-          )}
-
-          {activeTemplate && activeVersions.length > 0 && (
+              <span className="text-lg leading-none">»</span>
+              <span
+                className="text-[10px] uppercase tracking-wider text-slate-400"
+                style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+              >
+                Plantillas · {templates.length}
+              </span>
+            </button>
+          ) : (
             <>
-              <div className="mt-6 px-3 pb-2 text-xs uppercase tracking-wide text-slate-500">Versiones</div>
+              <button
+                onClick={() => setTemplatesCollapsed(true)}
+                className="w-full flex items-center justify-between px-3 pt-4 pb-2 text-xs uppercase tracking-wide text-slate-500 hover:text-slate-700 transition-colors"
+                aria-label="Colapsar sidebar"
+                title="Colapsar"
+              >
+                <span>Plantillas ({templates.length})</span>
+                <span className="text-slate-400">«</span>
+              </button>
               <ul className="px-2 space-y-0.5">
-                {activeVersions.map((v) => (
-                  <li
-                    key={v.id}
-                    className={`px-3 py-1.5 rounded text-xs flex items-center justify-between ${
-                      latestVersion?.id === v.id ? 'bg-slate-100' : ''
-                    }`}
+                {templates.map((t) => (
+                  <li key={t.id}>
+                    <button
+                      onClick={() => setActiveTemplateId(t.id)}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${
+                        activeTemplateId === t.id
+                          ? 'bg-indigo-50 text-indigo-700 font-medium'
+                          : 'hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{t.display_name}</span>
+                        {t.step_number && <span className="text-xs text-slate-400">#{t.step_number}</span>}
+                      </div>
+                      <div className="text-[11px] text-slate-400 truncate">{t.name}</div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              {activeTemplate && activeVersions.length > 0 && (
+                <>
+                  <div className="mt-6 px-3 pb-2 text-xs uppercase tracking-wide text-slate-500">Versiones</div>
+                  <ul className="px-2 space-y-0.5 pb-6">
+                    {activeVersions.map((v) => (
+                      <li
+                        key={v.id}
+                        className={`px-3 py-1.5 rounded text-xs flex items-center justify-between ${
+                          latestVersion?.id === v.id ? 'bg-slate-100' : ''
+                        }`}
                   >
                     <span>v{v.version}</span>
                     <span
@@ -196,11 +207,13 @@ export default function PlantillasPage() {
                     >
                       {v.status}
                     </span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </>
+            )}
         </aside>
 
         <main className="min-h-0">
