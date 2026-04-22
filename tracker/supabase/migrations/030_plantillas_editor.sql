@@ -273,9 +273,14 @@ INSERT INTO plantilla_user_roles (user_id, role) VALUES
   ('a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0', 'editor')
 ON CONFLICT (user_id) DO UPDATE SET role = EXCLUDED.role;
 
--- Daniel existente → role operator (reutiliza la cuenta ya creada en migración 003)
-INSERT INTO plantilla_user_roles (user_id, role) VALUES
-  ('11111111-1111-1111-1111-111111111111', 'operator')
+-- Daniel → role operator: lookup por email para ser resiliente a distintos
+-- UUIDs entre ambientes (local/staging/prod). Si el usuario no existe en este
+-- Supabase, el INSERT es no-op y la migración no falla. El operator role se
+-- podrá asignar manualmente después vía UPDATE.
+INSERT INTO plantilla_user_roles (user_id, role)
+SELECT u.id, 'operator'
+FROM auth.users u
+WHERE u.email = 'daniel@laneta.com'
 ON CONFLICT (user_id) DO UPDATE SET role = EXCLUDED.role;
 
 -- ─────────────────────────────────────────────────────────────────
