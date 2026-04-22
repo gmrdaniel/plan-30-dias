@@ -5,8 +5,11 @@ import type { Template, TemplateVersion, PreviewPersona, VariableRegistryEntry }
 import EditorPanel from './components/EditorPanel'
 import PreviewPanel from './components/PreviewPanel'
 import SplitPane from './components/SplitPane'
+import SaveVersionModal from './components/SaveVersionModal'
 import { useDebounced } from './lib/useDebounce'
 import { hasErrors, validate } from './lib/validator'
+import { buildExportText, downloadTxt } from './lib/exportTxt'
+import { plainToHtml } from './lib/plainToHtml'
 
 const SIDEBAR_STATE_KEY = 'plantillas:sidebar:templates:collapsed'
 
@@ -30,9 +33,13 @@ export default function PlantillasPage() {
     }
   }, [templatesCollapsed])
 
-  // Estado editable (draft en memoria hasta que el save real llegue en Fase 4)
+  // Estado editable del draft en memoria. Al Save se persiste como nueva versión.
   const [subject, setSubject] = useState('')
   const [bodyPlain, setBodyPlain] = useState('')
+  const [loadedVersionId, setLoadedVersionId] = useState<string | null>(null)
+  const [saveModalOpen, setSaveModalOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const debouncedSubject = useDebounced(subject, 300)
   const debouncedBody = useDebounced(bodyPlain, 300)
 
@@ -94,16 +101,35 @@ export default function PlantillasPage() {
     [personas, activePersonaId],
   )
 
-  // Cuando cambia el template activo, carga su subject/body para edición
+  // Cuando cambia el template activo, carga la última versión para edición
   useEffect(() => {
     if (latestVersion) {
       setSubject(latestVersion.subject)
       setBodyPlain(latestVersion.body_plain)
+      setLoadedVersionId(latestVersion.id)
     } else {
       setSubject('')
       setBodyPlain('')
+      setLoadedVersionId(null)
     }
-  }, [latestVersion?.id])
+  }, [activeTemplateId, latestVersion?.id])
+
+  // Dirty: el buffer difiere de la versión cargada como base
+  const loadedVersion = useMemo(
+    () => (activeTemplate ? versions[activeTemplate.id]?.find((v) => v.id === loadedVersionId) ?? null : null),
+    [versions, activeTemplate, loadedVersionId],
+  )
+  const isDirty = !!loadedVersion && (subject !== loadedVersion.subject || bodyPlain !== loadedVersion.body_plain)
+
+  const loadVersion = (v: TemplateVersion) => {
+    if (isDirty) {
+      const ok = window.confirm('Tienes cambios sin guardar. ¿Descartarlos y cargar esta versión?')
+      if (!ok) return
+    }
+    setSubject(v.subject)
+    setBodyPlain(v.body_plain)
+    setLoadedVersionId(v.id)
+  }
 
   // Validación en tiempo real (sobre el valor debounced, no cada keystroke)
   const warnings = useMemo(() => {
@@ -118,6 +144,67 @@ export default function PlantillasPage() {
   }, [debouncedSubject, debouncedBody, registry, activeTemplate])
 
   const blocked = hasErrors(warnings)
+
+  const nextVersionNumber = useMemo(() => {
+    if (!activeTemplate) return 1
+    const all = versions[activeTemplate.id] ?? []
+    if (all.length === 0) return 1
+    return Math.max(...all.map((v) => v.version)) + 1
+  }, [activeTemplate, versions])
+
+  async function saveDraft(commitMessage: string) {
+    if (!activeTemplate) return
+    setSaving(true)
+    setSaveError(null)
+    try {
+      const { data: userData } = await supabase.auth.getUser()
+      const userId = userData.user?.id ?? null
+
+      const html = plainToHtml(bodyPlain)
+      const hash = await sha256(html)
+
+      const { data: inserted, error } = await supabase
+        .from('template_versions')
+        .insert({
+          template_id: activeTemplate.id,
+          version: nextVersionNumber,
+          subject,
+          body_plain: bodyPlain,
+          body_html: html,
+          body_html_hash: hash,
+          commit_message: commitMessage || null,
+          status: 'draft',
+          validation_warnings: warnings,
+          created_by: userId,
+        })
+        .select('*')
+        .single()
+
+      if (error) throw error
+      if (!inserted) throw new Error('No data returned from insert')
+
+      // Actualiza estado local: prepend la nueva versión
+      setVersions((prev) => ({
+        ...prev,
+        [activeTemplate.id]: [inserted as TemplateVersion, ...(prev[activeTemplate.id] ?? [])],
+      }))
+      setLoadedVersionId((inserted as TemplateVersion).id)
+      setSaveModalOpen(false)
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleExport() {
+    if (!activeTemplate || !loadedVersion) return
+    const { data: userData } = await supabase.auth.getUser()
+    const exportedBy = userData.user?.email ?? 'anonymous'
+    const content = buildExportText(activeTemplate, loadedVersion, registry, exportedBy)
+    const filename = `${activeTemplate.name}_v${loadedVersion.version}.txt`
+    downloadTxt(filename, content)
+  }
 
   if (loading) return <div className="p-10 text-slate-400">Cargando plantillas…</div>
   if (error)
@@ -138,11 +225,11 @@ export default function PlantillasPage() {
         <div className="flex items-center gap-4">
           <Link to="/" className="text-slate-400 hover:text-slate-600 text-sm">← Tracker</Link>
           <h1 className="text-lg font-semibold">Plantillas Smartlead</h1>
-          <span className="rounded bg-amber-100 text-amber-800 text-xs px-2 py-0.5">
-            Fase 3 · validador live · sin save aún
+          <span className="rounded bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5">
+            Fase 4 · save + export
           </span>
         </div>
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-2 text-xs">
           <span
             className={`px-2 py-0.5 rounded font-medium ${
               blocked
@@ -155,9 +242,29 @@ export default function PlantillasPage() {
           >
             {blocked ? '❌ Bloqueado' : warnings.length > 0 ? `⚠️ ${warnings.length} avisos` : '✅ OK'}
           </span>
-          <span className="text-slate-500">
-            {activeTemplate?.display_name} · v{latestVersion?.version ?? '—'} · {latestVersion?.status ?? '—'}
-          </span>
+          {isDirty && (
+            <span className="px-2 py-0.5 rounded font-medium bg-amber-100 text-amber-900" title="Hay cambios sin guardar">
+              ● Sin guardar
+            </span>
+          )}
+          <button
+            onClick={handleExport}
+            disabled={!loadedVersion}
+            className="px-3 py-1 rounded border border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Exporta la versión cargada como .txt"
+          >
+            Export .txt
+          </button>
+          <button
+            onClick={() => setSaveModalOpen(true)}
+            disabled={blocked || !isDirty || !activeTemplate}
+            className="px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed"
+            title={
+              !isDirty ? 'Sin cambios que guardar' : blocked ? 'Resuelve los errores antes de guardar' : 'Guardar nueva versión'
+            }
+          >
+            Guardar draft
+          </button>
         </div>
       </header>
 
@@ -219,32 +326,38 @@ export default function PlantillasPage() {
                 <>
                   <div className="mt-6 px-3 pb-2 text-xs uppercase tracking-wide text-slate-500">Versiones</div>
                   <ul className="px-2 space-y-0.5 pb-6">
-                    {activeVersions.map((v) => (
-                      <li
-                        key={v.id}
-                        className={`px-3 py-1.5 rounded text-xs flex items-center justify-between ${
-                          latestVersion?.id === v.id ? 'bg-slate-100' : ''
-                        }`}
-                  >
-                    <span>v{v.version}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded ${
-                        v.status === 'in_production'
-                          ? 'bg-green-100 text-green-700'
-                          : v.status === 'approved'
-                          ? 'bg-blue-100 text-blue-700'
-                          : v.status === 'draft'
-                          ? 'bg-slate-200 text-slate-700'
-                          : 'bg-slate-100 text-slate-500'
-                      }`}
-                    >
-                      {v.status}
-                    </span>
+                    {activeVersions.map((v) => {
+                      const isLoaded = loadedVersionId === v.id
+                      return (
+                        <li key={v.id}>
+                          <button
+                            onClick={() => loadVersion(v)}
+                            className={`w-full px-3 py-1.5 rounded text-xs flex items-center justify-between hover:bg-slate-50 ${
+                              isLoaded ? 'bg-indigo-50 ring-1 ring-indigo-200' : ''
+                            }`}
+                            title={v.commit_message ?? 'sin commit message'}
+                          >
+                            <span className={isLoaded ? 'font-medium text-indigo-700' : ''}>v{v.version}</span>
+                            <span
+                              className={`text-[10px] px-1.5 py-0.5 rounded ${
+                                v.status === 'in_production'
+                                  ? 'bg-green-100 text-green-700'
+                                  : v.status === 'approved'
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : v.status === 'draft'
+                                  ? 'bg-slate-200 text-slate-700'
+                                  : 'bg-slate-100 text-slate-500'
+                              }`}
+                            >
+                              {v.status}
+                            </span>
+                          </button>
                         </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
+                      )
+                    })}
+                  </ul>
+                </>
+              )}
               </>
             )}
         </aside>
@@ -278,6 +391,38 @@ export default function PlantillasPage() {
           )}
         </main>
       </div>
+
+      {saveError && (
+        <div className="fixed bottom-4 right-4 bg-red-50 border border-red-200 text-red-800 text-sm rounded shadow-lg px-4 py-3 max-w-md">
+          <div className="font-semibold mb-1">Error al guardar</div>
+          <div className="text-xs">{saveError}</div>
+          <button
+            onClick={() => setSaveError(null)}
+            className="mt-2 text-xs underline hover:no-underline"
+          >
+            Cerrar
+          </button>
+        </div>
+      )}
+
+      {saveModalOpen && activeTemplate && (
+        <SaveVersionModal
+          nextVersion={nextVersionNumber}
+          warnings={warnings}
+          blocked={blocked}
+          saving={saving}
+          onCancel={() => setSaveModalOpen(false)}
+          onConfirm={saveDraft}
+        />
+      )}
     </div>
   )
+}
+
+async function sha256(text: string): Promise<string> {
+  const data = new TextEncoder().encode(text)
+  const buf = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
 }
