@@ -1,0 +1,53 @@
+Hi {{first_name}},
+
+The data on creator monetization across platforms is clear, and we think it is worth your attention.
+
+
+TIKTOK
+$500 to $1K per million views (est.)
+Stricter classifications, algorithmic suppression, and zero compensation reported on videos with tens of thousands of views.
+
+FACEBOOK
+$1K to $3K per million views
+According to Meta, nearly $3 billion paid to creators in 2025, a 35% increase year over year.
+
+
+The most efficient creators right now are not filming anything new. They are simply reposting their existing {{main_platforme}} archive to Facebook Reels. A lifestyle content creator who recently joined one of our programs shared this:
+
+"I joined a week ago, posting twice a day, and already accumulated over 200,000 views."
+
+Meta's Creator Fast Track program was built for exactly this. Creators with 100K or more followers secure a fixed monthly payment for 3 months: $1,000 per month for 100K to 999K followers, $3,000 per month for 1M or more, totaling $3,000 to $9,000 secured over the program period.*
+
+No new production. No view minimums.
+
+*Payment secured when posting requirements are met.
+
+Applying through us also connects you to something bigger. Creators who join through ELEVN stay in our network for ongoing opportunities, including exclusive events, industry sessions, and brand deals we share with our community regularly.
+
+
+What's next?
+
+Secure your spot using the link below.
+
+Important: The application must be completed through the Facebook app on your mobile device.
+
+Apply here:
+https://www.facebook.com/creator_programs/signup?referral_code=laneta
+
+
+Once applied: just reply and let us know. If you have any questions regarding your eligibility or during the application process, just reply to this email and we will connect you to one of our specialists.
+
+Looking forward to seeing your application.
+
+Thanks,
+{{sender_name}}
+ELEVN
+
+
+ELEVN | Powered by La Neta | Meta Official Partner
+174 Nassau St. Ste 341 Princeton NJ 08542 United States
+
+You received this email because your public creator profile meets the eligibility criteria for the Meta Creator Fast Track program.
+
+Unsubscribe: {{unsubscribe}}
+Terms: https://laneta-portal.netlify.app/opportunities/meta-fast-track/terms

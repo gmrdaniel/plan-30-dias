@@ -1,0 +1,47 @@
+Hey {{first_name}},
+
+You've put real effort into building a community of over {{max_followers}} followers on @{{username}}. Your {{main_platforme}} is clearly your home base, but Meta is willing to pay you to expand from there.
+
+Bring your existing {{vertical}} content to Facebook, post 15 reels a month and earn $3K-$9K over a period of 3 months as part of their new Creator Fast Track Program. No new content needed, no engagement minimums.
+
+Apply to the program directly through the Facebook app by clicking the link below (mobile only), and start your path to Creator Fast Track.
+
+Apply here:
+https://www.facebook.com/creator_programs/signup?referral_code=laneta
+
+Important: You must apply through your mobile device. The application is completed through the Facebook app.
+
+
+How it works
+
+Post 15 Reels on Facebook across 10+ days per month and get a fixed monthly payout. No view counts to hit, no engagement minimums, and no new content needed. This is how your secured payout breaks down:
+
+100K to 999K followers: $3K secured* ($1K/month for 3 months)
+1M+ followers: $9K secured* ($3K/month for 3 months)
+
+*Payment secured when program terms are met.
+
+
+Who are we?
+
+ELEVN, powered by La Neta.
+
+With over 10 years of experience working with creators, top brands, and the biggest platforms in the world, La Neta built ELEVN to be the creator platform that actually delivers. A place that connects you with the right monetization opportunities, gives you access to free courses and live sessions, and puts you inside a community of creators who are on the same journey.
+
+Creator Fast Track is one of those opportunities. And whether you qualify for it or not, ELEVN will keep working for you, connecting you with the right programs, the right people, and the right next step for where you are right now.
+
+
+Have any questions? Just reply to this email and one of our experts will get back to you. Can't wait to work together.
+
+Thanks,
+{{sender_name}}
+ELEVN
+
+
+ELEVN | Powered by La Neta
+174 Nassau St. Ste 341 Princeton NJ 08542 United States
+
+You received this email because your public creator profile meets the eligibility criteria for the Meta Creator Fast Track program.
+
+Unsubscribe: {{unsubscribe}}
+Terms: https://laneta-portal.netlify.app/opportunities/meta-fast-track/terms

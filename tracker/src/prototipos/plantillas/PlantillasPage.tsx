@@ -7,6 +7,8 @@ import PreviewPanel from './components/PreviewPanel'
 import SplitPane from './components/SplitPane'
 import { useDebounced } from './lib/useDebounce'
 
+const SIDEBAR_STATE_KEY = 'plantillas:sidebar:templates:collapsed'
+
 export default function PlantillasPage() {
   const [templates, setTemplates] = useState<Template[]>([])
   const [versions, setVersions] = useState<Record<string, TemplateVersion[]>>({})
@@ -15,6 +17,16 @@ export default function PlantillasPage() {
   const [activePersonaId, setActivePersonaId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [templatesCollapsed, setTemplatesCollapsed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem(SIDEBAR_STATE_KEY) === '1'
+  })
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(SIDEBAR_STATE_KEY, templatesCollapsed ? '1' : '0')
+    }
+  }, [templatesCollapsed])
 
   // Estado editable (draft en memoria hasta que el save real llegue en Fase 4)
   const [subject, setSubject] = useState('')
@@ -118,27 +130,46 @@ export default function PlantillasPage() {
 
       <div className="flex-1 min-h-0 grid grid-cols-[240px_1fr]">
         <aside className="border-r bg-white overflow-y-auto">
-          <div className="px-3 pt-4 pb-2 text-xs uppercase tracking-wide text-slate-500">Plantillas</div>
-          <ul className="px-2 space-y-0.5">
-            {templates.map((t) => (
-              <li key={t.id}>
-                <button
-                  onClick={() => setActiveTemplateId(t.id)}
-                  className={`w-full text-left px-3 py-2 rounded text-sm ${
-                    activeTemplateId === t.id
-                      ? 'bg-indigo-50 text-indigo-700 font-medium'
-                      : 'hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{t.display_name}</span>
-                    {t.step_number && <span className="text-xs text-slate-400">#{t.step_number}</span>}
-                  </div>
-                  <div className="text-[11px] text-slate-400 truncate">{t.name}</div>
-                </button>
-              </li>
-            ))}
-          </ul>
+          <button
+            onClick={() => setTemplatesCollapsed((v) => !v)}
+            className="w-full flex items-center justify-between px-3 pt-4 pb-2 text-xs uppercase tracking-wide text-slate-500 hover:text-slate-700 transition-colors"
+            aria-expanded={!templatesCollapsed}
+          >
+            <span>Plantillas ({templates.length})</span>
+            <span
+              className={`transition-transform text-slate-400 ${templatesCollapsed ? '-rotate-90' : ''}`}
+              aria-hidden="true"
+            >
+              ▼
+            </span>
+          </button>
+          {!templatesCollapsed && (
+            <ul className="px-2 space-y-0.5">
+              {templates.map((t) => (
+                <li key={t.id}>
+                  <button
+                    onClick={() => setActiveTemplateId(t.id)}
+                    className={`w-full text-left px-3 py-2 rounded text-sm ${
+                      activeTemplateId === t.id
+                        ? 'bg-indigo-50 text-indigo-700 font-medium'
+                        : 'hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>{t.display_name}</span>
+                      {t.step_number && <span className="text-xs text-slate-400">#{t.step_number}</span>}
+                    </div>
+                    <div className="text-[11px] text-slate-400 truncate">{t.name}</div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {templatesCollapsed && activeTemplate && (
+            <div className="px-3 py-2 text-sm text-slate-700 border-b">
+              <span className="text-xs text-slate-400">Activa:</span> {activeTemplate.display_name}
+            </div>
+          )}
 
           {activeTemplate && activeVersions.length > 0 && (
             <>
