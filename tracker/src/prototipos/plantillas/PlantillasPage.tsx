@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import type { Template, TemplateVersion, PreviewPersona } from './types'
+import type { Template, TemplateVersion, PreviewPersona, VariableRegistryEntry } from './types'
 import EditorPanel from './components/EditorPanel'
 import PreviewPanel from './components/PreviewPanel'
 import SplitPane from './components/SplitPane'
 import { useDebounced } from './lib/useDebounce'
+import { hasErrors, validate } from './lib/validator'
 
 const SIDEBAR_STATE_KEY = 'plantillas:sidebar:templates:collapsed'
 
@@ -13,6 +14,7 @@ export default function PlantillasPage() {
   const [templates, setTemplates] = useState<Template[]>([])
   const [versions, setVersions] = useState<Record<string, TemplateVersion[]>>({})
   const [personas, setPersonas] = useState<PreviewPersona[]>([])
+  const [registry, setRegistry] = useState<VariableRegistryEntry[]>([])
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null)
   const [activePersonaId, setActivePersonaId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -39,18 +41,21 @@ export default function PlantillasPage() {
     ;(async () => {
       setLoading(true)
       try {
-        const [tplRes, personaRes] = await Promise.all([
+        const [tplRes, personaRes, regRes] = await Promise.all([
           supabase.from('templates').select('*').eq('archived', false).order('step_number', { ascending: true, nullsFirst: false }),
           supabase.from('preview_personas').select('*').order('is_default', { ascending: false }),
+          supabase.from('variable_registry').select('*').eq('platform', 'smartlead'),
         ])
         if (cancelled) return
         if (tplRes.error) throw tplRes.error
         if (personaRes.error) throw personaRes.error
+        if (regRes.error) throw regRes.error
 
         const tpls = tplRes.data ?? []
         const ppl = personaRes.data ?? []
         setTemplates(tpls)
         setPersonas(ppl)
+        setRegistry(regRes.data ?? [])
         setActivePersonaId(ppl.find((p) => p.is_default)?.id ?? ppl[0]?.id ?? null)
 
         if (tpls.length > 0) {
@@ -100,6 +105,20 @@ export default function PlantillasPage() {
     }
   }, [latestVersion?.id])
 
+  // Validación en tiempo real (sobre el valor debounced, no cada keystroke)
+  const warnings = useMemo(() => {
+    if (!activeTemplate) return []
+    return validate({
+      subject: debouncedSubject,
+      bodyPlain: debouncedBody,
+      registry,
+      branchLinkConfigured: !!activeTemplate.branch_link_url,
+      qrConfigured: !!activeTemplate.qr_image_url,
+    })
+  }, [debouncedSubject, debouncedBody, registry, activeTemplate])
+
+  const blocked = hasErrors(warnings)
+
   if (loading) return <div className="p-10 text-slate-400">Cargando plantillas…</div>
   if (error)
     return (
@@ -120,11 +139,25 @@ export default function PlantillasPage() {
           <Link to="/" className="text-slate-400 hover:text-slate-600 text-sm">← Tracker</Link>
           <h1 className="text-lg font-semibold">Plantillas Smartlead</h1>
           <span className="rounded bg-amber-100 text-amber-800 text-xs px-2 py-0.5">
-            Fase 2 · editor live · sin save aún
+            Fase 3 · validador live · sin save aún
           </span>
         </div>
-        <div className="text-xs text-slate-500">
-          {activeTemplate?.display_name} · v{latestVersion?.version ?? '—'} · status {latestVersion?.status ?? '—'}
+        <div className="flex items-center gap-3 text-xs">
+          <span
+            className={`px-2 py-0.5 rounded font-medium ${
+              blocked
+                ? 'bg-red-100 text-red-700'
+                : warnings.length > 0
+                ? 'bg-amber-100 text-amber-800'
+                : 'bg-green-100 text-green-700'
+            }`}
+            title={blocked ? 'Hay errores que bloquean save' : `${warnings.length} warnings`}
+          >
+            {blocked ? '❌ Bloqueado' : warnings.length > 0 ? `⚠️ ${warnings.length} avisos` : '✅ OK'}
+          </span>
+          <span className="text-slate-500">
+            {activeTemplate?.display_name} · v{latestVersion?.version ?? '—'} · {latestVersion?.status ?? '—'}
+          </span>
         </div>
       </header>
 
@@ -228,6 +261,7 @@ export default function PlantillasPage() {
                   personas={personas}
                   activePersonaId={activePersonaId}
                   onPersonaChange={setActivePersonaId}
+                  warnings={warnings}
                 />
               }
               right={
