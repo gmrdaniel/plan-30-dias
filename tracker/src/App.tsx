@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom'
-import type { ReactNode } from 'react'
+import { lazy, Suspense, type ReactNode } from 'react'
 import { AuthProvider, useAuth } from './hooks/use-auth'
 import { TEAM_CONFIG, type TeamId } from './lib/types'
 import Login from './components/Login'
@@ -17,6 +17,8 @@ import DocView from './pages/DocView'
 import ConfiguradorPage from './prototipos/configurador-flujo/ConfiguradorPage'
 import MarketingAnalysisPage from './prototipos/marketing-analysis/MarketingAnalysisPage'
 import PlanFastTrackPage from './prototipos/plan-fast-track/PlanFastTrackPage'
+
+const PlantillasPage = lazy(() => import('./prototipos/plantillas/PlantillasPage'))
 
 function ValidateTeam({ children }: { children: ReactNode }) {
   const { team } = useParams<{ team: string }>()
@@ -86,6 +88,14 @@ export default function App() {
           <Route path="/configurador" element={<ConfiguradorPage />} />
           <Route path="/marketing-analysis" element={<MarketingAnalysisPage />} />
           <Route path="/plan-fast-track-abril" element={<PlanFastTrackPage />} />
+          <Route
+            path="/plantillas"
+            element={
+              <Suspense fallback={<div className="p-10 text-slate-400">Cargando editor de plantillas…</div>}>
+                <PlantillasPage />
+              </Suspense>
+            }
+          />
           <Route path="/" element={<TeamSelector />} />
           <Route path="/:team/*" element={<ValidateTeam><AppRoutes /></ValidateTeam>} />
         </Routes>
