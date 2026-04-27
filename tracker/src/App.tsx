@@ -17,6 +17,7 @@ import DocView from './pages/DocView'
 import ConfiguradorPage from './prototipos/configurador-flujo/ConfiguradorPage'
 import MarketingAnalysisPage from './prototipos/marketing-analysis/MarketingAnalysisPage'
 import PlanFastTrackPage from './prototipos/plan-fast-track/PlanFastTrackPage'
+import MetaReportePage from './prototipos/meta-reporte/MetaReportePage'
 
 const PlantillasPage = lazy(() => import('./prototipos/plantillas/PlantillasPage'))
 
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="/configurador" element={<ConfiguradorPage />} />
           <Route path="/marketing-analysis" element={<MarketingAnalysisPage />} />
           <Route path="/plan-fast-track-abril" element={<PlanFastTrackPage />} />
+          <Route path="/meta-reporte" element={<MetaReportePage />} />
           <Route
             path="/plantillas"
             element={
