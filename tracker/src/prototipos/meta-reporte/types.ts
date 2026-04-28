@@ -69,3 +69,19 @@ export interface BranchDailyAgg {
   installs: number
   other: number
 }
+
+export interface HourlySend {
+  id: number
+  campaign_id: number
+  date: string                 // YYYY-MM-DD
+  hour_start: number           // 0-23
+  predicted: number
+  actual_sent: number
+  opened: number
+  clicked: number
+  replied: number
+  bounced: number
+  disconnected_mailboxes: number
+  send_limit_reached: number
+  source_file: string | null
+}

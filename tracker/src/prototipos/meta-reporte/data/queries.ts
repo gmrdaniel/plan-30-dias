@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, HourlySend } from '../types'
 
 const META_CAMPAIGN_IDS = [3212141, 3217790]
 
@@ -129,6 +129,18 @@ export function buildBranchDaily(events: BranchEvent[]): BranchDailyAgg[] {
     byDate.set(date, cur)
   }
   return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date))
+}
+
+export async function fetchHourlySends(campaignIds: number[]): Promise<HourlySend[]> {
+  if (campaignIds.length === 0) return []
+  const { data, error } = await supabase
+    .from('meta_hourly_sends')
+    .select('*')
+    .in('campaign_id', campaignIds)
+    .order('date', { ascending: false })
+    .order('hour_start', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as HourlySend[]
 }
 
 export function colorForBand(b: ColorBand): { bg: string; text: string; border: string; hex: string } {

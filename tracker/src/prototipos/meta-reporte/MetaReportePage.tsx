@@ -7,8 +7,9 @@ import SnapshotsTable from './components/SnapshotsTable'
 import CapComplianceCard from './components/CapComplianceCard'
 import CampaignFilter from './components/CampaignFilter'
 import BranchEventsChart from './components/BranchEventsChart'
-import { buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchSnapshots } from './data/queries'
-import type { BranchEvent, MetaSnapshot } from './types'
+import HourlySendsChart from './components/HourlySendsChart'
+import { buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchHourlySends, fetchSnapshots } from './data/queries'
+import type { BranchEvent, HourlySend, MetaSnapshot } from './types'
 
 function fmtTs(ts: string | null): string | null {
   if (!ts) return null
@@ -20,6 +21,7 @@ function fmtTs(ts: string | null): string | null {
 export default function MetaReportePage() {
   const [snapshots, setSnapshots] = useState<MetaSnapshot[] | null>(null)
   const [branchEvents, setBranchEvents] = useState<BranchEvent[]>([])
+  const [hourly, setHourly] = useState<HourlySend[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshAt, setRefreshAt] = useState(Date.now())
   const [selectedIds, setSelectedIds] = useState<number[] | null>(null)   // null = sin inicializar (loading)
@@ -54,6 +56,16 @@ export default function MetaReportePage() {
 
     return () => { cancelled = true }
   }, [refreshAt])
+
+  // Hourly sends — fetch cuando cambian las campañas seleccionadas
+  useEffect(() => {
+    if (!selectedIds || selectedIds.length === 0) { setHourly([]); return }
+    let cancelled = false
+    fetchHourlySends(selectedIds)
+      .then((rows) => { if (!cancelled) setHourly(rows) })
+      .catch((e) => console.warn('hourly fetch failed (ok si tabla está vacía):', e))
+    return () => { cancelled = true }
+  }, [selectedIds, refreshAt])
 
   const branchDaily = useMemo(() => buildBranchDaily(branchEvents), [branchEvents])
 
@@ -143,6 +155,7 @@ export default function MetaReportePage() {
               <DailySendsChart aggregates={aggregates} status={statusMap} />
               <BurndownChart snapshots={filtered} />
             </div>
+            <HourlySendsChart rows={hourly} />
             <BranchEventsChart events={branchEvents} daily={branchDaily} />
             <SnapshotsTable snapshots={filtered} />
 
