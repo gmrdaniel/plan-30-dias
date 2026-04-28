@@ -70,6 +70,20 @@ export interface BranchDailyAgg {
   other: number
 }
 
+export interface DailyStat {
+  id: number
+  campaign_id: number
+  date: string
+  step: number | null     // null = total del día
+  sent: number
+  opens: number
+  clicks: number
+  replies: number
+  bounces: number
+  unsubscribes: number
+  refreshed_at: string
+}
+
 export interface HourlySend {
   id: number
   campaign_id: number

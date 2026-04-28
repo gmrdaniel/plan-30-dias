@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, HourlySend } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, HourlySend, DailyStat } from '../types'
 
 const META_CAMPAIGN_IDS = [3212141, 3217790]
 
@@ -52,72 +52,87 @@ export function computeDeltas(snapshots: MetaSnapshot[]): CampaignDelta[] {
 /**
  * Aggregate snapshots into "sends per day per campaign".
  *
- * Prioridad de fuentes:
- *   1. Si hay datos en `hourly` para (date, campaign_id) → usar sum(actual_sent) (autoridad Smartlead)
- *   2. Si hay snapshot del día anterior → delta vs ese baseline
- *   3. Si es el primer día del histórico → usar sent_total como aproximación (asume tracking fresh)
+ * Prioridad de fuentes (de más a menos precisa):
+ *   1. dailyStats (meta_daily_stats) — desde /campaigns/{id}/statistics, autoridad
+ *   2. hourly (meta_hourly_sends) — desde CSVs descargados de Smartlead UI
+ *   3. delta vs ultimo snap del día anterior
+ *   4. sent_total del primer día (sin baseline) — aproximación
  */
 export function buildDailyAggregates(
   snapshots: MetaSnapshot[],
   hourly: HourlySend[] = [],
+  dailyStats: DailyStat[] = [],
 ): DailyAggregate[] {
-  // Index hourly: key = `${date}::${campaign_id}` → sum(actual_sent)
+  // 1. Index dailyStats: key = `${date}::${campaign_id}` → sent
+  const dailyByKey = new Map<string, number>()
+  for (const d of dailyStats) {
+    if (d.step !== null) continue                 // solo totales del día
+    dailyByKey.set(`${d.date}::${d.campaign_id}`, d.sent)
+  }
+  // 2. Index hourly
   const hourlyByKey = new Map<string, number>()
   for (const h of hourly) {
     const k = `${h.date}::${h.campaign_id}`
     hourlyByKey.set(k, (hourlyByKey.get(k) ?? 0) + (h.actual_sent ?? 0))
   }
 
+  // Map de snapshot último por campaña para metadata (cap, status, name)
+  const lastSnapByCampaign = new Map<number, MetaSnapshot>()
+  for (const s of snapshots) {
+    const prev = lastSnapByCampaign.get(s.campaign_id)
+    if (!prev || s.taken_at > prev.taken_at) lastSnapByCampaign.set(s.campaign_id, s)
+  }
+
+  // Conjunto de (date, campaign_id) que tenemos que cubrir — union de todas las fuentes
+  const keys = new Set<string>()
+  for (const k of dailyByKey.keys()) keys.add(k)
+  for (const k of hourlyByKey.keys()) keys.add(k)
+  // Snapshots fallback
   const byCampaign = new Map<number, MetaSnapshot[]>()
   for (const s of snapshots) {
     const arr = byCampaign.get(s.campaign_id) ?? []
     arr.push(s)
     byCampaign.set(s.campaign_id, arr)
   }
+  for (const [cid, arr] of byCampaign) {
+    const days = new Set(arr.map((s) => s.taken_at.slice(0, 10)))
+    for (const d of days) keys.add(`${d}::${cid}`)
+  }
+
   const out: DailyAggregate[] = []
-  for (const [cid, arrUnsorted] of byCampaign) {
-    const arr = [...arrUnsorted].sort((a, b) => a.taken_at.localeCompare(b.taken_at))
-    const byDay = new Map<string, MetaSnapshot[]>()
-    for (const s of arr) {
-      const day = s.taken_at.slice(0, 10)
-      const list = byDay.get(day) ?? []
-      list.push(s)
-      byDay.set(day, list)
-    }
-    const days = [...byDay.keys()].sort()
-    let prevDayLast: MetaSnapshot | null = null
-    for (const day of days) {
-      const list = byDay.get(day)!
-      const last = list[list.length - 1]
-      const capTarget = last.daily_cap_target ?? 180
-      const capEfectivo = last.daily_cap_efectivo ?? 0
+  for (const key of keys) {
+    const [date, cidStr] = key.split('::')
+    const cid = Number(cidStr)
+    const lastSnap = lastSnapByCampaign.get(cid)
+    const capTarget = lastSnap?.daily_cap_target ?? 180
+    const capEfectivo = lastSnap?.daily_cap_efectivo ?? 0
+    const campaignName = lastSnap?.campaign_name ?? `Campaign ${cid}`
 
-      // 1. Hourly CSV es la fuente más precisa
-      const hourlyKey = `${day}::${cid}`
-      const hourlyTotal = hourlyByKey.get(hourlyKey)
-      let sentDelta: number
-      if (hourlyTotal !== undefined) {
-        sentDelta = hourlyTotal
-      } else if (prevDayLast) {
-        // 2. Delta vs ultimo snap del día anterior
+    let sentDelta: number
+    if (dailyByKey.has(key)) {
+      sentDelta = dailyByKey.get(key)!
+    } else if (hourlyByKey.has(key)) {
+      sentDelta = hourlyByKey.get(key)!
+    } else {
+      // Fallback: delta entre snapshots
+      const arr = (byCampaign.get(cid) ?? []).sort((a, b) => a.taken_at.localeCompare(b.taken_at))
+      const dayList = arr.filter((s) => s.taken_at.slice(0, 10) === date)
+      const prevDayList = arr.filter((s) => s.taken_at.slice(0, 10) < date)
+      const prevDayLast = prevDayList[prevDayList.length - 1]
+      const last = dayList[dayList.length - 1]
+      if (last && prevDayLast) {
         sentDelta = Math.max(0, (last.sent_total ?? 0) - (prevDayLast.sent_total ?? 0))
-      } else {
-        // 3. Primer día del histórico — sin baseline → usar sent_total como aproximación
+      } else if (last) {
         sentDelta = last.sent_total ?? 0
+      } else {
+        sentDelta = 0
       }
-
-      const pct = capTarget > 0 ? (sentDelta / capTarget) * 100 : 0
-      out.push({
-        date: day,
-        campaign_id: cid,
-        campaign_name: last.campaign_name,
-        sentDelta,
-        capTarget,
-        capEfectivo,
-        pctOfTarget: pct,
-      })
-      prevDayLast = last
     }
+    const pct = capTarget > 0 ? (sentDelta / capTarget) * 100 : 0
+    out.push({
+      date, campaign_id: cid, campaign_name: campaignName,
+      sentDelta, capTarget, capEfectivo, pctOfTarget: pct,
+    })
   }
   return out.sort((a, b) => a.date.localeCompare(b.date) || a.campaign_id - b.campaign_id)
 }
@@ -153,6 +168,18 @@ export function buildBranchDaily(events: BranchEvent[]): BranchDailyAgg[] {
     byDate.set(date, cur)
   }
   return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date))
+}
+
+export async function fetchDailyStats(campaignIds: number[]): Promise<DailyStat[]> {
+  if (campaignIds.length === 0) return []
+  const { data, error } = await supabase
+    .from('meta_daily_stats')
+    .select('*')
+    .in('campaign_id', campaignIds)
+    .is('step', null)         // solo totales del día (step NULL)
+    .order('date', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as DailyStat[]
 }
 
 export async function fetchHourlySends(campaignIds: number[]): Promise<HourlySend[]> {

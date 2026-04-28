@@ -9,8 +9,8 @@ import CampaignFilter from './components/CampaignFilter'
 import BranchEventsChart from './components/BranchEventsChart'
 import HourlySendsChart from './components/HourlySendsChart'
 import CumulativeSendsChart from './components/CumulativeSendsChart'
-import { buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchHourlySends, fetchSnapshots } from './data/queries'
-import type { BranchEvent, HourlySend, MetaSnapshot } from './types'
+import { buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchDailyStats, fetchHourlySends, fetchSnapshots } from './data/queries'
+import type { BranchEvent, DailyStat, HourlySend, MetaSnapshot } from './types'
 
 function fmtTs(ts: string | null): string | null {
   if (!ts) return null
@@ -23,6 +23,7 @@ export default function MetaReportePage() {
   const [snapshots, setSnapshots] = useState<MetaSnapshot[] | null>(null)
   const [branchEvents, setBranchEvents] = useState<BranchEvent[]>([])
   const [hourly, setHourly] = useState<HourlySend[]>([])
+  const [dailyStats, setDailyStats] = useState<DailyStat[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshAt, setRefreshAt] = useState(Date.now())
   const [selectedIds, setSelectedIds] = useState<number[] | null>(null)   // null = sin inicializar (loading)
@@ -58,13 +59,19 @@ export default function MetaReportePage() {
     return () => { cancelled = true }
   }, [refreshAt])
 
-  // Hourly sends — fetch cuando cambian las campañas seleccionadas
+  // Hourly sends + daily stats — fetch cuando cambian las campañas seleccionadas
   useEffect(() => {
-    if (!selectedIds || selectedIds.length === 0) { setHourly([]); return }
+    if (!selectedIds || selectedIds.length === 0) {
+      setHourly([]); setDailyStats([])
+      return
+    }
     let cancelled = false
     fetchHourlySends(selectedIds)
       .then((rows) => { if (!cancelled) setHourly(rows) })
       .catch((e) => console.warn('hourly fetch failed (ok si tabla está vacía):', e))
+    fetchDailyStats(selectedIds)
+      .then((rows) => { if (!cancelled) setDailyStats(rows) })
+      .catch((e) => console.warn('daily stats fetch failed (ok si tabla está vacía):', e))
     return () => { cancelled = true }
   }, [selectedIds, refreshAt])
 
@@ -78,7 +85,10 @@ export default function MetaReportePage() {
   }, [snapshots, selectedIds])
 
   const deltas = useMemo(() => computeDeltas(filtered), [filtered])
-  const aggregates = useMemo(() => buildDailyAggregates(filtered, hourly), [filtered, hourly])
+  const aggregates = useMemo(
+    () => buildDailyAggregates(filtered, hourly, dailyStats),
+    [filtered, hourly, dailyStats],
+  )
   const statusMap = useMemo(() => {
     const map: Record<number, string> = {}
     for (const d of deltas) map[d.campaign_id] = d.status
