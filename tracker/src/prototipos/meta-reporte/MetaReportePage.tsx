@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import HeaderHero from './components/HeaderHero'
 import DailySendsChart from './components/DailySendsChart'
-import BurndownChart from './components/BurndownChart'
+import OpensChart from './components/OpensChart'
 import SnapshotsTable from './components/SnapshotsTable'
 import CapComplianceCard from './components/CapComplianceCard'
 import CampaignFilter from './components/CampaignFilter'
@@ -164,7 +164,7 @@ export default function MetaReportePage() {
             <CapComplianceCard aggregates={aggregates} status={statusMap} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <DailySendsChart aggregates={aggregates} status={statusMap} />
-              <BurndownChart snapshots={filtered} />
+              <OpensChart dailyStats={dailyStats} snapshots={filtered} />
             </div>
             <HourlySendsChart rows={hourly} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
