@@ -50,11 +50,24 @@ export function computeDeltas(snapshots: MetaSnapshot[]): CampaignDelta[] {
 }
 
 /**
- * Aggregate snapshots into "sends per day per campaign" by computing
- * the delta between the first and last snapshot of each calendar day.
- * If only one snapshot exists for a day, falls back to delta vs the previous day's last snap.
+ * Aggregate snapshots into "sends per day per campaign".
+ *
+ * Prioridad de fuentes:
+ *   1. Si hay datos en `hourly` para (date, campaign_id) → usar sum(actual_sent) (autoridad Smartlead)
+ *   2. Si hay snapshot del día anterior → delta vs ese baseline
+ *   3. Si es el primer día del histórico → usar sent_total como aproximación (asume tracking fresh)
  */
-export function buildDailyAggregates(snapshots: MetaSnapshot[]): DailyAggregate[] {
+export function buildDailyAggregates(
+  snapshots: MetaSnapshot[],
+  hourly: HourlySend[] = [],
+): DailyAggregate[] {
+  // Index hourly: key = `${date}::${campaign_id}` → sum(actual_sent)
+  const hourlyByKey = new Map<string, number>()
+  for (const h of hourly) {
+    const k = `${h.date}::${h.campaign_id}`
+    hourlyByKey.set(k, (hourlyByKey.get(k) ?? 0) + (h.actual_sent ?? 0))
+  }
+
   const byCampaign = new Map<number, MetaSnapshot[]>()
   for (const s of snapshots) {
     const arr = byCampaign.get(s.campaign_id) ?? []
@@ -75,13 +88,24 @@ export function buildDailyAggregates(snapshots: MetaSnapshot[]): DailyAggregate[
     let prevDayLast: MetaSnapshot | null = null
     for (const day of days) {
       const list = byDay.get(day)!
-      const first = list[0]
       const last = list[list.length - 1]
-      // baseline = ultimo snap del día anterior, o el primer snap del mismo día si no hay anterior
-      const baseline = prevDayLast ?? first
-      const sentDelta = Math.max(0, (last.sent_total ?? 0) - (baseline.sent_total ?? 0))
       const capTarget = last.daily_cap_target ?? 180
       const capEfectivo = last.daily_cap_efectivo ?? 0
+
+      // 1. Hourly CSV es la fuente más precisa
+      const hourlyKey = `${day}::${cid}`
+      const hourlyTotal = hourlyByKey.get(hourlyKey)
+      let sentDelta: number
+      if (hourlyTotal !== undefined) {
+        sentDelta = hourlyTotal
+      } else if (prevDayLast) {
+        // 2. Delta vs ultimo snap del día anterior
+        sentDelta = Math.max(0, (last.sent_total ?? 0) - (prevDayLast.sent_total ?? 0))
+      } else {
+        // 3. Primer día del histórico — sin baseline → usar sent_total como aproximación
+        sentDelta = last.sent_total ?? 0
+      }
+
       const pct = capTarget > 0 ? (sentDelta / capTarget) * 100 : 0
       out.push({
         date: day,

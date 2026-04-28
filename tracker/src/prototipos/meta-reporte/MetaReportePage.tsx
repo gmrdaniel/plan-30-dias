@@ -8,6 +8,7 @@ import CapComplianceCard from './components/CapComplianceCard'
 import CampaignFilter from './components/CampaignFilter'
 import BranchEventsChart from './components/BranchEventsChart'
 import HourlySendsChart from './components/HourlySendsChart'
+import CumulativeSendsChart from './components/CumulativeSendsChart'
 import { buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchHourlySends, fetchSnapshots } from './data/queries'
 import type { BranchEvent, HourlySend, MetaSnapshot } from './types'
 
@@ -77,7 +78,7 @@ export default function MetaReportePage() {
   }, [snapshots, selectedIds])
 
   const deltas = useMemo(() => computeDeltas(filtered), [filtered])
-  const aggregates = useMemo(() => buildDailyAggregates(filtered), [filtered])
+  const aggregates = useMemo(() => buildDailyAggregates(filtered, hourly), [filtered, hourly])
   const statusMap = useMemo(() => {
     const map: Record<number, string> = {}
     for (const d of deltas) map[d.campaign_id] = d.status
@@ -156,7 +157,10 @@ export default function MetaReportePage() {
               <BurndownChart snapshots={filtered} />
             </div>
             <HourlySendsChart rows={hourly} />
-            <BranchEventsChart events={branchEvents} daily={branchDaily} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <BranchEventsChart events={branchEvents} daily={branchDaily} />
+              <CumulativeSendsChart snapshots={filtered} />
+            </div>
             <SnapshotsTable snapshots={filtered} />
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
