@@ -20,6 +20,7 @@ import PlanFastTrackPage from './prototipos/plan-fast-track/PlanFastTrackPage'
 import MetaReportePage from './prototipos/meta-reporte/MetaReportePage'
 import FormulariosReportePage from './prototipos/formularios-reporte/FormulariosReportePage'
 import CapacidadEnviosPage from './prototipos/capacidad-envios/CapacidadEnviosPage'
+import SmartleadHubPage from './prototipos/smartlead-hub/SmartleadHubPage'
 
 const PlantillasPage = lazy(() => import('./prototipos/plantillas/PlantillasPage'))
 
@@ -94,6 +95,8 @@ export default function App() {
           <Route path="/meta-reporte" element={<MetaReportePage />} />
           <Route path="/formularios-reporte" element={<FormulariosReportePage />} />
           <Route path="/capacidad-envios" element={<CapacidadEnviosPage />} />
+          <Route path="/smartlead" element={<SmartleadHubPage />} />
+          <Route path="/smartLead" element={<SmartleadHubPage />} />
           <Route
             path="/plantillas"
             element={
