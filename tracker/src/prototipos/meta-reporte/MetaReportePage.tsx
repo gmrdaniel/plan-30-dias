@@ -5,8 +5,10 @@ import DailySendsChart from './components/DailySendsChart'
 import BurndownChart from './components/BurndownChart'
 import SnapshotsTable from './components/SnapshotsTable'
 import CapComplianceCard from './components/CapComplianceCard'
-import { buildDailyAggregates, computeDeltas, fetchSnapshots } from './data/queries'
-import type { MetaSnapshot } from './types'
+import CampaignFilter from './components/CampaignFilter'
+import BranchEventsChart from './components/BranchEventsChart'
+import { buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchSnapshots } from './data/queries'
+import type { BranchEvent, MetaSnapshot } from './types'
 
 function fmtTs(ts: string | null): string | null {
   if (!ts) return null
@@ -17,28 +19,61 @@ function fmtTs(ts: string | null): string | null {
 
 export default function MetaReportePage() {
   const [snapshots, setSnapshots] = useState<MetaSnapshot[] | null>(null)
+  const [branchEvents, setBranchEvents] = useState<BranchEvent[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshAt, setRefreshAt] = useState(Date.now())
+  const [selectedIds, setSelectedIds] = useState<number[] | null>(null)   // null = sin inicializar (loading)
 
   useEffect(() => {
     let cancelled = false
     setSnapshots(null)
     setError(null)
     fetchSnapshots()
-      .then((rows) => { if (!cancelled) setSnapshots(rows) })
+      .then((rows) => {
+        if (cancelled) return
+        setSnapshots(rows)
+        // Default selection: solo ACTIVE en su snapshot más reciente
+        const lastByCampaign = new Map<number, MetaSnapshot>()
+        for (const s of rows) {
+          const prev = lastByCampaign.get(s.campaign_id)
+          if (!prev || s.taken_at > prev.taken_at) lastByCampaign.set(s.campaign_id, s)
+        }
+        const activeIds = [...lastByCampaign.values()]
+          .filter((s) => s.status === 'ACTIVE')
+          .map((s) => s.campaign_id)
+          .sort((a, b) => a - b)
+        const allIds = [...lastByCampaign.keys()].sort((a, b) => a - b)
+        setSelectedIds(activeIds.length > 0 ? activeIds : allIds)
+      })
       .catch((e) => { if (!cancelled) setError(String(e?.message ?? e)) })
+
+    // Branch events — fetch en paralelo, fail silencioso (tabla puede estar vacía)
+    fetchBranchEvents()
+      .then((rows) => { if (!cancelled) setBranchEvents(rows) })
+      .catch((e) => console.warn('branch events fetch failed (ok si tabla está vacía):', e))
+
     return () => { cancelled = true }
   }, [refreshAt])
 
-  const deltas = useMemo(() => snapshots ? computeDeltas(snapshots) : [], [snapshots])
-  const aggregates = useMemo(() => snapshots ? buildDailyAggregates(snapshots) : [], [snapshots])
+  const branchDaily = useMemo(() => buildBranchDaily(branchEvents), [branchEvents])
+
+  // Filtered set propagated to all components
+  const filtered = useMemo(() => {
+    if (!snapshots || !selectedIds) return []
+    if (selectedIds.length === 0) return []
+    return snapshots.filter((s) => selectedIds.includes(s.campaign_id))
+  }, [snapshots, selectedIds])
+
+  const deltas = useMemo(() => computeDeltas(filtered), [filtered])
+  const aggregates = useMemo(() => buildDailyAggregates(filtered), [filtered])
   const statusMap = useMemo(() => {
     const map: Record<number, string> = {}
     for (const d of deltas) map[d.campaign_id] = d.status
     return map
   }, [deltas])
 
-  const lastTs = snapshots && snapshots.length > 0 ? fmtTs(snapshots[0].taken_at) : null
+  const lastTs = filtered.length > 0 ? fmtTs(filtered[0].taken_at) : null
+  const noneSelected = selectedIds !== null && selectedIds.length === 0
 
   return (
     <div className="ma-root min-h-screen bg-[#F8F9FB] text-slate-900">
@@ -60,6 +95,14 @@ export default function MetaReportePage() {
           <Link to="/" className="text-xs text-slate-500 hover:text-[#0F52BA]">← Tracker</Link>
         </div>
       </nav>
+
+      {snapshots && snapshots.length > 0 && selectedIds !== null && (
+        <CampaignFilter
+          snapshots={snapshots}
+          selected={selectedIds}
+          onChange={setSelectedIds}
+        />
+      )}
 
       {error && (
         <div className="max-w-6xl mx-auto px-4 md:px-8 mt-6">
@@ -83,6 +126,13 @@ export default function MetaReportePage() {
             </code>
           </div>
         </div>
+      ) : noneSelected ? (
+        <div className="max-w-6xl mx-auto px-4 md:px-8 mt-12">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
+            <p className="text-base font-bold text-slate-700">Sin campañas seleccionadas</p>
+            <p className="text-sm text-slate-500 mt-2">Activa al menos una campaña en los chips de arriba.</p>
+          </div>
+        </div>
       ) : snapshots && (
         <>
           <HeaderHero deltas={deltas} lastSnapshotAt={lastTs} />
@@ -91,9 +141,10 @@ export default function MetaReportePage() {
             <CapComplianceCard aggregates={aggregates} status={statusMap} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <DailySendsChart aggregates={aggregates} status={statusMap} />
-              <BurndownChart snapshots={snapshots} />
+              <BurndownChart snapshots={filtered} />
             </div>
-            <SnapshotsTable snapshots={snapshots} />
+            <BranchEventsChart events={branchEvents} daily={branchDaily} />
+            <SnapshotsTable snapshots={filtered} />
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
               <p className="font-semibold text-slate-700 mb-1">Cómo se actualiza este dashboard</p>

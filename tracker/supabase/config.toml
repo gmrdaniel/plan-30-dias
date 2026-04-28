@@ -11,3 +11,6 @@ port = 54323
 
 [functions.clay-webhook-test]
 verify_jwt = false
+
+[functions.branch-webhook]
+verify_jwt = false

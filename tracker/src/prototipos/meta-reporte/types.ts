@@ -46,3 +46,26 @@ export interface DailyAggregate {
 }
 
 export type ColorBand = 'green' | 'amber' | 'red' | 'idle'
+
+export interface BranchEvent {
+  id: number
+  received_at: string
+  event_timestamp: string | null
+  event_type: string
+  feature: string | null
+  campaign: string | null
+  channel: string | null
+  tags: string[] | null
+  branch_link: string | null
+  os: string | null
+  country: string | null
+  raw: unknown
+}
+
+export interface BranchDailyAgg {
+  date: string                 // YYYY-MM-DD
+  clicks: number
+  opens: number
+  installs: number
+  other: number
+}

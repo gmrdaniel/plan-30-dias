@@ -3,7 +3,7 @@ import type { MetaSnapshot } from '../types'
 import { colorBand, colorForBand } from '../data/queries'
 
 interface Props {
-  snapshots: MetaSnapshot[]   // ordered desc
+  snapshots: MetaSnapshot[]   // ordered desc, ya filtrados por campaña en raíz
 }
 
 const PAGE_SIZE = 20
@@ -21,16 +21,9 @@ function fmtTs(ts: string): string {
 
 export default function SnapshotsTable({ snapshots }: Props) {
   const [page, setPage] = useState(0)
-  const [filterCid, setFilterCid] = useState<number | 'all'>('all')
 
-  const filtered = useMemo(() => {
-    return filterCid === 'all' ? snapshots : snapshots.filter((s) => s.campaign_id === filterCid)
-  }, [snapshots, filterCid])
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const visible = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
-
-  const cids = [...new Set(snapshots.map((s) => s.campaign_id))]
+  const totalPages = Math.max(1, Math.ceil(snapshots.length / PAGE_SIZE))
+  const visible = snapshots.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
   // Compute prev sent_total per campaign, in chronological order, so we can show delta
   const indexInCampaignAsc = useMemo(() => {
@@ -52,21 +45,8 @@ export default function SnapshotsTable({ snapshots }: Props) {
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
         <div>
-          <h3 className="text-lg font-bold text-slate-900">Histórico — todos los snapshots</h3>
-          <p className="text-sm text-slate-500">{filtered.length} filas · most recent first</p>
-        </div>
-        <div className="flex gap-2 text-xs">
-          <button
-            className={`px-3 py-1.5 rounded border ${filterCid === 'all' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600'}`}
-            onClick={() => { setFilterCid('all'); setPage(0) }}
-          >Todas</button>
-          {cids.map((cid) => (
-            <button
-              key={cid}
-              className={`px-3 py-1.5 rounded border ${filterCid === cid ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600'}`}
-              onClick={() => { setFilterCid(cid); setPage(0) }}
-            >{cid}</button>
-          ))}
+          <h3 className="text-lg font-bold text-slate-900">Histórico — snapshots</h3>
+          <p className="text-sm text-slate-500">{snapshots.length} filas · most recent first</p>
         </div>
       </div>
 

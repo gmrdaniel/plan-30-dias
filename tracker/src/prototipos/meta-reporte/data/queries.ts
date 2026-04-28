@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg } from '../types'
 
 const META_CAMPAIGN_IDS = [3212141, 3217790]
 
@@ -103,6 +103,32 @@ export function colorBand(pctOfTarget: number, status: string): ColorBand {
   if (pctOfTarget >= 90) return 'green'
   if (pctOfTarget >= 60) return 'amber'
   return 'red'
+}
+
+export async function fetchBranchEvents(limit = 5000): Promise<BranchEvent[]> {
+  const { data, error } = await supabase
+    .from('branch_events')
+    .select('id, received_at, event_timestamp, event_type, feature, campaign, channel, tags, branch_link, os, country, raw')
+    .order('received_at', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+  return (data ?? []) as BranchEvent[]
+}
+
+export function buildBranchDaily(events: BranchEvent[]): BranchDailyAgg[] {
+  const byDate = new Map<string, BranchDailyAgg>()
+  for (const e of events) {
+    const ts = e.event_timestamp ?? e.received_at
+    const date = ts.slice(0, 10)
+    const cur = byDate.get(date) ?? { date, clicks: 0, opens: 0, installs: 0, other: 0 }
+    const t = e.event_type.toLowerCase()
+    if (t === 'click') cur.clicks++
+    else if (t === 'open') cur.opens++
+    else if (t === 'install') cur.installs++
+    else cur.other++
+    byDate.set(date, cur)
+  }
+  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date))
 }
 
 export function colorForBand(b: ColorBand): { bg: string; text: string; border: string; hex: string } {
