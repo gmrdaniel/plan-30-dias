@@ -18,6 +18,7 @@ import ConfiguradorPage from './prototipos/configurador-flujo/ConfiguradorPage'
 import MarketingAnalysisPage from './prototipos/marketing-analysis/MarketingAnalysisPage'
 import PlanFastTrackPage from './prototipos/plan-fast-track/PlanFastTrackPage'
 import MetaReportePage from './prototipos/meta-reporte/MetaReportePage'
+import FormulariosReportePage from './prototipos/formularios-reporte/FormulariosReportePage'
 
 const PlantillasPage = lazy(() => import('./prototipos/plantillas/PlantillasPage'))
 
@@ -90,6 +91,7 @@ export default function App() {
           <Route path="/marketing-analysis" element={<MarketingAnalysisPage />} />
           <Route path="/plan-fast-track-abril" element={<PlanFastTrackPage />} />
           <Route path="/meta-reporte" element={<MetaReportePage />} />
+          <Route path="/formularios-reporte" element={<FormulariosReportePage />} />
           <Route
             path="/plantillas"
             element={

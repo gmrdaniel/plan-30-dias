@@ -13,13 +13,22 @@ export function localDate(iso: string): string {
   return DATE_FORMATTER.format(new Date(iso))
 }
 
-const META_CAMPAIGN_IDS = [3212141, 3217790]
+export const META_CAMPAIGN_IDS = [3212141, 3217790]
+export const FORMULARIO_CAMPAIGN_IDS = [3213557, 3213796, 3224154, 3224156]
 
-export async function fetchSnapshots(limit = 500): Promise<MetaSnapshot[]> {
+/**
+ * Fetch snapshots for a specific set of campaign IDs.
+ * @param campaignIds  IDs to filter to
+ * @param limit  default 500
+ */
+export async function fetchSnapshots(
+  campaignIds: number[] = META_CAMPAIGN_IDS,
+  limit = 500,
+): Promise<MetaSnapshot[]> {
   const { data, error } = await supabase
     .from('meta_snapshots')
     .select('*')
-    .in('campaign_id', META_CAMPAIGN_IDS)
+    .in('campaign_id', campaignIds)
     .order('taken_at', { ascending: false })
     .limit(limit)
   if (error) throw error
