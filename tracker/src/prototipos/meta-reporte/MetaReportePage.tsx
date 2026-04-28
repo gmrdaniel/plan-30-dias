@@ -124,6 +124,7 @@ export default function MetaReportePage() {
           snapshots={snapshots}
           selected={selectedIds}
           onChange={setSelectedIds}
+          storageKey="meta-reporte-filter"
         />
       )}
 

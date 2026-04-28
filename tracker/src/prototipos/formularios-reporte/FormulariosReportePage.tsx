@@ -126,6 +126,7 @@ export default function FormulariosReportePage() {
           snapshots={snapshots}
           selected={selectedIds}
           onChange={setSelectedIds}
+          storageKey="formularios-reporte-filter"
         />
       )}
 
