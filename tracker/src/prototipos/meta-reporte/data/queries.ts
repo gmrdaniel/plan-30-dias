@@ -1,6 +1,18 @@
 import { supabase } from '../../../lib/supabase'
 import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, HourlySend, DailyStat } from '../types'
 
+/** TZ canónica para todas las agregaciones diarias del dashboard. */
+export const LOCAL_TZ = 'America/Mexico_City'
+
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-CA', {
+  timeZone: LOCAL_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
+})
+
+/** ISO timestamp → 'YYYY-MM-DD' en MX TZ (no UTC). */
+export function localDate(iso: string): string {
+  return DATE_FORMATTER.format(new Date(iso))
+}
+
 const META_CAMPAIGN_IDS = [3212141, 3217790]
 
 export async function fetchSnapshots(limit = 500): Promise<MetaSnapshot[]> {
@@ -95,7 +107,7 @@ export function buildDailyAggregates(
     byCampaign.set(s.campaign_id, arr)
   }
   for (const [cid, arr] of byCampaign) {
-    const days = new Set(arr.map((s) => s.taken_at.slice(0, 10)))
+    const days = new Set(arr.map((s) => localDate(s.taken_at)))
     for (const d of days) keys.add(`${d}::${cid}`)
   }
 
@@ -116,8 +128,8 @@ export function buildDailyAggregates(
     } else {
       // Fallback: delta entre snapshots
       const arr = (byCampaign.get(cid) ?? []).sort((a, b) => a.taken_at.localeCompare(b.taken_at))
-      const dayList = arr.filter((s) => s.taken_at.slice(0, 10) === date)
-      const prevDayList = arr.filter((s) => s.taken_at.slice(0, 10) < date)
+      const dayList = arr.filter((s) => localDate(s.taken_at) === date)
+      const prevDayList = arr.filter((s) => localDate(s.taken_at) < date)
       const prevDayLast = prevDayList[prevDayList.length - 1]
       const last = dayList[dayList.length - 1]
       if (last && prevDayLast) {
@@ -158,7 +170,7 @@ export function buildBranchDaily(events: BranchEvent[]): BranchDailyAgg[] {
   const byDate = new Map<string, BranchDailyAgg>()
   for (const e of events) {
     const ts = e.event_timestamp ?? e.received_at
-    const date = ts.slice(0, 10)
+    const date = localDate(ts)
     const cur = byDate.get(date) ?? { date, clicks: 0, opens: 0, installs: 0, other: 0 }
     const t = e.event_type.toLowerCase()
     if (t === 'click') cur.clicks++

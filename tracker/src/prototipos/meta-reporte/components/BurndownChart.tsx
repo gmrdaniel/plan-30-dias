@@ -1,5 +1,6 @@
 import { Area, AreaChart, CartesianGrid, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { MetaSnapshot } from '../types'
+import { localDate } from '../data/queries'
 
 interface Props {
   snapshots: MetaSnapshot[]   // ordered desc; we'll reorder asc here
@@ -34,9 +35,9 @@ export default function BurndownChart({ snapshots }: Props) {
     const realByDate = new Map<string, number>()
     let lastSnap = arr[0]
     for (const s of arr) {
-      const d = s.taken_at.slice(0, 10)
+      const d = localDate(s.taken_at)
       const pendientes = Math.max(0, (s.total_leads ?? 0) - (s.sent_unique ?? 0))
-      realByDate.set(d, pendientes)  // last write per day
+      realByDate.set(d, pendientes)
       lastSnap = s
       allDates.add(d)
     }
@@ -53,14 +54,13 @@ export default function BurndownChart({ snapshots }: Props) {
       let pend = startPendientes
       let day = 0
       while (pend > 0 && day < 60) {
-        const d = new Date(startDate.getTime() + day * 86400000).toISOString().slice(0, 10)
+        const d = localDate(new Date(startDate.getTime() + day * 86400000).toISOString())
         projRows.push({ date: d, [`proj_${cid}`]: Math.max(0, pend) })
         allDates.add(d)
         pend -= capEff
         day++
         if (pend <= 0) {
-          // include the zero point
-          const dz = new Date(startDate.getTime() + day * 86400000).toISOString().slice(0, 10)
+          const dz = localDate(new Date(startDate.getTime() + day * 86400000).toISOString())
           projRows.push({ date: dz, [`proj_${cid}`]: 0 })
           allDates.add(dz)
           break
