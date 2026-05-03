@@ -1,0 +1,26 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# ── Cron Schedule ────────────────────────────────────────────────────────────
+# Railway runs cron jobs as separate ephemeral containers (not the main service).
+# To trigger /trigger/cron-tick we use a curl-based cron service definition.
+#
+# In Railway dashboard → Settings → Cron Schedule, add:
+#   Schedule:  0 15 * * *           (15:00 UTC = 09:00 MX, daily)
+#   Command:   python -m cron_tick  (Run python script that calls API)
+#
+# Alternative (simpler): use external cron like cron-job.org pointing to
+# https://laneta-pipeline-api.up.railway.app/trigger/cron-tick with X-Api-Secret.
+
+# ── Cron Schedule (railway native) ───────────────────────────────────────────
+# Uncomment when ready to enable automated daily runs:
+# [[crons]]
+# schedule = "0 15 * * *"           # 15:00 UTC = 09:00 MX (Mon-Sun)
+# command = "python -m cron_tick"

@@ -11,3 +11,12 @@ tracker/.env
 # Claude Code local
 .claude/
 .mcp.json
+
+# Python services (laneta-pipeline-api etc.)
+services/**/__pycache__/
+services/**/.env
+services/**/.env.local
+services/**/.venv/
+services/**/venv/
+services/**/*.pyc
+services/**/.pytest_cache/

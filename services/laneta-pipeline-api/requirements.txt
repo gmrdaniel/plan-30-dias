@@ -1,0 +1,11 @@
+fastapi==0.115.6
+uvicorn==0.34.0
+httpx==0.28.1
+supabase==2.13.0
+pydantic==2.10.4
+python-dotenv==1.0.1
+# apify-client 1.9.x pulls a newer apify-shared that removes ignore_docs,
+# causing `cannot import name 'ignore_docs'` at runtime. Pin a known-good
+# combination.
+apify-client==1.8.1
+apify-shared==1.1.2
