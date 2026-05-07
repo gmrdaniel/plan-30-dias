@@ -25,20 +25,24 @@ jobs:
           version: latest
 
       - name: Verify secrets are set
+        shell: bash
         run: |
           echo "PROJECT_ID is: ${SUPABASE_PROJECT_ID:+set}"
           echo "ACCESS_TOKEN is: ${SUPABASE_ACCESS_TOKEN:+set}"
           echo "DB_PASSWORD is: ${SUPABASE_DB_PASSWORD:+set}"
-        shell: bash
+
+      - name: Authenticate Supabase CLI
+        working-directory: tracker
+        run: supabase login --token "$SUPABASE_ACCESS_TOKEN"
 
       - name: Link Supabase project
         working-directory: tracker
-        run: supabase link --project-ref $SUPABASE_PROJECT_ID
+        run: supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
 
       - name: Push database migrations
         working-directory: tracker
-        run: supabase db push --include-all
+        run: supabase db push --include-all --password "$SUPABASE_DB_PASSWORD"
 
       - name: Deploy Edge Functions
         working-directory: tracker
-        run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+        run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID"
