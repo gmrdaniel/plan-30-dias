@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, HourlySend, DailyStat } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, HourlySend, DailyStat, SequenceVersion } from '../types'
 
 /** TZ canónica para todas las agregaciones diarias del dashboard. */
 export const LOCAL_TZ = 'America/Mexico_City'
@@ -189,6 +189,17 @@ export function buildBranchDaily(events: BranchEvent[]): BranchDailyAgg[] {
     byDate.set(date, cur)
   }
   return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date))
+}
+
+export async function fetchSequenceVersions(campaignIds: number[]): Promise<SequenceVersion[]> {
+  if (campaignIds.length === 0) return []
+  const { data, error } = await supabase
+    .from('meta_sequence_versions')
+    .select('*')
+    .in('campaign_id', campaignIds)
+    .order('smartlead_updated_at', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as SequenceVersion[]
 }
 
 export async function fetchDailyStats(campaignIds: number[]): Promise<DailyStat[]> {

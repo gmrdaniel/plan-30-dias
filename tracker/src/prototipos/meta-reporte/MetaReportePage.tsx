@@ -7,10 +7,13 @@ import SnapshotsTable from './components/SnapshotsTable'
 import CapComplianceCard from './components/CapComplianceCard'
 import CampaignFilter from './components/CampaignFilter'
 import BranchEventsChart from './components/BranchEventsChart'
+import BranchVsSmartleadCompare from './components/BranchVsSmartleadCompare'
+import SequenceVersionTimeline from './components/SequenceVersionTimeline'
 import HourlySendsChart from './components/HourlySendsChart'
 import CumulativeSendsChart from './components/CumulativeSendsChart'
-import { META_CAMPAIGN_IDS, buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchDailyStats, fetchHourlySends, fetchSnapshots } from './data/queries'
-import type { BranchEvent, DailyStat, HourlySend, MetaSnapshot } from './types'
+import LeadInventoryAlert from './components/LeadInventoryAlert'
+import { META_CAMPAIGN_IDS, buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchDailyStats, fetchHourlySends, fetchSequenceVersions, fetchSnapshots } from './data/queries'
+import type { BranchEvent, DailyStat, HourlySend, MetaSnapshot, SequenceVersion } from './types'
 
 function fmtTs(ts: string | null): string | null {
   if (!ts) return null
@@ -24,6 +27,7 @@ export default function MetaReportePage() {
   const [branchEvents, setBranchEvents] = useState<BranchEvent[]>([])
   const [hourly, setHourly] = useState<HourlySend[]>([])
   const [dailyStats, setDailyStats] = useState<DailyStat[]>([])
+  const [sequenceVersions, setSequenceVersions] = useState<SequenceVersion[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshAt, setRefreshAt] = useState(Date.now())
   const [selectedIds, setSelectedIds] = useState<number[] | null>(null)   // null = sin inicializar (loading)
@@ -72,6 +76,9 @@ export default function MetaReportePage() {
     fetchDailyStats(selectedIds)
       .then((rows) => { if (!cancelled) setDailyStats(rows) })
       .catch((e) => console.warn('daily stats fetch failed (ok si tabla está vacía):', e))
+    fetchSequenceVersions(selectedIds)
+      .then((rows) => { if (!cancelled) setSequenceVersions(rows) })
+      .catch((e) => console.warn('sequence versions fetch failed (ok si tabla está vacía):', e))
     return () => { cancelled = true }
   }, [selectedIds, refreshAt])
 
@@ -162,6 +169,7 @@ export default function MetaReportePage() {
           <HeaderHero deltas={deltas} lastSnapshotAt={lastTs} />
 
           <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-6">
+            <LeadInventoryAlert deltas={deltas} dailyStats={dailyStats} alertDays={2} />
             <CapComplianceCard aggregates={aggregates} status={statusMap} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <DailySendsChart aggregates={aggregates} status={statusMap} />
@@ -172,6 +180,8 @@ export default function MetaReportePage() {
               <BranchEventsChart events={branchEvents} daily={branchDaily} />
               <CumulativeSendsChart snapshots={filtered} />
             </div>
+            <BranchVsSmartleadCompare snapshots={filtered} dailyStats={dailyStats} />
+            <SequenceVersionTimeline versions={sequenceVersions} />
             <SnapshotsTable snapshots={filtered} />
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">

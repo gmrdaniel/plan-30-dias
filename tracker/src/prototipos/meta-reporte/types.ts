@@ -21,6 +21,12 @@ export interface MetaSnapshot {
   replies: number | null
   bounces: number | null
   drafted: number | null
+  // Lead pipeline (since 2026-04-28 — migration 037)
+  leads_total: number | null
+  leads_not_started: number | null
+  leads_in_progress: number | null
+  leads_completed: number | null
+  leads_blocked: number | null
   notes: string | null
 }
 
@@ -82,6 +88,23 @@ export interface DailyStat {
   bounces: number
   unsubscribes: number
   refreshed_at: string
+}
+
+export interface SequenceVersion {
+  id: number
+  campaign_id: number
+  step_id: number
+  seq_number: number
+  subject: string | null
+  body_chars: number | null
+  body_hash: string
+  branch_aliases: string[] | null
+  fb_direct_count: number | null
+  has_branch: boolean
+  has_fb_direct: boolean
+  smartlead_created_at: string
+  smartlead_updated_at: string
+  detected_at: string
 }
 
 export interface HourlySend {
