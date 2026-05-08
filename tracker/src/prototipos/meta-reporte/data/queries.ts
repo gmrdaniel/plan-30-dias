@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, HourlySend, DailyStat, SequenceVersion } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchLinkStat, HourlySend, DailyStat, SequenceVersion } from '../types'
 
 /** TZ canónica para todas las agregaciones diarias del dashboard. */
 export const LOCAL_TZ = 'America/Mexico_City'
@@ -212,6 +212,44 @@ export async function fetchDailyStats(campaignIds: number[]): Promise<DailyStat[
     .order('date', { ascending: true })
   if (error) throw error
   return (data ?? []) as DailyStat[]
+}
+
+/**
+ * Trae todos los snapshots manuales de clicks por Branch link.
+ * Se devuelven ordenados por (alias, snapshot_date desc) para que el caller
+ * pueda quedarse con el primer match por alias = "último conocido".
+ */
+export async function fetchBranchLinkStats(): Promise<BranchLinkStat[]> {
+  const { data, error } = await supabase
+    .from('branch_link_stats')
+    .select('*')
+    .order('alias', { ascending: true })
+    .order('snapshot_date', { ascending: false })
+  if (error) throw error
+  return (data ?? []) as BranchLinkStat[]
+}
+
+/**
+ * Upsert de un snapshot manual (alias, snapshot_date) → clicks.
+ * Re-corrida en el mismo día sobreescribe.
+ */
+export async function upsertBranchLinkStat(
+  row: { alias: string; snapshot_date: string; clicks: number; campaign?: string | null; notes?: string | null; recorded_by?: string | null },
+): Promise<void> {
+  const { error } = await supabase
+    .from('branch_link_stats')
+    .upsert(
+      {
+        alias: row.alias,
+        snapshot_date: row.snapshot_date,
+        clicks: row.clicks,
+        campaign: row.campaign ?? null,
+        notes: row.notes ?? null,
+        recorded_by: row.recorded_by ?? null,
+      },
+      { onConflict: 'alias,snapshot_date' },
+    )
+  if (error) throw error
 }
 
 export async function fetchHourlySends(campaignIds: number[]): Promise<HourlySend[]> {

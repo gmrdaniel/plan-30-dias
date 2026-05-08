@@ -16,6 +16,7 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      BRANCH_WEBHOOK_SECRET: ${{ secrets.BRANCH_WEBHOOK_SECRET }}
 
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +43,15 @@ jobs:
       - name: Push database migrations
         working-directory: tracker
         run: supabase db push --include-all --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Set Edge Function secrets
+        working-directory: tracker
+        run: |
+          if [ -n "$BRANCH_WEBHOOK_SECRET" ]; then
+            supabase secrets set BRANCH_WEBHOOK_SECRET="$BRANCH_WEBHOOK_SECRET" --project-ref "$SUPABASE_PROJECT_ID"
+          else
+            echo "::warning::BRANCH_WEBHOOK_SECRET not set — branch-webhook will accept unauthenticated POSTs"
+          fi
 
       - name: Deploy Edge Functions
         working-directory: tracker

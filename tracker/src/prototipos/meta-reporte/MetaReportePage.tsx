@@ -8,6 +8,7 @@ import CapComplianceCard from './components/CapComplianceCard'
 import CampaignFilter from './components/CampaignFilter'
 import BranchEventsChart from './components/BranchEventsChart'
 import BranchVsSmartleadCompare from './components/BranchVsSmartleadCompare'
+import BranchClicksAdmin from './components/BranchClicksAdmin'
 import SequenceVersionTimeline from './components/SequenceVersionTimeline'
 import HourlySendsChart from './components/HourlySendsChart'
 import CumulativeSendsChart from './components/CumulativeSendsChart'
@@ -30,6 +31,7 @@ export default function MetaReportePage() {
   const [sequenceVersions, setSequenceVersions] = useState<SequenceVersion[]>([])
   const [error, setError] = useState<string | null>(null)
   const [refreshAt, setRefreshAt] = useState(Date.now())
+  const [branchStatsRefreshKey, setBranchStatsRefreshKey] = useState(0)
   const [selectedIds, setSelectedIds] = useState<number[] | null>(null)   // null = sin inicializar (loading)
 
   useEffect(() => {
@@ -180,7 +182,8 @@ export default function MetaReportePage() {
               <BranchEventsChart events={branchEvents} daily={branchDaily} />
               <CumulativeSendsChart snapshots={filtered} />
             </div>
-            <BranchVsSmartleadCompare snapshots={filtered} dailyStats={dailyStats} />
+            <BranchVsSmartleadCompare snapshots={filtered} dailyStats={dailyStats} refreshKey={branchStatsRefreshKey} />
+            <BranchClicksAdmin onSaved={() => setBranchStatsRefreshKey((k) => k + 1)} />
             <SequenceVersionTimeline versions={sequenceVersions} />
             <SnapshotsTable snapshots={filtered} />
 

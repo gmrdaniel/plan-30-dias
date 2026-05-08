@@ -107,6 +107,17 @@ export interface SequenceVersion {
   detected_at: string
 }
 
+export interface BranchLinkStat {
+  id: number
+  imported_at: string
+  snapshot_date: string         // YYYY-MM-DD
+  alias: string
+  campaign: string | null
+  clicks: number
+  notes: string | null
+  recorded_by: string | null
+}
+
 export interface HourlySend {
   id: number
   campaign_id: number
