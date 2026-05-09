@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
+  buildDailyAggregates,
+  computeDeltas,
   fetchBranchLinkStats,
   fetchDailyStats,
+  fetchHourlySends,
   fetchMetaSignups,
   fetchSnapshots,
   META_CAMPAIGN_IDS,
@@ -11,9 +14,13 @@ import {
 import type {
   BranchLinkStat,
   DailyStat,
+  HourlySend,
   MetaSignup,
   MetaSnapshot,
 } from '../meta-reporte/types'
+import CapComplianceCard from '../meta-reporte/components/CapComplianceCard'
+import DailySendsChart from '../meta-reporte/components/DailySendsChart'
+import OpensChart from '../meta-reporte/components/OpensChart'
 import HeroMetrics from './components/HeroMetrics'
 import FunnelChart from './components/FunnelChart'
 import DesktopFinding from './components/DesktopFinding'
@@ -35,6 +42,7 @@ export default function FunnelMetaPage() {
   const [dailyStats, setDailyStats] = useState<DailyStat[]>([])
   const [linkStats, setLinkStats] = useState<BranchLinkStat[]>([])
   const [signups, setSignups] = useState<MetaSignup[]>([])
+  const [hourly, setHourly] = useState<HourlySend[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -47,13 +55,15 @@ export default function FunnelMetaPage() {
       fetchDailyStats(META_CAMPAIGN_IDS),
       fetchBranchLinkStats(),
       fetchMetaSignups(dateNDaysAgo(period * 2)),  // pull doble del periodo para comparativa
+      fetchHourlySends(META_CAMPAIGN_IDS),
     ])
-      .then(([s, ds, ls, sg]) => {
+      .then(([s, ds, ls, sg, h]) => {
         if (cancelled) return
         setSnapshots(s)
         setDailyStats(ds)
         setLinkStats(ls)
         setSignups(sg)
+        setHourly(h)
       })
       .catch((e) => { if (!cancelled) setError(String(e?.message ?? e)) })
       .finally(() => { if (!cancelled) setLoading(false) })
@@ -143,6 +153,26 @@ export default function FunnelMetaPage() {
     return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date))
   }, [dailyStats, signups, fromCurrent])
 
+  // Aggregates + status para los 3 cards reutilizados de /meta-reporte.
+  // Filtrados por el periodo seleccionado para coherencia con el header.
+  const aggregates = useMemo(
+    () => buildDailyAggregates(snapshots, hourly, dailyStats),
+    [snapshots, hourly, dailyStats],
+  )
+  const filteredAggregates = useMemo(
+    () => aggregates.filter((a) => a.date >= fromCurrent),
+    [aggregates, fromCurrent],
+  )
+  const filteredDailyStats = useMemo(
+    () => dailyStats.filter((d) => d.date >= fromCurrent),
+    [dailyStats, fromCurrent],
+  )
+  const statusMap = useMemo(() => {
+    const map: Record<number, string> = {}
+    for (const d of computeDeltas(snapshots)) map[d.campaign_id] = d.status
+    return map
+  }, [snapshots])
+
   const lastSnapAt = snapshots[0]?.taken_at ? localDate(snapshots[0].taken_at) : null
 
   return (
@@ -214,6 +244,11 @@ export default function FunnelMetaPage() {
           />
 
           <DesktopFinding clicks={clicksCurrent + clicksSmartleadCurrent} signups={signupsCurrent} />
+
+          {/* ---- Cards reutilizados de /meta-reporte ---- */}
+          <CapComplianceCard aggregates={filteredAggregates} status={statusMap} />
+          <DailySendsChart aggregates={filteredAggregates} status={statusMap} />
+          <OpensChart dailyStats={filteredDailyStats} snapshots={snapshots} />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
