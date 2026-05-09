@@ -123,6 +123,16 @@ export interface MetaSignup {
   raw: unknown
 }
 
+export interface BranchDeviceSnapshot {
+  id: number
+  snapshot_date: string
+  device_breakdown: Record<string, number>     // {Windows: 50, macOS: 15, ...}
+  source_pdf: string | null
+  notes: string | null
+  recorded_by: string | null
+  imported_at: string
+}
+
 export interface BranchLinkStat {
   id: number
   imported_at: string

@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchLinkStat, HourlySend, DailyStat, MetaSignup, SequenceVersion } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchDeviceSnapshot, BranchLinkStat, HourlySend, DailyStat, MetaSignup, SequenceVersion } from '../types'
 
 /** TZ canónica para todas las agregaciones diarias del dashboard. */
 export const LOCAL_TZ = 'America/Mexico_City'
@@ -248,6 +248,38 @@ export async function upsertBranchLinkStat(
         recorded_by: row.recorded_by ?? null,
       },
       { onConflict: 'alias,snapshot_date' },
+    )
+  if (error) throw error
+}
+
+/**
+ * Snapshot más reciente del device breakdown (OS distribution) de Branch.
+ * Devuelve null si tabla vacía.
+ */
+export async function fetchLatestBranchDeviceSnapshot(): Promise<BranchDeviceSnapshot | null> {
+  const { data, error } = await supabase
+    .from('branch_device_snapshots')
+    .select('*')
+    .order('snapshot_date', { ascending: false })
+    .limit(1)
+  if (error) throw error
+  return (data?.[0] as BranchDeviceSnapshot) ?? null
+}
+
+export async function upsertBranchDeviceSnapshot(
+  row: { snapshot_date: string; device_breakdown: Record<string, number>; source_pdf?: string | null; notes?: string | null; recorded_by?: string | null },
+): Promise<void> {
+  const { error } = await supabase
+    .from('branch_device_snapshots')
+    .upsert(
+      {
+        snapshot_date: row.snapshot_date,
+        device_breakdown: row.device_breakdown,
+        source_pdf: row.source_pdf ?? null,
+        notes: row.notes ?? null,
+        recorded_by: row.recorded_by ?? null,
+      },
+      { onConflict: 'snapshot_date' },
     )
   if (error) throw error
 }

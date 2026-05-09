@@ -64,18 +64,18 @@ export default function FunnelMetaPage() {
   const fromCurrent = dateNDaysAgo(period)
   const fromPrevious = dateNDaysAgo(period * 2)
 
-  // L1 + L2 from daily stats
-  const { sentCurrent, sentPrev, opensCurrent, opensPrev } = useMemo(() => {
-    let sc = 0, sp = 0, oc = 0, op = 0
+  // L1 + L2 + Smartlead clicks from daily stats
+  const { sentCurrent, sentPrev, opensCurrent, opensPrev, clicksSmartleadCurrent, clicksSmartleadPrev } = useMemo(() => {
+    let sc = 0, sp = 0, oc = 0, op = 0, csc = 0, csp = 0
     for (const d of dailyStats) {
       if (d.step !== null) continue
       if (d.date >= fromCurrent) {
-        sc += d.sent; oc += d.opens
+        sc += d.sent; oc += d.opens; csc += d.clicks
       } else if (d.date >= fromPrevious) {
-        sp += d.sent; op += d.opens
+        sp += d.sent; op += d.opens; csp += d.clicks
       }
     }
-    return { sentCurrent: sc, sentPrev: sp, opensCurrent: oc, opensPrev: op }
+    return { sentCurrent: sc, sentPrev: sp, opensCurrent: oc, opensPrev: op, clicksSmartleadCurrent: csc, clicksSmartleadPrev: csp }
   }, [dailyStats, fromCurrent, fromPrevious])
 
   // L3 — clicks: usamos el snapshot más reciente por alias y restamos el snapshot
@@ -192,11 +192,11 @@ export default function FunnelMetaPage() {
           <HeroMetrics
             sentCurrent={sentCurrent}
             opensCurrent={opensCurrent}
-            clicksCurrent={clicksCurrent}
+            clicksCurrent={clicksCurrent + clicksSmartleadCurrent}
             signupsCurrent={signupsCurrent}
             sentPrev={sentPrev}
             opensPrev={opensPrev}
-            clicksPrev={clicksPrev}
+            clicksPrev={clicksPrev + clicksSmartleadPrev}
             signupsPrev={signupsPrev}
             period={period}
           />
@@ -206,12 +206,14 @@ export default function FunnelMetaPage() {
           <FunnelChart
             sent={sentCurrent}
             opens={opensCurrent}
-            clicks={clicksCurrent}
+            clicks={clicksCurrent + clicksSmartleadCurrent}
+            clicksBranch={clicksCurrent}
+            clicksSmartlead={clicksSmartleadCurrent}
             signups={signupsCurrent}
             period={period}
           />
 
-          <DesktopFinding clicks={clicksCurrent} signups={signupsCurrent} />
+          <DesktopFinding clicks={clicksCurrent + clicksSmartleadCurrent} signups={signupsCurrent} />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">

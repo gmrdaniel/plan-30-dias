@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchBranchLinkStats, upsertBranchLinkStat } from '../data/queries'
-import type { BranchLinkStat } from '../types'
+import { fetchBranchLinkStats, fetchLatestBranchDeviceSnapshot, upsertBranchDeviceSnapshot, upsertBranchLinkStat } from '../data/queries'
+import type { BranchDeviceSnapshot, BranchLinkStat } from '../types'
+
+const DEVICE_KEYS = ['Windows', 'macOS', 'Linux', 'iOS', 'Android', 'Other'] as const
+type DeviceKey = typeof DEVICE_KEYS[number]
 
 // Catálogo canónico de aliases bajo tracking — agregar aquí cuando se cree
 // un nuevo Branch link que se quiera medir. La data (clicks) vive en Supabase;
@@ -60,6 +63,13 @@ export default function BranchClicksAdmin({ onSaved }: { onSaved?: () => void })
   const [error, setError] = useState<string | null>(null)
   const [savedAt, setSavedAt] = useState<string | null>(null)
 
+  // Device breakdown
+  const [latestDevices, setLatestDevices] = useState<BranchDeviceSnapshot | null>(null)
+  const [deviceDrafts, setDeviceDrafts] = useState<Record<DeviceKey, string>>({
+    Windows: '', macOS: '', Linux: '', iOS: '', Android: '', Other: '',
+  })
+  const [savingDevices, setSavingDevices] = useState(false)
+
   // Cargar últimos conocidos
   useEffect(() => {
     if (!open) return
@@ -67,6 +77,9 @@ export default function BranchClicksAdmin({ onSaved }: { onSaved?: () => void })
     fetchBranchLinkStats()
       .then((rows) => { if (!cancelled) setStats(rows) })
       .catch((e) => { if (!cancelled) setError(String(e?.message ?? e)) })
+    fetchLatestBranchDeviceSnapshot()
+      .then((row) => { if (!cancelled) setLatestDevices(row) })
+      .catch((e) => console.warn('device snapshot fetch failed:', e))
     return () => { cancelled = true }
   }, [open, savedAt])
 
@@ -115,6 +128,53 @@ export default function BranchClicksAdmin({ onSaved }: { onSaved?: () => void })
       setError(`Error guardando ${cfg.alias}: ${String((e as Error)?.message ?? e)}`)
     } finally {
       setSavingAlias(null)
+    }
+  }
+
+  const deviceTotalDraft = useMemo(() => {
+    return DEVICE_KEYS.reduce((sum, k) => {
+      const v = Number(deviceDrafts[k])
+      return Number.isFinite(v) ? sum + v : sum
+    }, 0)
+  }, [deviceDrafts])
+
+  async function saveDevices() {
+    const breakdown: Record<string, number> = {}
+    let hasAny = false
+    for (const k of DEVICE_KEYS) {
+      const raw = deviceDrafts[k]
+      if (raw === '' || raw === undefined) continue
+      const n = Number(raw)
+      if (!Number.isFinite(n) || n < 0 || n > 100) {
+        setError(`Valor inválido para ${k}: ${raw} (0-100)`)
+        return
+      }
+      breakdown[k] = n
+      hasAny = true
+    }
+    if (!hasAny) {
+      setError('Captura al menos un %.')
+      return
+    }
+    if (Math.abs(deviceTotalDraft - 100) > 5) {
+      setError(`Los % suman ${deviceTotalDraft.toFixed(1)} (esperado ~100). Corrige antes de guardar.`)
+      return
+    }
+    setSavingDevices(true)
+    setError(null)
+    try {
+      await upsertBranchDeviceSnapshot({
+        snapshot_date: snapshotDate,
+        device_breakdown: breakdown,
+        recorded_by: recordedBy.trim() || null,
+      })
+      setDeviceDrafts({ Windows: '', macOS: '', Linux: '', iOS: '', Android: '', Other: '' })
+      setSavedAt(new Date().toISOString())
+      onSaved?.()
+    } catch (e) {
+      setError(`Error guardando devices: ${String((e as Error)?.message ?? e)}`)
+    } finally {
+      setSavingDevices(false)
     }
   }
 
@@ -291,6 +351,58 @@ export default function BranchClicksAdmin({ onSaved }: { onSaved?: () => void })
         >
           Guardar todos los modificados
         </button>
+      </div>
+
+      {/* ============ DEVICES SECTION ============ */}
+      <div className="mt-8 pt-6 border-t-2 border-slate-200">
+        <h4 className="text-base font-bold text-slate-900 mb-1">Device breakdown (% por OS)</h4>
+        <p className="text-xs text-slate-500 mb-4">
+          Capturado del donut chart "Clicks + Scans by Operating System" del PDF Branch Single Link Analytics.
+          La suma debe ser ~100%. Re-guardar en el mismo <code className="bg-slate-100 px-1 rounded">snapshot_date</code> sobreescribe.
+        </p>
+
+        {latestDevices && (
+          <div className="mb-3 rounded bg-slate-50 border border-slate-200 p-3 text-xs">
+            <p className="text-slate-700 font-semibold mb-1">Último guardado: {latestDevices.snapshot_date}</p>
+            <div className="flex gap-3 flex-wrap text-slate-600">
+              {Object.entries(latestDevices.device_breakdown).map(([k, v]) => (
+                <span key={k} className="font-mono">{k}: <b>{v}%</b></span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-3">
+          {DEVICE_KEYS.map((k) => (
+            <label key={k} className="text-xs">
+              <span className="block text-slate-500 mb-1">{k}</span>
+              <input
+                type="number"
+                min={0} max={100} step={0.1}
+                value={deviceDrafts[k]}
+                onChange={(e) => setDeviceDrafts((d) => ({ ...d, [k]: e.target.value }))}
+                placeholder={String(latestDevices?.device_breakdown?.[k] ?? '0')}
+                className="w-full px-2 py-1.5 border border-slate-300 rounded text-sm tabular-nums text-right"
+              />
+            </label>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs">
+            Suma actual: <span className={`font-bold tabular-nums ${Math.abs(deviceTotalDraft - 100) <= 1 ? 'text-emerald-700' : Math.abs(deviceTotalDraft - 100) <= 5 ? 'text-amber-700' : 'text-rose-700'}`}>
+              {deviceTotalDraft.toFixed(1)}%
+            </span>
+            {' '}(esperado ~100%)
+          </p>
+          <button
+            onClick={saveDevices}
+            disabled={savingDevices || deviceTotalDraft === 0}
+            className="px-4 py-2 rounded bg-[#10B981] text-white text-sm font-semibold hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed"
+          >
+            {savingDevices ? 'Guardando...' : 'Guardar device %'}
+          </button>
+        </div>
       </div>
     </div>
   )

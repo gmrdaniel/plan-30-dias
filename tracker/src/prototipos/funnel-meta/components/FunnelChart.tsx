@@ -2,6 +2,8 @@ interface Props {
   sent: number
   opens: number
   clicks: number
+  clicksBranch?: number
+  clicksSmartlead?: number
   signups: number
   period: number
 }
@@ -42,11 +44,14 @@ function bandFor(stage: number, ratePct: number): { bg: string; label: string } 
   return { bg: 'bg-slate-400', label: '' }
 }
 
-export default function FunnelChart({ sent, opens, clicks, signups, period }: Props) {
+export default function FunnelChart({ sent, opens, clicks, clicksBranch, clicksSmartlead, signups, period }: Props) {
+  const l3Description = clicksBranch !== undefined && clicksSmartlead !== undefined
+    ? `Branch ${clicksBranch.toLocaleString()} + Smartlead ${clicksSmartlead.toLocaleString()} (combinado)`
+    : 'Intención activa'
   const stages: Stage[] = [
     { label: 'L1 — Enviados', count: sent,    description: 'Universo entrante (cold)', color: 'bg-slate-700' },
     { label: 'L2 — Abrieron', count: opens,   description: 'Engagement pasivo',         color: 'bg-blue-500' },
-    { label: 'L3 — Clicks',   count: clicks,  description: 'Intención activa (Branch)', color: 'bg-indigo-500' },
+    { label: 'L3 — Clicks',   count: clicks,  description: l3Description,                color: 'bg-indigo-500' },
     { label: 'L4 — Registros',count: signups, description: 'Conversión real (Meta)',    color: 'bg-emerald-500' },
   ]
   const top = sent || 1
