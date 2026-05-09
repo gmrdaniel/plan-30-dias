@@ -45,6 +45,8 @@ export default function FunnelMetaPage() {
   const [hourly, setHourly] = useState<HourlySend[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [refreshAt, setRefreshAt] = useState(Date.now())
+  const [lastLoadedAt, setLastLoadedAt] = useState<Date | null>(null)
 
   // Load all data
   useEffect(() => {
@@ -64,11 +66,12 @@ export default function FunnelMetaPage() {
         setLinkStats(ls)
         setSignups(sg)
         setHourly(h)
+        setLastLoadedAt(new Date())
       })
       .catch((e) => { if (!cancelled) setError(String(e?.message ?? e)) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
-  }, [period])
+  }, [period, refreshAt])
 
   // Compute periods
   const fromCurrent = dateNDaysAgo(period)
@@ -183,7 +186,12 @@ export default function FunnelMetaPage() {
           <div>
             <p className="font-bold text-slate-900 text-sm leading-tight">Funnel Meta — conversión cold</p>
             <p className="text-xs text-slate-500 leading-tight">
-              Sent → Opens → Clicks → Registros · {lastSnapAt ?? '—'}
+              Sent → Opens → Clicks → Registros · snapshot {lastSnapAt ?? '—'}
+              {lastLoadedAt && (
+                <span className="ml-2 text-slate-400">
+                  · cargado {lastLoadedAt.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -201,6 +209,14 @@ export default function FunnelMetaPage() {
               </button>
             ))}
           </div>
+          <button
+            onClick={() => setRefreshAt(Date.now())}
+            disabled={loading}
+            className="text-slate-500 hover:text-[#10B981] inline-flex items-center gap-1 px-3 py-1.5 rounded border border-slate-200 hover:border-[#10B981] transition-colors disabled:opacity-50"
+            title="Re-fetch desde Supabase"
+          >
+            ↻ Refresh
+          </button>
           <Link to="/meta-reporte" className="text-slate-500 hover:text-[#10B981] px-2">Operacional →</Link>
           <Link to="/" className="text-slate-500 hover:text-[#10B981] px-2">← Tracker</Link>
         </div>
