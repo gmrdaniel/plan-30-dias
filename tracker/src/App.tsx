@@ -18,6 +18,7 @@ import ConfiguradorPage from './prototipos/configurador-flujo/ConfiguradorPage'
 import MarketingAnalysisPage from './prototipos/marketing-analysis/MarketingAnalysisPage'
 import PlanFastTrackPage from './prototipos/plan-fast-track/PlanFastTrackPage'
 import MetaReportePage from './prototipos/meta-reporte/MetaReportePage'
+import FunnelMetaPage from './prototipos/funnel-meta/FunnelMetaPage'
 import FormulariosReportePage from './prototipos/formularios-reporte/FormulariosReportePage'
 import CapacidadEnviosPage from './prototipos/capacidad-envios/CapacidadEnviosPage'
 import SmartleadHubPage from './prototipos/smartlead-hub/SmartleadHubPage'
@@ -93,6 +94,7 @@ export default function App() {
           <Route path="/marketing-analysis" element={<MarketingAnalysisPage />} />
           <Route path="/plan-fast-track-abril" element={<PlanFastTrackPage />} />
           <Route path="/meta-reporte" element={<MetaReportePage />} />
+          <Route path="/funnel-meta" element={<FunnelMetaPage />} />
           <Route path="/formularios-reporte" element={<FormulariosReportePage />} />
           <Route path="/capacidad-envios" element={<CapacidadEnviosPage />} />
           <Route path="/smartlead" element={<SmartleadHubPage />} />

@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchLinkStat, HourlySend, DailyStat, SequenceVersion } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchLinkStat, HourlySend, DailyStat, MetaSignup, SequenceVersion } from '../types'
 
 /** TZ canónica para todas las agregaciones diarias del dashboard. */
 export const LOCAL_TZ = 'America/Mexico_City'
@@ -250,6 +250,22 @@ export async function upsertBranchLinkStat(
       { onConflict: 'alias,snapshot_date' },
     )
   if (error) throw error
+}
+
+/**
+ * Trae signups Meta con fecha de aceptación dentro del rango.
+ * Si la tabla está vacía (Excel no cargado), devuelve [] sin error.
+ */
+export async function fetchMetaSignups(fromDate?: string, toDate?: string): Promise<MetaSignup[]> {
+  let q = supabase
+    .from('meta_signups')
+    .select('*')
+    .order('accepted_at', { ascending: false })
+  if (fromDate) q = q.gte('accepted_at', fromDate)
+  if (toDate)   q = q.lte('accepted_at', toDate)
+  const { data, error } = await q
+  if (error) throw error
+  return (data ?? []) as MetaSignup[]
 }
 
 export async function fetchHourlySends(campaignIds: number[]): Promise<HourlySend[]> {

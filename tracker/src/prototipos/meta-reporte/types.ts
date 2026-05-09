@@ -107,6 +107,22 @@ export interface SequenceVersion {
   detected_at: string
 }
 
+export interface MetaSignup {
+  id: number
+  email: string
+  accepted_at: string           // YYYY-MM-DD
+  first_name: string | null
+  last_name: string | null
+  creator_handle: string | null
+  platform: string | null
+  meta_creator_id: string | null
+  referral_code: string | null
+  batch_label: string | null
+  source_file: string | null
+  imported_at: string
+  raw: unknown
+}
+
 export interface BranchLinkStat {
   id: number
   imported_at: string
