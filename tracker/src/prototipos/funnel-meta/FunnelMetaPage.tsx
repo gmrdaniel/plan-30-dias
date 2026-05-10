@@ -170,9 +170,14 @@ export default function FunnelMetaPage() {
     () => dailyStats.filter((d) => d.date >= fromCurrent),
     [dailyStats, fromCurrent],
   )
+  // Override TODOS los status como ACTIVE para que CapComplianceCard y DailySendsChart
+  // sumen sends históricos sin filtrar por status actual. En /meta-reporte el filtro
+  // por ACTIVE es correcto (operacional, muestra "lo que estamos enviando ahora"),
+  // pero /funnel-meta es histórico del funnel — queremos ver todos los sends que
+  // ocurrieron, aunque la campaña hoy esté PAUSED.
   const statusMap = useMemo(() => {
     const map: Record<number, string> = {}
-    for (const d of computeDeltas(snapshots)) map[d.campaign_id] = d.status
+    for (const d of computeDeltas(snapshots)) map[d.campaign_id] = 'ACTIVE'
     return map
   }, [snapshots])
 
