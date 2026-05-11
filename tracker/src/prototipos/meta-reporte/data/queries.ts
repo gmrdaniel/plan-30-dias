@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchDeviceSnapshot, BranchLinkStat, HourlySend, DailyStat, MetaSignup, SequenceVersion } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchDeviceSnapshot, BranchLinkStat, HourlySend, DailyStat, MetaSignup, MetaReply, ReplySentiment, SequenceVersion } from '../types'
 
 /** TZ canónica para todas las agregaciones diarias del dashboard. */
 export const LOCAL_TZ = 'America/Mexico_City'
@@ -129,13 +129,19 @@ export function buildDailyAggregates(
     const capEfectivo = lastSnap?.daily_cap_efectivo ?? 0
     const campaignName = lastSnap?.campaign_name ?? `Campaign ${cid}`
 
-    let sentDelta: number
+    let sentDelta: number | null
     if (dailyByKey.has(key)) {
       sentDelta = dailyByKey.get(key)!
     } else if (hourlyByKey.has(key)) {
       sentDelta = hourlyByKey.get(key)!
     } else {
-      // Fallback: delta entre snapshots
+      // Fallback: delta entre snapshots consecutivos del día.
+      // SOLO confiable cuando tenemos baseline del día anterior — sin baseline,
+      // antes este path usaba `last.sent_total` (cumulative desde origen de la
+      // campaña) como si fuera el delta diario, lo que disparaba barras enormes
+      // en el primer día del fetch (e.g. 3,111 en 5/10 con limit=200). Mejor saltar
+      // la entry y dejar que la fuente autoritativa (meta_daily_stats) la llene cuando
+      // el snapshot script corra.
       const arr = (byCampaign.get(cid) ?? []).sort((a, b) => a.taken_at.localeCompare(b.taken_at))
       const dayList = arr.filter((s) => localDate(s.taken_at) === date)
       const prevDayList = arr.filter((s) => localDate(s.taken_at) < date)
@@ -143,12 +149,11 @@ export function buildDailyAggregates(
       const last = dayList[dayList.length - 1]
       if (last && prevDayLast) {
         sentDelta = Math.max(0, (last.sent_total ?? 0) - (prevDayLast.sent_total ?? 0))
-      } else if (last) {
-        sentDelta = last.sent_total ?? 0
       } else {
-        sentDelta = 0
+        sentDelta = null
       }
     }
+    if (sentDelta === null) continue
     const pct = capTarget > 0 ? (sentDelta / capTarget) * 100 : 0
     out.push({
       date, campaign_id: cid, campaign_name: campaignName,
@@ -298,6 +303,42 @@ export async function fetchMetaSignups(fromDate?: string, toDate?: string): Prom
   const { data, error } = await q
   if (error) throw error
   return (data ?? []) as MetaSignup[]
+}
+
+/**
+ * Trae replies recibidos en las campañas dadas, optionally desde una fecha.
+ * Devuelve ordenados por replied_at desc (más recientes primero).
+ */
+export async function fetchReplies(
+  campaignIds: number[],
+  fromIso?: string,
+): Promise<MetaReply[]> {
+  if (campaignIds.length === 0) return []
+  let q = supabase
+    .from('meta_replies')
+    .select('*')
+    .in('campaign_id', campaignIds)
+    .order('replied_at', { ascending: false })
+  if (fromIso) q = q.gte('replied_at', fromIso)
+  const { data, error } = await q
+  if (error) throw error
+  return (data ?? []) as MetaReply[]
+}
+
+/**
+ * Override humano del sentiment de un reply. Marca sentiment_source='human_override'
+ * + sentiment_at=now para auditoría. La UI usa esto desde el modal de detalle.
+ */
+export async function updateReplySentiment(id: number, sentiment: ReplySentiment): Promise<void> {
+  const { error } = await supabase
+    .from('meta_replies')
+    .update({
+      sentiment,
+      sentiment_source: 'human_override',
+      sentiment_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+  if (error) throw error
 }
 
 export async function fetchHourlySends(campaignIds: number[]): Promise<HourlySend[]> {

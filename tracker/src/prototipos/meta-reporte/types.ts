@@ -144,6 +144,25 @@ export interface BranchLinkStat {
   recorded_by: string | null
 }
 
+export type ReplySentiment = 'interested' | 'decline' | 'out_of_office' | 'unsubscribe_req' | 'other'
+export type SentimentSource = 'auto_haiku' | 'human_override' | 'error'
+
+export interface MetaReply {
+  id: number
+  campaign_id: number
+  lead_id: number
+  lead_email: string
+  lead_name: string | null
+  step: number | null
+  replied_at: string                       // ISO timestamp
+  subject: string | null
+  body_text: string | null
+  sentiment: ReplySentiment | null
+  sentiment_source: SentimentSource | null
+  sentiment_at: string | null
+  recorded_at: string
+}
+
 export interface HourlySend {
   id: number
   campaign_id: number

@@ -53,7 +53,7 @@ export default function FunnelMetaPage() {
     let cancelled = false
     setLoading(true)
     Promise.all([
-      fetchSnapshots(META_CAMPAIGN_IDS, 200),
+      fetchSnapshots(META_CAMPAIGN_IDS, 1500),
       fetchDailyStats(META_CAMPAIGN_IDS),
       fetchBranchLinkStats(),
       fetchMetaSignups(dateNDaysAgo(period * 2)),  // pull doble del periodo para comparativa
