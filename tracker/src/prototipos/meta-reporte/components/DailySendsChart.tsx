@@ -17,6 +17,21 @@ interface DayRow {
   byCampaign: Record<number, number>
   pct: number
   band: 'green' | 'amber' | 'red' | 'idle'
+  zeroReason: string | null
+}
+
+const WEEKDAY_LABEL = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+
+/** Para días con 0 sends, deriva la razón más probable.
+ * Schedule canónico de cold = Lun-Jue + Sáb (skip Vie + Dom).
+ */
+function reasonForZero(date: string): string | null {
+  // 'YYYY-MM-DD' a noon UTC para evitar edge de TZ. getUTCDay 0=Dom..6=Sáb.
+  const d = new Date(`${date}T12:00:00Z`)
+  const dow = d.getUTCDay()
+  if (dow === 0) return `${WEEKDAY_LABEL[0]} — skip por schedule canónico`
+  if (dow === 5) return `${WEEKDAY_LABEL[5]} — skip por schedule canónico`
+  return `${WEEKDAY_LABEL[dow]} activo — 0 sends inesperado (revisar stall o pause)`
 }
 
 export default function DailySendsChart({ aggregates, status }: Props) {
@@ -33,6 +48,7 @@ export default function DailySendsChart({ aggregates, status }: Props) {
       byCampaign: {} as Record<number, number>,
       pct: 0,
       band: 'idle' as const,
+      zeroReason: null,
     }
     cur.planeado = Math.max(cur.planeado, a.capTarget)
     cur.capEfectivo = Math.max(cur.capEfectivo, a.capEfectivo)
@@ -43,7 +59,12 @@ export default function DailySendsChart({ aggregates, status }: Props) {
   const data = [...datesMap.values()]
     .map((r) => {
       const pct = r.planeado ? (r.real / r.planeado) * 100 : 0
-      return { ...r, pct, band: colorBand(pct, 'ACTIVE') }
+      return {
+        ...r,
+        pct,
+        band: colorBand(pct, 'ACTIVE'),
+        zeroReason: r.real === 0 ? reasonForZero(r.date) : null,
+      }
     })
     .sort((a, b) => a.date.localeCompare(b.date))
 
@@ -98,6 +119,11 @@ export default function DailySendsChart({ aggregates, status }: Props) {
                         <span className="text-slate-500">% cumplimiento:</span>
                         <span className="font-mono text-right font-bold">{row.pct.toFixed(0)}%</span>
                       </div>
+                      {row.zeroReason && (
+                        <p className="text-[11px] text-amber-700 italic pt-1 mt-1 border-t border-slate-100">
+                          ⓘ {row.zeroReason}
+                        </p>
+                      )}
                       {Object.keys(row.byCampaign).length > 0 && (
                         <div className="pt-1 mt-1 border-t border-slate-100">
                           <p className="text-[10px] text-slate-400 uppercase tracking-wider">Por campaña</p>
