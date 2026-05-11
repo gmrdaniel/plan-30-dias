@@ -144,6 +144,27 @@ export interface BranchLinkStat {
   recorded_by: string | null
 }
 
+export interface BranchClickDaily {
+  id: number
+  alias: string
+  click_date: string                 // YYYY-MM-DD
+  clicks: number
+  imported_at: string
+}
+
+export type BranchClickDimension = 'os' | 'browser' | 'platform' | 'referrer'
+
+export interface BranchClickBreakdown {
+  id: number
+  alias: string
+  dimension: BranchClickDimension
+  category: string
+  clicks: number
+  window_start: string | null        // YYYY-MM-DD
+  window_end: string | null
+  imported_at: string
+}
+
 export type ReplySentiment = 'interested' | 'decline' | 'out_of_office' | 'unsubscribe_req' | 'other'
 export type SentimentSource = 'auto_haiku' | 'human_override' | 'error'
 

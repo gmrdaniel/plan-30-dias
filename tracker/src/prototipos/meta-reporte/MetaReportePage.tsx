@@ -6,9 +6,6 @@ import OpensChart from './components/OpensChart'
 import SnapshotsTable from './components/SnapshotsTable'
 import CapComplianceCard from './components/CapComplianceCard'
 import CampaignFilter from './components/CampaignFilter'
-import BranchEventsChart from './components/BranchEventsChart'
-import BranchVsSmartleadCompare from './components/BranchVsSmartleadCompare'
-import BranchClicksAdmin from './components/BranchClicksAdmin'
 import SequenceVersionTimeline from './components/SequenceVersionTimeline'
 import HourlySendsChart from './components/HourlySendsChart'
 import CumulativeSendsChart from './components/CumulativeSendsChart'
@@ -16,6 +13,7 @@ import LeadInventoryAlert from './components/LeadInventoryAlert'
 import StallAlert from './components/StallAlert'
 import RepliesByStepCard from './components/RepliesByStepCard'
 import RepliesTable from './components/RepliesTable'
+import ClicksAnalysisTab from './components/ClicksAnalysisTab'
 import { META_CAMPAIGN_IDS, buildBranchDaily, buildDailyAggregates, computeDeltas, fetchBranchEvents, fetchDailyStats, fetchHourlySends, fetchReplies, fetchSequenceVersions, fetchSnapshots } from './data/queries'
 import type { BranchEvent, DailyStat, HourlySend, MetaReply, MetaSnapshot, SequenceVersion } from './types'
 
@@ -37,6 +35,14 @@ export default function MetaReportePage() {
   const [refreshAt, setRefreshAt] = useState(Date.now())
   const [branchStatsRefreshKey, setBranchStatsRefreshKey] = useState(0)
   const [selectedIds, setSelectedIds] = useState<number[] | null>(null)   // null = sin inicializar (loading)
+  const [activeTab, setActiveTab] = useState<'funnel' | 'clicks'>(() => {
+    const stored = typeof window !== 'undefined' ? window.localStorage.getItem('meta-reporte-tab') : null
+    return stored === 'clicks' ? 'clicks' : 'funnel'
+  })
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') window.localStorage.setItem('meta-reporte-tab', activeTab)
+  }, [activeTab])
 
   useEffect(() => {
     let cancelled = false
@@ -177,35 +183,66 @@ export default function MetaReportePage() {
         <>
           <HeaderHero deltas={deltas} lastSnapshotAt={lastTs} />
 
-          <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-6">
-            <StallAlert deltas={deltas} />
-            <LeadInventoryAlert deltas={deltas} dailyStats={dailyStats} alertDays={2} />
-            <CapComplianceCard aggregates={aggregates} status={statusMap} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <DailySendsChart aggregates={aggregates} status={statusMap} />
-              <OpensChart dailyStats={dailyStats} snapshots={filtered} />
+          {/* Tabs */}
+          <div className="max-w-6xl mx-auto px-4 md:px-8 pt-6">
+            <div className="inline-flex rounded-lg bg-slate-100 p-1 gap-1">
+              <button
+                onClick={() => setActiveTab('funnel')}
+                className={`px-4 py-1.5 rounded text-sm font-semibold transition-colors ${
+                  activeTab === 'funnel' ? 'bg-white text-[#0F52BA] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Funnel
+              </button>
+              <button
+                onClick={() => setActiveTab('clicks')}
+                className={`px-4 py-1.5 rounded text-sm font-semibold transition-colors ${
+                  activeTab === 'clicks' ? 'bg-white text-[#0F52BA] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Clics &amp; escaneos
+              </button>
             </div>
-            <RepliesByStepCard replies={replies} dailyStats={dailyStats} />
-            <HourlySendsChart rows={hourly} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <BranchEventsChart events={branchEvents} daily={branchDaily} />
-              <CumulativeSendsChart snapshots={filtered} />
-            </div>
-            <BranchVsSmartleadCompare snapshots={filtered} dailyStats={dailyStats} refreshKey={branchStatsRefreshKey} />
-            <BranchClicksAdmin onSaved={() => setBranchStatsRefreshKey((k) => k + 1)} />
-            <SequenceVersionTimeline versions={sequenceVersions} />
-            <RepliesTable replies={replies} onUpdated={() => setRefreshAt(Date.now())} />
-            <SnapshotsTable snapshots={filtered} />
+          </div>
 
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
-              <p className="font-semibold text-slate-700 mb-1">Cómo se actualiza este dashboard</p>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Snapshots automáticos: 07:00 y 19:00 MX (cuando se configure cron)</li>
-                <li>Snapshot manual: <code className="bg-white px-1 rounded">python _snapshot_meta.py</code></li>
-                <li>Con nota: <code className="bg-white px-1 rounded">python _snapshot_meta.py --note "Subí cap inboxes a 20"</code></li>
-                <li>Solo Ana: <code className="bg-white px-1 rounded">python _snapshot_meta.py --campaigns 3217790</code></li>
-              </ul>
-            </div>
+          <main className="max-w-6xl mx-auto px-4 md:px-8 py-6 space-y-6">
+            {activeTab === 'funnel' ? (
+              <>
+                <StallAlert deltas={deltas} />
+                <LeadInventoryAlert deltas={deltas} dailyStats={dailyStats} alertDays={2} />
+                <CapComplianceCard aggregates={aggregates} status={statusMap} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <DailySendsChart aggregates={aggregates} status={statusMap} />
+                  <OpensChart dailyStats={dailyStats} snapshots={filtered} />
+                </div>
+                <RepliesByStepCard replies={replies} dailyStats={dailyStats} />
+                <HourlySendsChart rows={hourly} />
+                <CumulativeSendsChart snapshots={filtered} />
+                <SequenceVersionTimeline versions={sequenceVersions} />
+                <RepliesTable replies={replies} onUpdated={() => setRefreshAt(Date.now())} />
+                <SnapshotsTable snapshots={filtered} />
+
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
+                  <p className="font-semibold text-slate-700 mb-1">Cómo se actualiza este dashboard</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Snapshots automáticos: cron Windows cada 15 min (BrevoSnapshotMetaEvery15min)</li>
+                    <li>Snapshot manual: <code className="bg-white px-1 rounded">python _snapshot_meta.py</code></li>
+                    <li>Con nota: <code className="bg-white px-1 rounded">python _snapshot_meta.py --note "Subí cap inboxes a 20"</code></li>
+                    <li>Solo Ana: <code className="bg-white px-1 rounded">python _snapshot_meta.py --campaigns 3217790</code></li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <ClicksAnalysisTab
+                branchEvents={branchEvents}
+                branchDaily={branchDaily}
+                snapshots={filtered}
+                dailyStats={dailyStats}
+                branchStatsRefreshKey={branchStatsRefreshKey}
+                onBranchStatsSaved={() => setBranchStatsRefreshKey((k) => k + 1)}
+                refreshAt={refreshAt}
+              />
+            )}
           </main>
         </>
       )}

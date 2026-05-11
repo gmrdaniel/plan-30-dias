@@ -1,5 +1,5 @@
 import { supabase } from '../../../lib/supabase'
-import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchDeviceSnapshot, BranchLinkStat, HourlySend, DailyStat, MetaSignup, MetaReply, ReplySentiment, SequenceVersion } from '../types'
+import type { MetaSnapshot, CampaignDelta, DailyAggregate, ColorBand, BranchEvent, BranchDailyAgg, BranchDeviceSnapshot, BranchLinkStat, BranchClickDaily, BranchClickBreakdown, HourlySend, DailyStat, MetaSignup, MetaReply, ReplySentiment, SequenceVersion } from '../types'
 
 /** TZ canónica para todas las agregaciones diarias del dashboard. */
 export const LOCAL_TZ = 'America/Mexico_City'
@@ -339,6 +339,30 @@ export async function updateReplySentiment(id: number, sentiment: ReplySentiment
     })
     .eq('id', id)
   if (error) throw error
+}
+
+/** Time-series de clicks por día por alias Branch (source: Daily CSV importado). */
+export async function fetchBranchClicksDaily(aliases?: string[]): Promise<BranchClickDaily[]> {
+  let q = supabase
+    .from('branch_clicks_daily')
+    .select('*')
+    .order('click_date', { ascending: true })
+  if (aliases && aliases.length > 0) q = q.in('alias', aliases)
+  const { data, error } = await q
+  if (error) throw error
+  return (data ?? []) as BranchClickDaily[]
+}
+
+/** Breakdowns dimensionales (OS/browser/platform/referrer) por alias Branch. */
+export async function fetchBranchClicksBreakdown(aliases?: string[]): Promise<BranchClickBreakdown[]> {
+  let q = supabase
+    .from('branch_clicks_breakdown')
+    .select('*')
+    .order('clicks', { ascending: false })
+  if (aliases && aliases.length > 0) q = q.in('alias', aliases)
+  const { data, error } = await q
+  if (error) throw error
+  return (data ?? []) as BranchClickBreakdown[]
 }
 
 export async function fetchHourlySends(campaignIds: number[]): Promise<HourlySend[]> {
