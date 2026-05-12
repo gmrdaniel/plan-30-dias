@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
+  buildBranchDaily,
   buildDailyAggregates,
   computeDeltas,
+  fetchBranchEvents,
   fetchBranchLinkStats,
   fetchDailyStats,
   fetchHourlySends,
@@ -12,6 +14,7 @@ import {
   localDate,
 } from '../meta-reporte/data/queries'
 import type {
+  BranchEvent,
   BranchLinkStat,
   DailyStat,
   HourlySend,
@@ -21,6 +24,7 @@ import type {
 import CapComplianceCard from '../meta-reporte/components/CapComplianceCard'
 import DailySendsChart from '../meta-reporte/components/DailySendsChart'
 import OpensChart from '../meta-reporte/components/OpensChart'
+import ClicksAnalysisTab from '../meta-reporte/components/ClicksAnalysisTab'
 import HeroMetrics from './components/HeroMetrics'
 import FunnelChart from './components/FunnelChart'
 import DesktopFinding from './components/DesktopFinding'
@@ -43,10 +47,20 @@ export default function FunnelMetaPage() {
   const [linkStats, setLinkStats] = useState<BranchLinkStat[]>([])
   const [signups, setSignups] = useState<MetaSignup[]>([])
   const [hourly, setHourly] = useState<HourlySend[]>([])
+  const [branchEvents, setBranchEvents] = useState<BranchEvent[]>([])
+  const [branchStatsRefreshKey, setBranchStatsRefreshKey] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [refreshAt, setRefreshAt] = useState(Date.now())
   const [lastLoadedAt, setLastLoadedAt] = useState<Date | null>(null)
+  const [activeTab, setActiveTab] = useState<'funnel' | 'clicks'>(() => {
+    const stored = typeof window !== 'undefined' ? window.localStorage.getItem('funnel-meta-tab') : null
+    return stored === 'clicks' ? 'clicks' : 'funnel'
+  })
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') window.localStorage.setItem('funnel-meta-tab', activeTab)
+  }, [activeTab])
 
   // Load all data
   useEffect(() => {
@@ -58,20 +72,24 @@ export default function FunnelMetaPage() {
       fetchBranchLinkStats(),
       fetchMetaSignups(dateNDaysAgo(period * 2)),  // pull doble del periodo para comparativa
       fetchHourlySends(META_CAMPAIGN_IDS),
+      fetchBranchEvents().catch(() => []),         // tabla puede estar vacía, fail silencioso
     ])
-      .then(([s, ds, ls, sg, h]) => {
+      .then(([s, ds, ls, sg, h, be]) => {
         if (cancelled) return
         setSnapshots(s)
         setDailyStats(ds)
         setLinkStats(ls)
         setSignups(sg)
         setHourly(h)
+        setBranchEvents(be)
         setLastLoadedAt(new Date())
       })
       .catch((e) => { if (!cancelled) setError(String(e?.message ?? e)) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [period, refreshAt])
+
+  const branchDaily = useMemo(() => buildBranchDaily(branchEvents), [branchEvents])
 
   // Compute periods
   const fromCurrent = dateNDaysAgo(period)
@@ -236,10 +254,44 @@ export default function FunnelMetaPage() {
         </div>
       )}
 
+      {/* Tabs */}
+      <div className="max-w-6xl mx-auto px-4 md:px-8 pt-4">
+        <div className="inline-flex rounded-lg bg-slate-100 p-1 gap-1">
+          <button
+            onClick={() => setActiveTab('funnel')}
+            className={`px-4 py-1.5 rounded text-sm font-semibold transition-colors ${
+              activeTab === 'funnel' ? 'bg-white text-[#10B981] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Funnel
+          </button>
+          <button
+            onClick={() => setActiveTab('clicks')}
+            className={`px-4 py-1.5 rounded text-sm font-semibold transition-colors ${
+              activeTab === 'clicks' ? 'bg-white text-[#10B981] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Clics &amp; escaneos
+          </button>
+        </div>
+      </div>
+
       {loading && !error ? (
         <div className="max-w-6xl mx-auto px-4 md:px-8 mt-12 text-slate-400 text-sm">Cargando funnel…</div>
+      ) : activeTab === 'clicks' ? (
+        <main className="max-w-6xl mx-auto px-4 md:px-8 py-6 space-y-6">
+          <ClicksAnalysisTab
+            branchEvents={branchEvents}
+            branchDaily={branchDaily}
+            snapshots={snapshots}
+            dailyStats={dailyStats}
+            branchStatsRefreshKey={branchStatsRefreshKey}
+            onBranchStatsSaved={() => setBranchStatsRefreshKey((k) => k + 1)}
+            refreshAt={refreshAt}
+          />
+        </main>
       ) : (
-        <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-6">
+        <main className="max-w-6xl mx-auto px-4 md:px-8 py-6 space-y-6">
           <HeroMetrics
             sentCurrent={sentCurrent}
             opensCurrent={opensCurrent}
